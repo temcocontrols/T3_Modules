@@ -1,0 +1,12 @@
+
+*.LST
+*.lst
+*.bak
+*.hex
+*.m51
+*.cpp
+*.m51
+*.cpp
+/objects/*.obj
+/objects/*.htm
+/objects/*.lnp
