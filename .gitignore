@@ -10,3 +10,11 @@
 /objects/*.obj
 /objects/*.htm
 /objects/*.lnp
+/uIP-1.0/doc/*.pdf
+/uIP-1.0/doc/html/*.png
+/uIP-1.0/doc/html/*.gif
+/uIP-1.0/doc/html/*.css
+/uIP-1.0/apps/webserver/httpd-fs/*.png
+/uIP-1.0/apps/webserver/httpd-fs/*.css
+/uIP-1.0/apps/webserver/httpd-fs/*.shtml
+*.png
