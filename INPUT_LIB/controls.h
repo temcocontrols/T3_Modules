@@ -19,9 +19,11 @@
 
 #define INPUT
 
-#ifdef  T38AI8AO6DO
+#if (defined T38AI8AO6DO) || (defined T36CTA)
 #define OUTPUT
 #endif
+
+
 
 #ifdef ASIX_CON
 extern void map_extern_output(uint8_t point);
@@ -78,7 +80,7 @@ extern uint32_t conver_by_unit_10v(uint32_t sample);
 extern uint32_t conver_by_unit_custable(uint8_t point,uint8 sample);
 extern uint32_t get_high_spd_counter(uint8_t point);
 
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO) || (defined T36CTA)
 extern uint16_t output_raw[MAX_OUTS] ;
 #endif
 

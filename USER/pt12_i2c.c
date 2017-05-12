@@ -49,25 +49,6 @@ void PT12_I2C_stop(void)
 u8 PT12_I2C_wait_for_ack(void)
 {
 	u16 ucErrTime = 0;
-//	PT12_SDA_IN();		//SDA设置为输入 
-//	PT12_SDA = 1;
-//	delay_us(1);	
-//	PT12_SCL = 1;
-//	delay_us(40);
-//	while(READ_PT12_SDA)
-//	{
-//		ucErrTime++;
-//		if(ucErrTime > 50)
-//		{
-//			PT12_I2C_stop();
-//			return NACK;
-//		}
-//		delay_us(1);
-//	}
-//	PT12_SCL = 0;	//时钟输出0 	   
-//	return ACK;   	
-	
-	
 	PT12_SDA_IN();		//SDA设置为输入 	
 	PT12_SCL = 0;
 	PT12_SDA = 1;

@@ -24,5 +24,4 @@ del *.iex /s
 del *.htm /s
 del *.sct /s
 del *.map /s
-del *.hex /s
 exit

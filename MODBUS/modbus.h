@@ -92,7 +92,7 @@ typedef struct
 	u8 ghost_gate_addr[4] ;
 	u8 ghost_tcp_server ;
 	u16 ghost_listen_port ;
-	
+	u16 bacnet_port ;
 	u8 write_ghost_system  ;
 //	u8 stack[3] ;
 	#ifdef T322AI
@@ -106,7 +106,7 @@ typedef struct
 //	u8   customer_enable[MAX_AI_CHANNEL] ;
 	double_read pulse[MAX_AI_CHANNEL] ;
 	#endif
-	#ifdef T38AI8AO6DO
+	#if (defined T38AI8AO6DO) 
 //	u16 customer_range_hi[MAX_AI_CHANNEL];
 //	u16 customer_range_lo[MAX_AI_CHANNEL];
 //	u8   customer_enable[MAX_AI_CHANNEL] ;
@@ -119,26 +119,17 @@ typedef struct
 //	u16 output[MAX_AO+MAX_DO] ;
 	double_read pulse[MAX_AI_CHANNEL] ;
 	#endif 
-	#ifndef T3PT12
-//	u16 customer_table1_vol[11];
-//	u16 customer_table1_val[11];
-//	u16 customer_table2_vol[11];
-//	u16 customer_table2_val[11];
-//	u16 customer_table3_vol[11];
-//	u16 customer_table3_val[11];
-//	u16 customer_table4_vol[11];
-//	u16 customer_table4_val[11];
-//	u16 customer_table5_vol[11];
-//	u16 customer_table5_val[11];
-//	u8  table_point[5] ;
+	#if  (defined T36CTA)
+	u16	 switch_gourp[2] ;
+	double_read pulse[MAX_AI_CHANNEL] ;
 	#endif
 
 	
 	#ifdef T3PT12
 
-	u16 input[MAX_AI_CHANNEL] ;
+//	u16 input[MAX_AI_CHANNEL] ;
 //	u8  filter_value[MAX_AI_CHANNEL];
-	u8  range [MAX_AI_CHANNEL];
+//	u8  range [MAX_AI_CHANNEL];
 //	u16  offset[MAX_AI_CHANNEL];
 	//u8	type_sensor[MAX_AI_CHANNEL] ;
 //	u8 	resole_bit ;

@@ -12,7 +12,7 @@
 #endif
 
 #define READ_WRITE_PROPERTY 1
-#define SOFTREV    15
+#define SOFTREV    1
 
 //#define MODBUS 0 
 //#define BAC_MSTP 1
@@ -22,9 +22,10 @@
 //#define BAC_GSM 5
 
 #define DEFAULT_FILTER  5
-#define T322AI		43
+//#define T322AI		43
 //#define T38AI8AO6DO   44
 //#define T3PT12			46
+#define T36CTA		   95
 
 //#define SW_VER 20150112
 
@@ -42,23 +43,28 @@
 #ifdef  T3PT12
 #define HW_VER			1
 #define MAX_AI_CHANNEL	 12
-#define MAX_AIS         12
-#define MAX_INS					12
+#define MAX_AIS         MAX_AI_CHANNEL
+#define MAX_INS					MAX_AIS
 #define PRODUCT_ID 		T3PT12
-#define  MAX_AVS  		4
+#define  MAX_AVS  		29
 #define  MAX_AV			MAX_AVS
 //#define MAX_OUTS				1
 //#define MAX_AOS					1
 #define INPUT_CONTROL
 #endif
 
-
+#ifdef T36CTA
+#define INPUT_CONTROL
+#define OUTPUT_CONTROL
+#define  MAX_AVS  	41
+#define MAX_AV					MAX_AVS
+#endif
 
 
 #ifdef T38AI8AO6DO
 #define INPUT_CONTROL
 #define OUTPUT_CONTROL
-#define  MAX_AVS  	50
+#define  MAX_AVS  	41
 #define MAX_AV					MAX_AVS
 #endif
 
@@ -70,7 +76,7 @@
 #define MAX_AI_CHANNEL	 	22
 #define MAX_AIS        		MAX_AI_CHANNEL
 #define MAX_INS  			MAX_AIS 
-#define MAX_AVS  			50
+#define MAX_AVS  			40
 #define MAX_AV				MAX_AVS
 //#define MAX_OUTS				1
 //#define MAX_AOS					1
@@ -140,7 +146,34 @@
 #define RANGE_SET1			PAout(4)
 #endif 
 
+#ifdef T36CTA 
+#define SWITCH_NUM 			2
 
+#define PRODUCT_ID 		T36CTA
+#define HW_VER				1
+#define MAX_AI_CHANNEL	 	19
+#define MAX_AIS         MAX_AI_CHANNEL
+#define MAX_INS  				MAX_AIS 
+
+#define MAX_AO					0
+#define MAX_AOS					0
+#define MAX_DO					2
+#define MAX_OUTS				2
+//#define MAX_AV					20
+
+#define T36CTA_REV1    1
+
+#define  SW_OFF  0
+#define  SW_HAND 2
+#define  SW_AUTO 1
+
+//IO²Ù×÷º¯Êý	 
+
+
+#define CHA_SEL4				PDout(15)
+#define RANGE_SET0			PEout(13)
+#define RANGE_SET1			PEout(14)
+#endif 
 
 
 #endif 

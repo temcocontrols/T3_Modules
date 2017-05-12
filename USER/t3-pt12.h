@@ -25,10 +25,11 @@
 #define	RP4		91
 
 
-#define RP5		908
+#define RP5		910
 #define RP6		1000
 #define RP7		1200	
 #define RP8		1500
+
 typedef union 
 {
 	u8 qauter_temp_C[4];

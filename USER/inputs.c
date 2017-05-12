@@ -6,18 +6,19 @@
 #include "modbus.h"
 #include "../filter/filter.h"
 #include "controls.h"
-#if (defined T322AI) || (T38AI8AO6DO)	
+#if (defined T322AI) || (T38AI8AO6DO)	|| (defined T36CTA)
 uint16_t data_change[MAX_AI_CHANNEL] = {0} ;
+#endif
+
+#if defined T36CTA
+uint16_t air_flow_ad = 0;
 #endif
 
 #ifndef T3PT12
 void range_set_func(u8 channel) ;
- 
 #define ADC_DR_ADDRESS  0x4001244C  
-
-vu16 AD_Value[MAX_AI_CHANNEL] = {0}; 
 #endif
- 
+vu16 AD_Value[MAX_AI_CHANNEL] = {0};
 
 void inputs_io_init(void)
 {
@@ -48,7 +49,7 @@ GPIO_Init(GPIOC, &GPIO_InitStructure);
 //GPIO_Init(GPIOB, &GPIO_InitStructure);
 #endif
 
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO) 
 GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_7;  
 GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 
 GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;	
@@ -58,9 +59,40 @@ GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3;
 GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 
 GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	
 GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-
 #endif
+
+#if (defined T36CTA)
+
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;  
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	
+GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 ;//| GPIO_Pin_8 | GPIO_Pin_9;  
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	
+GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE, ENABLE);
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13|GPIO_Pin_14;  
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	
+GPIO_Init(GPIOE, &GPIO_InitStructure);
+
+RCC_APB2PeriphClockCmd( RCC_APB2Periph_ADC2|RCC_APB2Periph_GPIOA, ENABLE);
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;  
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; 
+GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+RCC_APB2PeriphClockCmd( RCC_APB2Periph_ADC2|RCC_APB2Periph_GPIOC, ENABLE);
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;  
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; 
+GPIO_Init(GPIOC, &GPIO_InitStructure);
+#endif
+
+
 /**************************PortC configure----ADC1*****************************************/
 RCC_APB2PeriphClockCmd( RCC_APB2Periph_ADC1|RCC_APB2Periph_GPIOC, ENABLE);
 GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;  
@@ -119,6 +151,28 @@ void inputs_adc_init(void)
 //	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
      ADC_StartCalibration(ADC1);
      while(ADC_GetCalibrationStatus(ADC1) == SET);
+	
+#if defined T36CTA
+	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC2, ENABLE);
+	/* configuration ------------------------------------------------------*/  
+	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+	ADC_InitStructure.ADC_NbrOfChannel = 7;//
+	ADC_Init(ADC2, &ADC_InitStructure);
+	ADC_Cmd(ADC2, ENABLE); 
+	/* Enable ADC2 reset calibaration register */   
+	ADC_ResetCalibration(ADC2);
+	while(ADC_GetResetCalibrationStatus(ADC2)== SET)
+	{
+		;
+	}		
+     ADC_StartCalibration(ADC2);
+     while(ADC_GetCalibrationStatus(ADC2) == SET);
+#endif	
 }
 
 //void dma_adc_init(void)
@@ -148,10 +202,151 @@ void inputs_init(void)
 	inputs_adc_init();
 	//dma_adc_init();
 	#endif
+	
 }
 
+#if defined T36CTA
+void inputs_scan(void)
+{
+	static u16 new_ad[22] ;
+	static u16 old_ad[22]= {4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095};
+	static u8 channel_count =0 ;
+	u16 port_temp;
+	u16	swap_adc ;
+	u8 i;
+	uint16_t ad_buf = 0 ;
+#if T36CTA_REV1
+	if( channel_count <13)
+	{
+		if((inputs[channel_count].range == N0_2_32counts)||(inputs[channel_count].range ==HI_spd_count))
+		{
+			AD_Value[channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
+			new_ad[channel_count] = AD_Value[channel_count] ;
+			if((old_ad[channel_count]> new_ad[channel_count])&&((old_ad[channel_count] - new_ad[channel_count])>1000))
+			{
+				modbus.pulse[channel_count].word++ ;
+				data_change[channel_count] = 1 ;
+			}
+			old_ad[channel_count] = new_ad[channel_count];
 
-#ifdef T38AI8AO6DO
+		}
+		else
+		{
+			AD_Value[channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
+		}
+
+		GPIO_ResetBits(GPIOD,  GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_12 );
+		if(channel_count>7)
+			GPIO_SetBits(GPIOC, GPIO_Pin_6);
+		else
+			GPIO_ResetBits(GPIOC, GPIO_Pin_6);
+		port_temp = GPIO_ReadOutputData(GPIOD);
+		port_temp = 0x8fff&port_temp ;
+		
+		GPIO_Write(GPIOD, (port_temp|(channel_count<<12)));
+		CHA_SEL4 = 1  ;
+		range_set_func(channel_count);
+		
+		channel_count++;
+	}
+	else
+	{
+//		swap_adc = AD_Value[0];
+//		for(i=0; i< 12; i++)
+//		{
+//			AD_Value[i] = AD_Value[i+1];
+//		}
+//		AD_Value[12] = swap_adc;
+//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_12));
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_0)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_1)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_2)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5)*10/75);//air_flow_ad;//(ADC_getChannal(ADC2,ADC_Channel_5)*10/75);
+		
+//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_0));
+//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_1));
+//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_2));
+//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3));
+//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4));
+//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5));
+		
+		channel_count %= MAX_AI_CHANNEL;
+	}
+#else 
+	if( channel_count <8)
+	{
+		
+		GPIO_ResetBits(GPIOD,  GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_12 );
+
+		//port_temp = GPIO_ReadOutputData(GPIOD);
+		//port_temp = 0x8fff&port_temp ;
+		
+		//GPIO_Write(GPIOD, (port_temp|(channel_count<<12)));
+		for( i=0; i<8; i++)
+		{
+			if(channel_count & (1<<0))
+			{
+				PDout(12) = 1;
+			}
+			if(channel_count & (1<<0))
+			{
+				PDout(13) = 1;
+			}
+			if(channel_count & (1<<0))
+			{
+				PDout(14) = 1;
+			}
+		}
+		CHA_SEL4 = 1  ;
+		range_set_func(channel_count);
+		
+		if((inputs[channel_count].range == N0_2_32counts)||(inputs[channel_count].range ==HI_spd_count))
+		{
+			AD_Value[channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
+			new_ad[channel_count] = AD_Value[channel_count] ;
+			if((old_ad[channel_count]> new_ad[channel_count])&&((old_ad[channel_count] - new_ad[channel_count])>1000))
+			{
+				modbus.pulse[channel_count].word++ ;
+				data_change[channel_count] = 1 ;
+			}
+			old_ad[channel_count] = new_ad[channel_count];
+
+		}
+		else
+		{
+			AD_Value[channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
+		}
+
+		
+		channel_count++;
+	}
+	else if( (channel_count>= 8)&&(channel_count<13))
+	{
+		AD_Value[channel_count++]= 0;
+		AD_Value[channel_count++]= 0;
+		AD_Value[channel_count++]= 0;
+		AD_Value[channel_count++]= 0;
+		AD_Value[channel_count++]= 0;
+	}
+	else
+	{
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_0)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_1)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_2)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4)*10/75);
+		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5)*10/75);//air_flow_ad;//(ADC_getChannal(ADC2,ADC_Channel_5)*10/75);
+
+		
+		channel_count %= MAX_AI_CHANNEL;
+	}
+#endif	
+}
+#endif
+
+#if (defined T38AI8AO6DO)
 void inputs_scan(void)
 {
 	static u16 new_ad[22] ;

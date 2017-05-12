@@ -2,7 +2,7 @@
 #include "t3-pt12.h" 
 #include "read_pt.h"
 #include "modbus.h"
-
+#include "inputs.h"
 #ifdef T3PT12
 #define PT1000  0x11 
 #define PT100		0x12
@@ -66,49 +66,53 @@ float get_rtd_temperature(long rtd_ad , unsigned char channel)
 	float rtd_A = -0.000000577521439;
 	float rtd_B = 0.003908319257;
 	float rtd_C = -0.00000000000418347612;
-//	buffer_range = (inputs[channel].decom>>4)&0x0f ;
-//	if((buffer_range == 0)||(buffer_range  == 1))
-	if((inputs[channel].range == 1)||(inputs[channel].range == 2)||(inputs[channel].range == 5)||(inputs[channel].range == 6))
+	if(inputs[channel].digital_analog == 1)
 	{
-		if((inputs[channel].range == 1)||(inputs[channel].range == 2))
+		if((inputs[channel].range == 1)||(inputs[channel].range == 2)||(inputs[channel].range == 5)||(inputs[channel].range == 6))
 		{
-			rtd_res = linear_K.temp_C * rtd_ad + linear_B.temp_C;	//pt100 get rtd resistor
-			RTD_R0 = 100 ;
-//			printf("%f\n\r", rtd_res);
-		}
-		else if((inputs[channel].range == 5)||(inputs[channel].range == 6))
-		{
-			rtd_res = linear_K_1.temp_C * rtd_ad + linear_B_1.temp_C;	//pt1000 get rtd resistor	
-			RTD_R0 = 1000 ;
-		}
-		fT0 = (-1.0*rtd_B + sqrt(rtd_B*rtd_B - 4*rtd_A*(1 - rtd_res/RTD_R0))) / (2*rtd_A); // caculate the temperature
-		if(rtd_res < RTD_R0)
-		{
-				fTX = (rtd_C*fT0*fT0*fT0*(fT0 - 100)) / (rtd_B + 2*rtd_A*fT0 + 3*rtd_C*fT0*fT0*(fT0 - 100) + rtd_C*fT0*fT0*fT0);
-				rtd_tc = fT0 + fTX;
-		}
-		else
-		{
-			rtd_tc = fT0;
-		}	
+			if((inputs[channel].range == 1)||(inputs[channel].range == 2))
+			{
+				rtd_res = linear_K.temp_C * rtd_ad + linear_B.temp_C;	//pt100 get rtd resistor
+				RTD_R0 = 100 ;
+			}
+			else if((inputs[channel].range == 5)||(inputs[channel].range == 6))
+			{
+				rtd_res = linear_K_1.temp_C * rtd_ad + linear_B_1.temp_C;	//pt1000 get rtd resistor	
+				RTD_R0 = 1000 ;
 
-	}
-	else if((inputs[channel].range == 3)||(inputs[channel].range == 4))
-	{
-		  rtd_tc = (float)NTC_TEMPERATURE((rtd_ad>>14)&0x3ff)/10  ; 
-	}
-	if((inputs[channel].range == 1)||(inputs[channel].range == 3)||(inputs[channel].range == 5))
-	{
-		return rtd_tc ;
-	}
-	else if((inputs[channel].range == 2)||(inputs[channel].range == 4)||(inputs[channel].range == 6))
-	{
-			rtd_tc = rtd_tc * 9	;
-			rtd_tc = rtd_tc / 5 ;
-			rtd_tc = rtd_tc + 32 ;
-			return rtd_tc ;	
-	}
+			}
+			fT0 = (-1.0*rtd_B + sqrt(rtd_B*rtd_B - 4*rtd_A*(1 - rtd_res/RTD_R0))) / (2*rtd_A); // caculate the temperature
+			if(rtd_res < RTD_R0)
+			{
+					fTX = (rtd_C*fT0*fT0*fT0*(fT0 - 100)) / (rtd_B + 2*rtd_A*fT0 + 3*rtd_C*fT0*fT0*(fT0 - 100) + rtd_C*fT0*fT0*fT0);
+					rtd_tc = fT0 + fTX;
+			}
+			else
+			{
+				rtd_tc = fT0;
+			}	
 
+		}
+		else if((inputs[channel].range == 3)||(inputs[channel].range == 4))
+		{ 
+			rtd_tc = (float)NTC_TEMPERATURE((rtd_ad>>14)&0x3ff)/10  ; 
+		}
+		if((inputs[channel].range == 1)||(inputs[channel].range == 3)||(inputs[channel].range == 5))
+		{
+			return rtd_tc ;
+		}
+		else if((inputs[channel].range == 2)||(inputs[channel].range == 4)||(inputs[channel].range == 6))
+		{
+				rtd_tc = rtd_tc * 9	;
+				rtd_tc = rtd_tc / 5 ;
+				rtd_tc = rtd_tc + 32 ;
+				return rtd_tc ;	
+		}
+	}
+	else
+	{
+			AD_Value[channel] = (rtd_ad>>10) ;
+	}
 }
     
 int16_t NTC_TEMPERATURE(uint16_t adc)

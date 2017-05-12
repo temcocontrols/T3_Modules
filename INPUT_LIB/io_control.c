@@ -2,12 +2,18 @@
 #include "ud_str.h"
 #include "controls.h"
 #include "inputs.h"
-
+// 返回input的原始ADC值，10bit， 如果不是10位，需要做相应转化
+uint16_t get_input_raw(uint8_t point)
+{
+//	return (modbus.input[point]+1)/4;
+	return AD_Value[point]/4 ;
+}
 #ifndef  T3PT12
 static uint16_t analog_buffer[MAX_AI_CHANNEL] ;
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO) || (defined T36CTA)
 uint16_t output_raw[MAX_OUTS]={0} ;
 #endif
+
 // 根据input_type[point]设置相应的硬件
 void Set_Input_Type(uint8_t point)
 {
@@ -15,23 +21,20 @@ void Set_Input_Type(uint8_t point)
 }
 
 
-// 返回input的原始ADC值，10bit， 如果不是10位，需要做相应转化
-uint16_t get_input_raw(uint8_t point)
-{
-//	return (modbus.input[point]+1)/4;
-	return AD_Value[point]/4 ;
-}
+
 
 // 设置input的原值
 // if digital output, 0 - off, 1000 - on
 // if analog ouput, 0 - 10v 对应 0-1023
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO) || (defined T36CTA)
 void set_output_raw(uint8_t point,uint16_t value)
 {
 	output_raw[point] = value;
 //	inputs[value].value = value ;
 }
 #endif
+
+
 
 // 把adc值转化成5v的range显示
 // 如果是input最新模块不需要修改
@@ -80,7 +83,7 @@ uint8_t get_max_input(void)
 	return MAX_AIS;
 }
 // 返回最大output数目
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO )|| (defined T36CTA)
 uint8_t get_max_output(void)
 {	
 	return MAX_OUTS;

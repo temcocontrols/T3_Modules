@@ -125,7 +125,7 @@ void uart1_init(u32 bound)
 
     USART_ITConfig(USART1, USART_IT_RXNE/*|USART_IT_TC*/, ENABLE);				//¿ªÆôÖÐ¶Ï
 //    USART_ITConfig(USART1, USART_IT_TC, ENABLE);
-		USART_Cmd(USART1, ENABLE);                    				
+	USART_Cmd(USART1, ENABLE);                    				
 }
 
 

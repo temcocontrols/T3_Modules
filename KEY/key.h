@@ -19,7 +19,7 @@ void beeper_off(void) ;
 
 
 
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO) || (defined T36CTA)
 extern u16 hand_status  ;
 extern u16 auto_status ;
 void KEY_IO_Init(void);	//IO初始化
@@ -27,5 +27,7 @@ void KEY_Status_Scan(void);  	//按键扫描函数
 extern u8 switch_state_buf[SWITCH_NUM] ;
 //extern u8 switch_test[10] ;
 #endif
+
+
 					    
 #endif

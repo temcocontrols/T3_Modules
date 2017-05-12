@@ -47,13 +47,15 @@
 #include "pt12_i2c.h"
 #include "store.h"
 #include "watchdog.h"
-#if (defined T38AI8AO6DO)||(defined T322AI)
+#include "rfm69.h"
+#include "accelero_meter.h"
+
+#if (defined T38AI8AO6DO)||(defined T322AI)||(defined T36CTA)
 void vSTORE_EEPTask(void *pvParameters ) ;
 static void vINPUTSTask( void *pvParameters );
 #endif
 static void vLED0Task( void *pvParameters );
 static void vCOMMTask( void *pvParameters );
-
 //static void vUSBTask( void *pvParameters );
 
 static void vNETTask( void *pvParameters );
@@ -61,9 +63,15 @@ static void vNETTask( void *pvParameters );
 void vKEYTask( void *pvParameters );
 void vOUTPUTSTask( void *pvParameters );
 #endif
+#ifdef T36CTA
+void vKEYTask( void *pvParameters );
+void vOUTPUTSTask( void *pvParameters );
+void vAcceleroTask( void *pvParameters);
+void vRFMTask(void *pvParameters);
+void vAirFlowTask( void *pvParameters);
+#endif
 #ifdef T3PT12
 void vI2C_READ(void *pvParameters) ;
-void EEP_PT12(void) ;
 #endif
 static void vMSTP_TASK(void *pvParameters ) ;
 void uip_polling(void);
@@ -80,7 +88,7 @@ u8 global_key = KEY_NON;
 static void debug_config(void)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOA, ENABLE);
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 }
 
 int main(void)
@@ -94,7 +102,6 @@ int main(void)
 //	uart1_init(38400);
 //	modbus.baudrate = 38400 ;
 	//KEY_Init();
-
 	beeper_gpio_init();
 	beeper_on();
 	beeper_off();	
@@ -108,10 +115,10 @@ int main(void)
 //	TIM3_Int_Init(5000, 7199);
 //	TIM6_Int_Init(100, 7199);
 //	TIM3_Int_Init(50, 7199);//5ms
-printf("T3_series\n\r");
-	#if (defined T38AI8AO6DO)||(defined T322AI)
+	printf("T3_series\n\r");
+	#if (defined T38AI8AO6DO)||(defined T322AI) ||(defined T36CTA)
 		xTaskCreate( vINPUTSTask, ( signed portCHAR * ) "INPUTS", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL );
-		xTaskCreate( vSTORE_EEPTask, ( signed portCHAR * ) "STOREEEP", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+		xTaskCreate( vSTORE_EEPTask, ( signed portCHAR * ) "STOREEEP", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
 	#endif
 	xTaskCreate( vLED0Task, ( signed portCHAR * ) "LED0", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
  	xTaskCreate( vCOMMTask, ( signed portCHAR * ) "COMM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL );
@@ -119,9 +126,14 @@ printf("T3_series\n\r");
 //	xTaskCreate( vUSBTask, ( signed portCHAR * ) "USB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	//xTaskCreate( vUSBTask, ( signed portCHAR * ) "USB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	/* Start the scheduler. */
- 	#ifdef T38AI8AO6DO
+ 	#if (defined T38AI8AO6DO) || (defined T36CTA)
 	xTaskCreate( vOUTPUTSTask, ( signed portCHAR * ) "OUTPUTS", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vKEYTask, ( signed portCHAR * ) "KEY", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	#endif
+	#if defined T36CTA
+	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	//xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	#endif
 	#ifdef T3PT12
 	xTaskCreate( vI2C_READ, ( signed portCHAR * ) "READ_I2C", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + 2, NULL );
@@ -129,8 +141,65 @@ printf("T3_series\n\r");
 	xTaskCreate( vMSTP_TASK, ( signed portCHAR * ) "MSTP", configMINIMAL_STACK_SIZE + 256  , NULL, tskIDLE_PRIORITY + 4, NULL );
 	vTaskStartScheduler();
 }
+#if defined T36CTA
+void vAirFlowTask( void *pvParameters)
+{
+	for(;;)
+	{
+		air_flow_ad = ADC_getChannal(ADC2,ADC_Channel_12);
+		delay_ms(10);
+	}
+}
 
+extern u8 rfm69_tx_count;
+extern bool rfm69_send_flag;
+extern u8 rfm69_length;
+extern u8 RFM69_SEND[];
+bool rfm_exsit = false;
+void vRFMTask( void *pvParameters)
+{
+	u8 temp;
+	
+	RFM69_GPIO_init();
+	RFM69_TIMER_init();
 
+	rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+	RFM69_encrypt(rfm69_key);
+
+	RFM69_setMode(RF69_MODE_RX);
+	for( ;; )
+	{
+		delay_ms(300);
+
+		RFM69_setMode(RF69_MODE_RX);
+		if(rfm69_send_flag)
+		{
+			if(rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
+			{
+				responseCmd(10, rfm69_sendBuf);
+				internalDeal(10, USART_RX_BUF);
+				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 1);
+			}
+			rfm69_send_flag = false;
+		}
+		RFM69_setMode(RF69_MODE_RX);
+
+	}
+}
+
+void vAcceleroTask(void *pvParameters)
+{
+	ACCELERO_IO_Init();
+	ACCELERO_I2C_init();
+	/* Write CTL REG1 register, set ACTIVE mode */
+    ACCELERO_Write_Data(0x2a, 0x01);
+	for( ;; )
+	{
+		axis_value[0]=ACCELERO_Read_Data(0x2a);
+		delay_ms(10);
+	}
+}
+#endif
 void vLED0Task( void *pvParameters )
 {
 	static u8 table_led_count =0 ;
@@ -157,7 +226,7 @@ void vCOMMTask(void *pvParameters )
 	{
 		if (dealwithTag)
 		{  
-		 dealwithTag--;
+		  dealwithTag--;
 		  if(dealwithTag == 1)//&& !Serial_Master )	
 			dealwithData();
 		}
@@ -183,7 +252,7 @@ void vI2C_READ(void *pvParameters)
 	u8		i;
 	float Rc[4] = {1118284 ,966354,895032,676148};
 	float Rc1[4] = {1118284 ,966354,895032,676148};
-	EEP_PT12();
+		modbus.cal_flag	= 0 ;
 	PT12_IO_Init();
 
 	for( ;; )
@@ -209,12 +278,14 @@ void vI2C_READ(void *pvParameters)
 		}
 		else
 		{
-			read_rtd_data();
-			update_temperature();
-			control_input();
+			if(read_rtd_data())
+			{
+				update_temperature();
+				control_input();
+			}
 			Flash_Write_Mass();
 		}
-		delay_ms(3000) ;				//if pulse changes ,store the data
+		delay_ms(2000) ;				//if pulse changes ,store the data
 	}	
 
 }
@@ -223,7 +294,7 @@ void vI2C_READ(void *pvParameters)
 
 
 
- #if (defined T322AI)||(defined T38AI8AO6DO)
+ #if (defined T322AI)||(defined T38AI8AO6DO) ||(defined T36CTA)
 void vSTORE_EEPTask(void *pvParameters )
 {
 	uint8_t  loop ;
@@ -241,6 +312,7 @@ void vSTORE_EEPTask(void *pvParameters )
 				data_change[loop] = 0 ;
 			}
 		}
+		
 		delay_ms(3000) ;				//if pulse changes ,store the data
 
 	}
@@ -251,26 +323,26 @@ void vSTORE_EEPTask(void *pvParameters )
 void vINPUTSTask( void *pvParameters )
 {
 	static u16 record_count = 0 ;
-	
+
 	inputs_init();
 	for( ;; )
 	{
-		
-		inputs_scan();
+		portDISABLE_INTERRUPTS() ;
+		inputs_scan();	
 		record_count ++ ;
-		if(record_count == 30)
+		if(record_count == 10)
 		{
 			record_count= 0 ;
 			control_input();
 			Flash_Write_Mass();
 
 		}
-		
-		delay_ms(20);
+		portDISABLE_INTERRUPTS() ;
+		delay_ms(200);
 	}	
 }
 #endif
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO) || (defined T36CTA)
 void vOUTPUTSTask( void *pvParameters )
 {
 
@@ -304,15 +376,7 @@ void Inital_Bacnet_Server(void)
 //	u32 Instance = 0x0c;
 //	Device_Init();
 //	Device_Set_Object_Instance_Number(Instance);
-#ifdef T322AI	
- Set_Object_Name("T3_22AI");
-#endif
-#ifdef T38AI8AO6DO	
- Set_Object_Name("T3_8AO6DO");
-#endif	
-#ifdef 	T3PT12
- Set_Object_Name("T3_PT12");
-#endif		
+		
  Device_Init();
  Device_Set_Object_Instance_Number(Instance);  
  address_init();
@@ -323,7 +387,7 @@ void Inital_Bacnet_Server(void)
   AIS = MAX_AIS;
   AVS = MAX_AVS;
 #endif	
-#ifdef T38AI8AO6DO
+#if (defined T38AI8AO6DO) || (defined T36CTA)
   AIS = MAX_AIS;
   AOS = MAX_AO;
   BOS = MAX_DO;
@@ -345,13 +409,13 @@ void vMSTP_TASK(void *pvParameters )
     {
 		if(modbus.protocal == BAC_MSTP)
 		{
-					pdu_len = datalink_receive(&src, &PDUBuffer[0], sizeof(PDUBuffer), 0,	modbus.protocal);
+					pdu_len = datalink_receive(&src, &PDUBuffer[0], sizeof(PDUBuffer), 0,	BAC_MSTP);
 					if(pdu_len) 
 						{
-				        npdu_handler(&src, &PDUBuffer[0], pdu_len, BAC_MSTP);	
+							npdu_handler(&src, &PDUBuffer[0], pdu_len, BAC_MSTP);	
 						} 
 						
-			}
+		}
 //			modbus.stack[1] = uxTaskGetStackHighWaterMark(NULL);
 			delay_ms(5);
 	}
@@ -450,7 +514,7 @@ void uip_polling(void)
 		//轮流处理每个TCP连接, UIP_CONNS缺省是40个  
 		for(i = 0; i < UIP_CONNS; i++)
 		{
-			//uip_periodic(i);							//处理TCP通信事件
+			 uip_periodic(i);							//处理TCP通信事件
 			
 	 		//当上面的函数执行后，如果需要发送数据，则全局变量uip_len>0
 			//需要发送的数据在uip_buf, 长度是uip_len (这是2个全局变量)
@@ -491,6 +555,27 @@ void EEP_Dat_Init(void)
 		u8 loop ;
 		u8 temp[6]; 
 		AT24CXX_Init();
+//		panelname[0] = 'T' ;
+//		panelname[1] = 'e' ;
+//		panelname[2] = 's' ;
+//		panelname[3] = 't' ;
+	
+//		AT24CXX_Read(EEP_PANEL_NAME1, panelname, 20); 
+//		if((panelname[0] ==0xff)&&(panelname[1] ==0xff)&&(panelname[2] ==0xff)&&(panelname[3] ==0xff)&&(panelname[4] ==0xff))
+		{			
+			#ifdef T322AI	
+			Set_Object_Name("T3_22AI");
+			#endif
+			#ifdef T38AI8AO6DO	
+			Set_Object_Name("T3_8AO6DO");
+			#endif	
+			#ifdef T36CTA
+			Set_Object_Name("T3_6CTA");
+			#endif
+			#ifdef 	T3PT12
+			Set_Object_Name("T3_PT12");
+			#endif
+		}
 		modbus.serial_Num[0] = AT24CXX_ReadOneByte(EEP_SERIALNUMBER_LOWORD);
 		modbus.serial_Num[1] = AT24CXX_ReadOneByte(EEP_SERIALNUMBER_LOWORD+1);
 		modbus.serial_Num[2] = AT24CXX_ReadOneByte(EEP_SERIALNUMBER_HIWORD);
@@ -502,10 +587,10 @@ void EEP_Dat_Init(void)
 					modbus.serial_Num[1] = 1 ;
 					modbus.serial_Num[2] = 2 ;
 					modbus.serial_Num[3] = 2 ;
-					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD, modbus.serial_Num[0]);
-					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD+1, modbus.serial_Num[1]);
-					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD+2, modbus.serial_Num[2]);
-					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD+3, modbus.serial_Num[3]);
+//					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD, modbus.serial_Num[0]);
+//					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD+1, modbus.serial_Num[1]);
+//					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD+2, modbus.serial_Num[2]);
+//					AT24CXX_WriteOneByte(EEP_SERIALNUMBER_LOWORD+3, modbus.serial_Num[3]);
 		}
 		Instance = modbus.serial_Num[0] + (U16_T)(modbus.serial_Num[1] << 8);
 		AT24CXX_WriteOneByte(EEP_VERSION_NUMBER_LO, SOFTREV&0XFF);
@@ -514,16 +599,26 @@ void EEP_Dat_Init(void)
 		if((modbus.address == 255)||(modbus.address == 0))
 		{
 					modbus.address = 254 ;
-					Station_NUM = modbus.address /128 ; 
+					
 					AT24CXX_WriteOneByte(EEP_ADDRESS, modbus.address);
 		}
+		 
 		modbus.product = PRODUCT_ID ;
-//		modbus.product = AT24CXX_ReadOneByte(EEP_PRODUCT_MODEL);
-//		if((modbus.product == 255)||(modbus.product == 0))
-//		{
-//			modbus.product = PRODUCT_ID ;
-//		//	AT24CXX_WriteOneByte(EEP_PRODUCT_MODEL, modbus.product);
-//		}
+		Station_NUM = AT24CXX_ReadOneByte(EEP_STATION_NUM);
+		if(Station_NUM > 127)
+		{
+					Station_NUM = 3 ;
+		}
+		temp[0] = AT24CXX_ReadOneByte(EEP_BACNET_PORT_HI);
+		temp[1] = AT24CXX_ReadOneByte(EEP_BACNET_PORT_LO);
+		if(temp[0]== 0xff & temp[1] == 0xff)
+		{
+			modbus.bacnet_port = 47808 ; 
+		}
+		else 
+		{
+			modbus.bacnet_port = (temp[0]<<8)|temp[1] ;
+		}
 		modbus.hardware_Rev = AT24CXX_ReadOneByte(EEP_HARDWARE_REV);
 		if((modbus.hardware_Rev == 255)||(modbus.hardware_Rev == 0))
 		{
@@ -570,7 +665,40 @@ void EEP_Dat_Init(void)
 				}
 				uart1_init(modbus.baudrate);
 
-				modbus.protocal = MODBUS ;
+				
+				#if T36CTA
+				temp[0] = AT24CXX_ReadOneByte(EEP_RFM12_ENCRYPT_KEY1);
+				if((temp[0]>=0x21)&&(temp[0]<=0x7f))
+				{
+					for(loop = 0; loop <16 ;loop++)
+					{
+						rfm69_key[loop] = AT24CXX_ReadOneByte(EEP_RFM12_ENCRYPT_KEY1+loop);
+					}
+				}
+				RFM69_networkID = (AT24CXX_ReadOneByte(EEP_RFM69_NETWORK_ID_HI)<<8)|AT24CXX_ReadOneByte(EEP_RFM69_NETWORK_ID_LO);
+				if((RFM69_networkID == 0xffff)||(RFM69_networkID == 0))
+				{
+					RFM69_networkID = 0x55AA;
+				}
+				
+				RFM69_nodeID = AT24CXX_ReadOneByte(EEP_RFM69_NODE_ID);
+				if((RFM69_nodeID == 0xff)|| (RFM69_nodeID == 0))
+				{
+					RFM69_nodeID = 10;
+				}
+				RFM69_freq = ((AT24CXX_ReadOneByte(EEP_RFM69_FREQ_1)<<24)|(AT24CXX_ReadOneByte(EEP_RFM69_FREQ_2)<<16)
+								|(AT24CXX_ReadOneByte(EEP_RFM69_FREQ_3)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_FREQ_4)));
+				if((RFM69_freq == 0xffffffff) || (RFM69_freq == 0))
+				{
+					RFM69_freq = 433000000;
+				}
+				#endif
+				
+				modbus.protocal = AT24CXX_ReadOneByte(EEP_MODBUS_COM_CONFIG); 
+				if((modbus.protocal != MODBUS)&&(modbus.protocal != BAC_MSTP))
+				{
+					modbus.protocal = MODBUS;
+				}
 				for(loop = 0 ; loop<6; loop++)
 				{
 					temp[loop] = AT24CXX_ReadOneByte(EEP_MAC_ADDRESS_1+loop); 
@@ -583,12 +711,12 @@ void EEP_Dat_Init(void)
 					temp[3] = 0xaF ;
 					temp[4] = 0x00 ;
 					temp[5] = 0x01 ;
-					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_1, temp[0]);
-					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_2, temp[1]);
-					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_3, temp[2]);
-					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_4, temp[3]);
-					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_5, temp[4]);
-					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_6, temp[5]);		
+//					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_1, temp[0]);
+//					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_2, temp[1]);
+//					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_3, temp[2]);
+//					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_4, temp[3]);
+//					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_5, temp[4]);
+//					AT24CXX_WriteOneByte(EEP_MAC_ADDRESS_6, temp[5]);		
 				}
 				for(loop =0; loop<6; loop++)
 				{
@@ -614,6 +742,7 @@ void EEP_Dat_Init(void)
 				{
 					modbus.ip_addr[loop] = 	temp[loop] ;
 					modbus.ghost_ip_addr[loop] = modbus.ip_addr[loop] ;
+					//printf("%u,%u,%u,%u,%u,%u,%u,%u,",  modbus.ip_addr[0], modbus.ip_addr[1], modbus.ip_addr[2], modbus.ip_addr[3],temp[0],temp[1],temp[2],temp[3]);
 				}
 				
 				temp[0] = AT24CXX_ReadOneByte(EEP_IP_MODE);
@@ -810,7 +939,7 @@ void EEP_Dat_Init(void)
 		
 		}
 		#endif
-		#ifdef T38AI8AO6DO
+		#if (defined T38AI8AO6DO) || (defined T36CTA)
 //		for(loop=0; loop<MAX_AO; loop++)
 //		{				
 //				temp[1]	= AT24CXX_ReadOneByte(EEP_AO_CHANNLE0+2*loop);
@@ -879,32 +1008,7 @@ void EEP_Dat_Init(void)
 		#endif
 	
 }
-#ifdef T3PT12
-void EEP_PT12(void)
-{
-		u8 loop =0 ;
-//		u8 temp[4] ;
-		modbus.cal_flag	= 0 ;
-	
-		
-//		modbus.int_float = AT24CXX_ReadOneByte(EEP_INT_FLOAT) ;
-//		if(modbus.int_float > 1)
-//				modbus.int_float = 0;
-//		modbus.cal_flag = AT24CXX_ReadOneByte(EEP_CALIBRATION_FLAG) ;
-//		if(modbus.cal_flag > 1) modbus.cal_flag = 0 ;
-//		if(modbus.cal_flag == 1)
-//		{
-//				for(loop=0; loop< 4 ; loop++)
-//				{
-//					temp[0] = AT24CXX_ReadOneByte(EEP_CAL_POINT0+4*loop) ;
-//					temp[1] = AT24CXX_ReadOneByte(EEP_CAL_POINT0+4*loop+1) ;
-//					temp[2] = AT24CXX_ReadOneByte(EEP_CAL_POINT0+4*loop+2) ;
-//					temp[3] = AT24CXX_ReadOneByte(EEP_CAL_POINT0+4*loop+3) ;
-//					rs_data[loop]= (temp[0]<<24)+(temp[1]<<16)+(temp[2]<<8)+temp[3] ;
-//				}		
-//		}
-}
-#endif	
+
 //u16 swap_int16( u16 value)
 //{
 //	u8 temp1, temp2 ;

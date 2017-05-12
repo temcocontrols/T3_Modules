@@ -55,9 +55,9 @@ if(checksum == iic_buf[50])
 		rs_data[17] = (iic_buf[38]<<24)|(iic_buf[39]<<16)|(iic_buf[40]<<8)|(iic_buf[41]) ;
 		rs_data[18] = (iic_buf[42]<<24)|(iic_buf[43]<<16)|(iic_buf[44]<<8)|(iic_buf[45]) ;
 		rs_data[19] = (iic_buf[46]<<24)|(iic_buf[47]<<16)|(iic_buf[48]<<8)|(iic_buf[49]) ;
-		return 0 ;
+		return 1 ;
 	}
-	return 1 ;
+	return 0 ;
 }
 //read 8 point calibration data when startup the board
 u8 read_celpoint_bytes(unsigned char addr)
@@ -107,14 +107,21 @@ u8 write_rtd_bytes(unsigned char addr, unsigned char cmd)
 		
 		for(i=0; i<12; i++)
 		{
-			if((inputs[i].range == 1)||(inputs[i].range == 2))
-			buffer_range[i] = 0 ;
-			else if((inputs[i].range == 5)||(inputs[i].range == 6))
-			buffer_range[i] = 1 ;
-			else if((inputs[i].range == 3)||(inputs[i].range == 4))
-			buffer_range[i] = 2 ;
-			else 
-			buffer_range[i] = 0 ;	
+			if(inputs[i].digital_analog == 1)
+			{
+				if((inputs[i].range == 1)||(inputs[i].range == 2))
+				buffer_range[i] = 0 ;
+				else if((inputs[i].range == 5)||(inputs[i].range == 6))
+				buffer_range[i] = 1 ;
+				else if((inputs[i].range == 3)||(inputs[i].range == 4))
+				buffer_range[i] = 2 ;
+				else 
+				buffer_range[i] = 0 ;
+			}
+			else
+			{
+				buffer_range[i] = 2 ;
+			}
 		}
 		i2c_buff[2] =  buffer_range[0] + (buffer_range[1]<<2)+(buffer_range[2]<<4)+(buffer_range[3]<<6);	
 		i2c_buff[3] =  buffer_range[4] + (buffer_range[5]<<2)+(buffer_range[6]<<4)+(buffer_range[7]<<6);
@@ -152,17 +159,17 @@ u8 write_rtd_bytes(unsigned char addr, unsigned char cmd)
 //when startup the board ,we read the four point calibration data to caculate the linear
 u8 init_celpoint(void)
 {
-	if(write_rtd_bytes(IIC_RTD_ADDR , CALI_AD_VALUE)); /* printf("CAL error\n\r") ;
-	else   printf("CAL ok\n\r") ;*/
-	delay_ms(3);
-	return read_celpoint_bytes(IIC_RTD_ADDR);
-
+	u8 res = 0 ;
+	write_rtd_bytes(IIC_RTD_ADDR , CALI_AD_VALUE) ;
+	delay_ms(5);
+	res = read_celpoint_bytes(IIC_RTD_ADDR);
+	return res ;
 }
 
 //one time we read 40 bytes for ten channel RTD data. 
-void read_rtd_data (void)
+u8 read_rtd_data (void)
 {
-//	static uint8_t read_status = 0 ;
+	 uint8_t read_status = 0 ;
 //	switch(read_status)
 //	{
 //		case 0: 
@@ -174,11 +181,12 @@ void read_rtd_data (void)
 //			read_status = 0 ;
 //		break ;
 //	}
-	if(write_rtd_bytes(IIC_RTD_ADDR , TWEVLE_CHANNAL_AD_VALUE)); /*printf("TW error\n\r");
-	else printf("TW OK\n\r");*/
+	write_rtd_bytes(IIC_RTD_ADDR , TWEVLE_CHANNAL_AD_VALUE); 
 	delay_ms(3);
-	if(read_rtd_bytes(IIC_RTD_ADDR));  /* printf("RD error\n\r");
-	else 	printf("RD ok\n\r");*/
+	read_status =read_rtd_bytes(IIC_RTD_ADDR) ;  
+	
+	return read_status ;
+	
 
 //	write_rtd_bytes(IIC_RTD_ADDR , TWEVLE_CHANNAL_AD_VALUE) ;
 //	delay_ms(3);

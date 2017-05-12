@@ -46,7 +46,7 @@ u8 read_celpoint_bytes(unsigned char addr) ;
 extern u32 rs_data[20] ; 	
 
 u8 init_celpoint(void);	
-void read_rtd_data (void) ;
+u8 read_rtd_data (void) ;
 
 #endif
 	

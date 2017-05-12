@@ -195,10 +195,13 @@ void bip_Init(void)
 //	uip_ipaddr_t addr;
 	bip_set_socket(0);
 	bip_set_addr(0);
-	bip_set_port(UDP_BACNET_LPORT); 	
-	// udp server
-	uip_listen(HTONS(UDP_BACNET_LPORT));
-	uip_udp_bind(&uip_udp_conns[1], HTONS(UDP_BACNET_LPORT));
+	bip_set_port(modbus.bacnet_port);
+	uip_listen(HTONS(modbus.bacnet_port));
+	uip_udp_bind(&uip_udp_conns[1], HTONS(modbus.bacnet_port));
+//	bip_set_port(UDP_BACNET_LPORT); 	
+//	// udp server
+//	uip_listen(HTONS(UDP_BACNET_LPORT));
+//	uip_udp_bind(&uip_udp_conns[1], HTONS(UDP_BACNET_LPORT));
 } 
 
 void UDP_bacnet_APP(void)

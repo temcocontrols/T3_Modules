@@ -28,12 +28,37 @@ void control_input(void)
 	ins = inputs;	
 	while( point < MAX_INS )
 	{	
-		sample = (int32_t)(_temp_value[point].temp_C*1000);
-		if( !ins->calibration_sign )
-			sample += 100L * (ins->calibration_hi * 256 + ins->calibration_lo);
-		else
-			sample += -100L * (ins->calibration_hi * 256 + ins->calibration_lo);			
-		ins->value = sample;
+		if( ins -> digital_analog == 1)  // analog
+		{
+			sample = (int32_t)(_temp_value[point].temp_C*1000);
+			if( !ins->calibration_sign )
+				sample += 100L * (ins->calibration_hi * 256 + ins->calibration_lo);
+			else
+				sample += -100L * (ins->calibration_hi * 256 + ins->calibration_lo);			
+			ins->value = sample;
+			
+			if(ins->value< -40000) ins->decom = (ins->decom&0xf0)| 0x01 ;
+			else if(ins->value>=150000) ins->decom = (ins->decom&0xf0)| 0x02 ;
+			else ins->decom = ins->decom&0xf0 ;
+		}
+		else if( ins -> digital_analog == 0)  // digital
+		{						
+			sample = get_input_raw(point);	
+			if( ins->range >= ON_OFF  && ins->range <= HIGH_LOW )  // control 0=OFF 1=ON
+			{
+				ins->control = (sample > 512 ) ? 1 : 0;
+			}
+			else
+			{
+				ins->control = (sample < 512 ) ? 0 : 1;					
+			}
+			if( ins->range >= custom_digital1 && ins->range <= custom_digital8 )
+			{
+				ins->control = (sample < 512 ) ? 0 : 1;	
+			}
+			//ins->value = ins->control ? 1000L : 0;
+			sample = ins->control ? 1000L : 0;
+		}			
 		point++;
 		ins++;
 	}

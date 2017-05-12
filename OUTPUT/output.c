@@ -2,8 +2,8 @@
 #include "output.h"
 #include "define.h"
 #include "controls.h"
-#ifdef	T38AI8AO6DO
-
+#if (defined T38AI8AO6DO) 
+extern Str_out_point outputs[];
 
 void output_init(void)
 { 
@@ -273,6 +273,117 @@ void output_refresh(void)
 		set_output(AO_CONFIG[i].TIMx, AO_CONFIG[i].chip_channel,(outputs[i+MAX_DO].value/10));
 	}
 }
+
+#elif  (defined T36CTA)
+
+extern Str_out_point outputs[];
+
+void output_init(void)
+{ 
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef TIM_OCInitStructure;
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC , ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 ;  //TIM3_CH1-4
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+}
+
+void set_output (u8 channel,u16 duty)
+{
+	switch (channel)
+	{
+		case 0:
+			
+			if(duty)
+			{
+//				printf("set_output 0\r\n");
+				GPIO_SetBits(GPIOC, GPIO_Pin_0);
+			}
+			else
+				GPIO_ResetBits(GPIOC, GPIO_Pin_0);
+		break;
+		case 1:
+			
+			if(duty)
+			{
+				GPIO_SetBits(GPIOC, GPIO_Pin_1);
+//				printf("set_output 1\r\n");
+			}
+			else
+				GPIO_ResetBits(GPIOC, GPIO_Pin_1);
+		break;
+	}
+}
+
+
+
+const struct
+{
+	TIM_TypeDef* TIMx ;
+	u8 chip_channel ;
+
+} DO_CONFIG[6] = 
+{
+	{TIM4, 1},
+	{TIM4, 2},
+	{TIM4, 3},
+	{TIM4, 4},
+	{TIM3, 1},
+	{TIM3, 2},	
+};
+#define DO_OFF 0 
+#define DO_ON  1
+
+
+void update_digit_output(void) 
+{
+	u8 loop ;
+	u8 oneswitch_buf ;
+	for(loop = 0; loop< 2; loop++)
+	{
+		oneswitch_buf = modbus.switch_gourp[0]>>(loop*2) & 0x03 ;
+		outputs[loop].switch_status = oneswitch_buf;
+		if(oneswitch_buf == SW_OFF) 
+		{
+			set_output(loop,DO_OFF);
+			outputs[loop].value = 0 ; 
+		}
+		else if(oneswitch_buf == SW_HAND)
+		{
+			set_output(loop,DO_ON);
+			outputs[loop].value = 1 ;
+		}
+			else if(oneswitch_buf == SW_AUTO) 
+		{
+			if(outputs[loop].value == 0)
+			set_output(loop,DO_OFF);
+			else
+			set_output(loop,DO_ON);		
+		}
+	}	
+}
+
+void output_refresh(void)
+{
+	u8  i = 0 ;
+	for(i=0; i< 2; i++ )
+	{
+//		if(outputs[i].switch_status == 1) set_output(DO_CONFIG[i].TIMx, DO_CONFIG[i].chip_channel,DO_ON);	
+//		else if(outputs[i].switch_status == 0)	set_output(DO_CONFIG[i].TIMx, DO_CONFIG[i].chip_channel,DO_OFF);
+//		else 													 
+//		{
+						if(output_raw[i] == 0)	 			 set_output(i,DO_OFF);
+						else 													 set_output(i,DO_ON);
+//		}
+	}
+
+}
+
 #endif
 
 

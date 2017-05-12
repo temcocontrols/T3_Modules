@@ -105,7 +105,6 @@ InformationStr[25] = modbus.listen_port >> 8;
  
 // bootloader mode or runtime mode, 0=runtime, !0=bootloader
 InformationStr[59] = 0;
- 
 // send out the response data
 uip_send((char *)InformationStr, 60); 
 state = 1;
@@ -260,15 +259,21 @@ void UDP_SCAN_APP(void)
 void udp_appcall(void)
 {
 // udp server
-      switch(uip_udp_conn->lport)
-    {
-      case HTONS(UDP_SCAN_LPORT):
-         UDP_SCAN_APP();
-         break;
-      case HTONS(UDP_BACNET_LPORT):         
-         UDP_bacnet_APP();
-         break;
-    }
+		u16_t port_temp ;
+		port_temp = HTONS(modbus.bacnet_port) ;
+		if(uip_udp_conn->lport == HTONS(UDP_SCAN_LPORT))
+		UDP_SCAN_APP();
+		else if(uip_udp_conn->lport == port_temp)
+		UDP_bacnet_APP();
+//      switch(uip_udp_conn->lport)
+//    {
+//      case HTONS(UDP_SCAN_LPORT):
+//         UDP_SCAN_APP();
+//         break;
+//      case port_temp:         
+//         UDP_bacnet_APP();
+//         break;
+//    }
 
 // udp client   
     switch(uip_udp_conn->rport)
@@ -297,8 +302,7 @@ void dhcpc_configured(const struct dhcpc_state *s)
 	
 	udp_scan_init();
 	uip_listen(HTONS(modbus.listen_port));       // 10000, modbustcp
-
-	
+#ifndef T36CTA
 	modbus.ip_addr[0] = uip_ipaddr1(uip_hostaddr);
 	modbus.ip_addr[1] = uip_ipaddr2(uip_hostaddr);
 	modbus.ip_addr[2] = uip_ipaddr3(uip_hostaddr);
@@ -313,7 +317,7 @@ void dhcpc_configured(const struct dhcpc_state *s)
 	modbus.gate_addr[1] = uip_ipaddr2(uip_draddr);
 	modbus.gate_addr[2] = uip_ipaddr3(uip_draddr);
 	modbus.gate_addr[3] = uip_ipaddr4(uip_draddr);
-	
+#endif
 	uip_ipaddr(uip_hostaddr_submask, modbus.ip_addr[0], modbus.ip_addr[1], modbus.ip_addr[2],255);
 	
 	

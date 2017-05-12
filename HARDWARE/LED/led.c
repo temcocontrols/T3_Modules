@@ -11,6 +11,11 @@ u8  rx_count = 0 ;
 u8  net_rx_count = 0 ;
 u8  net_tx_count = 0 ;
 //u8 dim_timer_setting[28];
+#if defined T36CTA
+bool t36ct_net_led = LED_OFF;
+u8 rfm69_rx_count = 0;
+u8 rfm69_tx_count = 0;
+#endif
 void LED_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -21,6 +26,16 @@ void LED_Init(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOE, GPIO_InitStructure.GPIO_Pin);	
+#if T36CTA	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOA, GPIO_InitStructure.GPIO_Pin);	
+	led_bank1 = 0xffff;
+	led_bank2 = 0xffff;
+#endif	
 }
 /*****************************LED TABLE------T3-22AI**************************************/
 /*
@@ -105,15 +120,30 @@ void tabulate_LED_STATE(void)
 		if(heart_beat_led == LED_ON)
 		{
 	
+#if T36CTA			
+			//GPIO_ResetBits(GPIOA, GPIO_Pin_13);
+			//led_bank1 &= ~(1<<5) ;
+			//led_bank2 &= ~(1<<13) ;
+#else
+			
 				led_bank2 &= ~(1<<13) ;
+#endif
+			
 		}
 		else
 		{
-				led_bank2 |= (1<<13) ;
+				
+#if T36CTA	
+			//GPIO_SetBits(GPIOA, GPIO_Pin_13);
+			//led_bank1 |= (1<<5) ;
+		//led_bank2 |= (1<<13) ;	
+#else
+		led_bank2 |= (1<<13) ;	
+#endif
 		}
 
   }
-  #ifdef	T38AI8AO6DO
+  #if	T38AI8AO6DO 
   
   for(i=0; i<8; i++)
   {
@@ -197,6 +227,135 @@ void tabulate_LED_STATE(void)
   
   
   #endif
+
+#if T36CTA	
+	for(i=0; i<1; i++)
+	{
+		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
+			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
+			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
+			{
+					if(AD_Value[i]<2048)  
+					{
+						led_bank1 &= ~(1<<(i+MAX_DO)) ;
+					}
+					else
+					{
+						led_bank1 |= (1<<(i+MAX_DO)) ;
+					}
+			}
+			else
+			{	
+					if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+					{
+						led_bank1 &= ~(1<<(i+MAX_DO)) ;
+					}
+					else
+					{
+						led_bank1 |= (1<<(i+MAX_DO)) ;
+					}
+			}
+		}
+	
+	for(i=1; i<6; i++)
+	{
+		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
+			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
+			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
+			{
+					if(AD_Value[i]<2048)  
+					{
+						led_bank2 &= ~(1<<(i+6)) ;
+					}
+					else
+					{
+						led_bank2 |= (1<<(i+6)) ;
+					}
+			}
+			else
+			{	
+					if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+					{
+						led_bank2 &= ~(1<<(i+6)) ;
+					}
+					else
+					{
+						led_bank2 |= (1<<(i+6)) ;
+					}
+			}
+		}
+//	for(i=6; i< 13;i++)
+//	{
+//			if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
+//			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
+//			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
+//			{
+//				if(AD_Value[i]<2048)  
+//				{
+//							led_bank1 &= ~(1<<(i+MAX_DO+1)) ;
+//				}
+//				else
+//				{
+//							led_bank1 |= (1<<(i+MAX_DO+1)) ;
+//				}
+//			
+//			}
+//			else
+//			{
+//				if(AD_Value[i]>2048)  
+//				{
+//							led_bank1 &= ~(1<<(i+MAX_DO+1)) ;
+//				}
+//				else
+//				{
+//							led_bank1 |= (1<<(i+MAX_DO+1)) ;
+//				}
+//			}
+//	}	
+	for(i=13; i< 19;i++)
+	{
+		if(AD_Value[i]>5)  
+		{
+					led_bank2 &= ~(1<<(i-13)) ;
+		}
+		else
+		{
+					led_bank2 |= (1<<(i-13)) ;
+		}
+			
+	}	
+	
+  for(i=0; i<MAX_DO; i++)
+  {
+	oneswitch_buf = modbus.switch_gourp[0]>>(i*2) & 0x03 ;
+	 if(i<3)
+	 {
+		if(oneswitch_buf == SW_OFF) led_bank1 |= (1<<i) ;
+		else if(oneswitch_buf == SW_HAND) led_bank1 &= ~(1<<i) ;  
+		else if(oneswitch_buf == SW_AUTO) 
+		{
+			if(outputs[i].value > 0)
+			led_bank1 &= ~(1<<i) ; 
+			else if(outputs[i].value == 0)
+			led_bank1 |= (1<<i) ;			
+		}
+	 }
+	 else
+	 {
+		if(oneswitch_buf == SW_OFF) led_bank1 |= (1<<(i-3)) ;
+		else if(oneswitch_buf == SW_HAND) led_bank1 &= ~(1<<(i-3)) ; 
+		else if(oneswitch_buf == SW_AUTO) 
+		{
+			if(outputs[i].value > 1)
+			led_bank1 &= ~(1<<(i-3)) ; 
+			else 
+			led_bank1 |= (1<<(i-3)) ;			
+		}	
+	 }
+	  
+  }
+	
+#endif	
   #ifdef	T322AI
   for(i=0; i<11; i++)
   {
@@ -260,22 +419,53 @@ void tabulate_LED_STATE(void)
 	}
   }
   #endif
-
+  
+#if defined T36CTA
+	if(rfm69_rx_count>0)rfm69_rx_count--;
+    if(rfm69_tx_count>0)rfm69_tx_count--;
+	if(rfm69_rx_count>0)
+		led_bank1 &= ~(1<<11) ;
+	else
+		led_bank1 |= (1<<11) ;
+	if(rfm69_tx_count>0)
+		led_bank1 &= ~(1<<10) ;
+	else
+		led_bank1 |= (1<<10) ;		
+#endif
+  
   if(net_rx_count> 0) net_rx_count -- ;  
   if(net_tx_count> 0) net_tx_count -- ;
 //  led_bank1 &= ~(1<<12) ;
 //  led_bank1 &= ~(1<<11) ;
   if(net_rx_count>0) 
+#if defined T36CTA
+	//GPIO_ResetBits(GPIOA, GPIO_Pin_13);
+    //led_bank1 &= ~(1<<13) ;
+	t36ct_net_led = LED_ON;
+#else  
 	  led_bank1 &= ~(1<<12) ;
-  else  		
+#endif
+  else  
+#if defined T36CTA
+	//GPIO_SetBits(GPIOA, GPIO_Pin_13);
+  //led_bank1 |= (1<<13) ;
+	t36ct_net_led = LED_OFF;
+#else  
 	  led_bank1 |= (1<<12) ;
-  
+#endif  
 
    if(net_tx_count>0) 
+#if defined T36CTA
+	led_bank1 &= ~(1<<12) ;
+#else   
 	  led_bank1 &= ~(1<<11) ;
-  else  		
+#endif
+  else  
+#if defined T36CTA	 
+	led_bank1 |= (1<<12) ;
+#else
 	  led_bank1 |= (1<<11) ;
-  
+#endif
   
   if(tx_count>0) tx_count-- ;
   if(rx_count>0) rx_count-- ;
@@ -295,19 +485,67 @@ void tabulate_LED_STATE(void)
 void refresh_led(void)
 {
 	static u8 led_switch = 0 ;
+#if T36CTA
+    //u16 port_temp;
+	u8 i;
+	//port_temp = GPIO_ReadOutputData(GPIOE);
+	//port_temp = 0x6000&port_temp ;
+#endif	
 	led_switch = !led_switch ;
 	if(led_switch)
 	{
+#if T36CTA
+		GPIO_ResetBits(GPIOA, GPIO_Pin_12);
+		GPIO_SetBits(GPIOE, GPIO_Pin_15);
+		
+		if(t36ct_net_led == LED_ON)
+			GPIO_ResetBits(GPIOA, GPIO_Pin_13);
+		else
+			GPIO_SetBits(GPIOA, GPIO_Pin_13);
+		
+		for(i = 0; i< 13; i++)
+		{
+			if( led_bank1 & (1<<i))
+			{
+				PEout(i) = 1;
+			}
+			else
+				PEout(i) = 0;
+		}
+#else		
 		led_bank1 &= ~(1<<14);
 		led_bank1 |= (1<<15);
+		
 		GPIO_Write(GPIOE, led_bank1) ;
+#endif
 	}
 	else
 	{
+#if T36CTA
+		GPIO_SetBits(GPIOA, GPIO_Pin_12);
+		GPIO_ResetBits(GPIOE, GPIO_Pin_15);
 		
+		if(heart_beat_led == LED_ON)
+			GPIO_ResetBits(GPIOA, GPIO_Pin_13);
+		else
+			GPIO_SetBits(GPIOA, GPIO_Pin_13);
+		//GPIO_Write(GPIOE, (led_bank2|port_temp)) ;
+		for(i = 0; i< 13; i++)
+		{
+			if( led_bank2 & (1<<i))
+			{
+				PEout(i) = 1;
+			}
+			else
+				PEout(i) = 0;
+		}
+		
+#else				
 		led_bank2 |= (1<<14);
 		led_bank2 &= ~(1<<15);
+		
 		GPIO_Write(GPIOE, led_bank2) ;
+#endif
 	}
 }
 

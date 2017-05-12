@@ -62,7 +62,7 @@ void Flash_Write_Mass(void)
 	uint16_t	len = 0 ;
 	uint16_t loop1;	
 	
-			#ifdef T38AI8AO6DO
+			#if (defined T38AI8AO6DO) || (defined T36CTA)
 			if(write_page_en[0] == 1)
 			{
 				STMFLASH_Unlock();
@@ -114,7 +114,7 @@ void mass_flash_init(void)
 	u16 loop ;
 	u16 len = 0;
 	u8 label_buf[21] ;
-	#ifdef  T38AI8AO6DO
+	#if (defined T38AI8AO6DO) || (defined T36CTA)
 	temp = STMFLASH_ReadHalfWord(OUT_PAGE_FLAG);
 	if(temp == 0xffff)
 	{
@@ -124,16 +124,16 @@ void mass_flash_init(void)
 		{
 			if(loop <6)
 			{
-				sprintf((char*)label_buf, "Digit output%u", loop);
+				sprintf((char*)label_buf, "Digit output%u", (loop+1));
 				memcpy(outputs[loop].description, label_buf, 21);
-				sprintf((char*)label_buf, "DO%u", loop);
+				sprintf((char*)label_buf, "DO%u", (loop+1));
 				memcpy(outputs[loop].label, label_buf, 9);
 			}
 			else
 			{
-				sprintf((char*)label_buf, "Analog output%u", (loop-6));
+				sprintf((char*)label_buf, "Analog output%u", (loop-5));
 				memcpy(outputs[loop].description, label_buf, 21);
-				sprintf((char*)label_buf, "AO%u", (loop-6));
+				sprintf((char*)label_buf, "AO%u", (loop-5));
 				memcpy(outputs[loop].label, label_buf, 9);	
 			}		
 			outputs[loop].value = 0; 
@@ -175,7 +175,7 @@ void mass_flash_init(void)
 			memcpy(inputs[loop].description, label_buf, 21);
 			memcpy(inputs[loop].label, label_buf, 9);		
 			inputs[loop].value = 0; 
-			inputs[loop].filter = 5 ;
+			inputs[loop].filter =1 ;
 			inputs[loop].decom = 0 ;
 			inputs[loop].sub_id = 0 ;
 			inputs[loop].sub_product = 0 ;
@@ -216,8 +216,8 @@ void mass_flash_init(void)
 		STMFLASH_ErasePage(AV_PAGE_FLAG);
 		for(loop=0; loop<MAX_AV; loop++ )
 		{
-			memcpy(var[loop].description, (char*)&Variable_name[loop], 9);
-			memcpy(var[loop].label, (char*)&Variable_name[loop], 9);		
+			memcpy(var[loop+1].description, (char*)&Variable_name[loop], 9);
+			memcpy(var[loop+1].label, (char*)&Variable_name[loop], 9);		
 			var[loop].value = 0; 
 //			var[loop].control = 0 ;
 //			var[loop].auto_manual = 0 ;

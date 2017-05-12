@@ -3,6 +3,7 @@
 #include "modbus.h"
 extern volatile uint16_t SilenceTime;
 //u32 dhcp_run_time = 30000;
+uint16_t rfm69_count;
 //定时器3中断服务程序	 
 void TIM3_IRQHandler(void)
 { 		    		  			    
@@ -10,6 +11,8 @@ void TIM3_IRQHandler(void)
 	if(TIM_GetFlagStatus(TIM3, TIM_IT_Update) == SET)
 	{
 		//LED1 = !LED1;	
+//		if(rfm69_count>0)
+//			rfm69_count--;
 	}
 //	TIM3->SR &= ~(1 << 0);		//清除中断标志位 
 	TIM_ClearFlag(TIM3, TIM_IT_Update);	
@@ -135,6 +138,8 @@ void TIM6_IRQHandler(void)//1ms
 		refresh_led();
 		led_count= 0 ;
 	}
+	if(rfm69_count>0)
+		rfm69_count--;
 //	TIM6->SR &= ~(1 << 0);	//清除中断标志位 
 	TIM_ClearFlag(TIM6, TIM_IT_Update);		
 }
