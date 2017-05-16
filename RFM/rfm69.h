@@ -43,6 +43,8 @@
 #define HIGH 1
 #define LOW  0
 
+#define REGISTER_DETAIL 1
+
 #define	RFM_CS	PDout(2) //RFM69Æ¬Ñ¡Òý½Å	
 
 extern char rfm69_key[];

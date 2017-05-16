@@ -132,8 +132,10 @@ int main(void)
 	#endif
 	#if defined T36CTA
 	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
-	//xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
-	xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+		#if T36CTA_REV2
+			xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "AIRFLOW", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+		#endif
 	#endif
 	#ifdef T3PT12
 	xTaskCreate( vI2C_READ, ( signed portCHAR * ) "READ_I2C", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + 2, NULL );
@@ -147,6 +149,7 @@ void vAirFlowTask( void *pvParameters)
 	for(;;)
 	{
 		air_flow_ad = ADC_getChannal(ADC2,ADC_Channel_12);
+		AD_Value[8] = air_flow_ad;
 		delay_ms(10);
 	}
 }
@@ -169,6 +172,10 @@ void vRFMTask( void *pvParameters)
 	RFM69_setMode(RF69_MODE_RX);
 	for( ;; )
 	{
+		if(RFM69_getFrequency() == 0)
+		{
+			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+		}
 		delay_ms(300);
 
 		RFM69_setMode(RF69_MODE_RX);

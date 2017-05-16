@@ -612,7 +612,6 @@ void RFM69_setHighPowerRegs(bool onOff)
 }
 
 //for debugging
-#define REGISTER_DETAIL 0
 
 void RFM69_readAllRegs()
 {
@@ -644,7 +643,7 @@ void RFM69_readAllRegs()
 //    usprintf(pcBuf, "%02X",regVal);
     SerialPrint(pcBuf);   //hex
 
-#if REGISTER_DETAIL 
+#if 0//REGISTER_DETAIL 
     switch ( regAddr ) 
     {
         case 0x1 : {

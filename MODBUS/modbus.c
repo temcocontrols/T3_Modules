@@ -1539,6 +1539,22 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp2);
          }
 		 
+		 #if REGISTER_DETAIL 
+		 else if((address>=MODBUS_RFM69_REGISTER_OP_MODE)&&(address<= MODBUS_RFM69_REG_TEMP2))
+		 {
+			 temp1 = 0;
+			 address_temp = address - MODBUS_RFM69_REGISTER_OP_MODE+1;
+			 RFM69_select();
+				SPI_transfer8(address_temp & 0x7F); // send address + r/w bit
+				temp2 = SPI_transfer8(0);
+				RFM69_unselect();
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+			 
+		 }
+		 #endif
 		 else if( address == MODBUS_RFM69_NETWORK_ID)
 		 {
 //			 temp1 = (RFM69_networkID>>8) & 0xff ;

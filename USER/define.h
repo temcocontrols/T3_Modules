@@ -54,6 +54,8 @@
 #endif
 
 #ifdef T36CTA
+#define T36CTA_REV1    0
+#define T36CTA_REV2    1
 #define INPUT_CONTROL
 #define OUTPUT_CONTROL
 #define  MAX_AVS  	41
@@ -151,9 +153,15 @@
 
 #define PRODUCT_ID 		T36CTA
 #define HW_VER				1
-#define MAX_AI_CHANNEL	 	19
-#define MAX_AIS         MAX_AI_CHANNEL
-#define MAX_INS  				MAX_AIS 
+	#if T36CTA_REV1
+		#define MAX_AI_CHANNEL	 	19
+		#define MAX_AIS         MAX_AI_CHANNEL
+		#define MAX_INS  				MAX_AIS 
+	#elif T36CTA_REV2
+		#define MAX_AI_CHANNEL	 	15    // 8 input 6 ct 1 airflow
+		#define MAX_AIS         MAX_AI_CHANNEL
+		#define MAX_INS  				MAX_AIS 
+	#endif
 
 #define MAX_AO					0
 #define MAX_AOS					0
@@ -161,7 +169,6 @@
 #define MAX_OUTS				2
 //#define MAX_AV					20
 
-#define T36CTA_REV1    1
 
 #define  SW_OFF  0
 #define  SW_HAND 2

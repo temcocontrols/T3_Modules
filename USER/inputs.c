@@ -274,7 +274,7 @@ void inputs_scan(void)
 		
 		channel_count %= MAX_AI_CHANNEL;
 	}
-#else 
+#elif T36CTA_REV2
 	if( channel_count <8)
 	{
 		
@@ -322,13 +322,9 @@ void inputs_scan(void)
 		
 		channel_count++;
 	}
-	else if( (channel_count>= 8)&&(channel_count<13))
+	else if (channel_count== 8)
 	{
-		AD_Value[channel_count++]= 0;
-		AD_Value[channel_count++]= 0;
-		AD_Value[channel_count++]= 0;
-		AD_Value[channel_count++]= 0;
-		AD_Value[channel_count++]= 0;
+		channel_count++;
 	}
 	else
 	{
