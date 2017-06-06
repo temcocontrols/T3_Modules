@@ -229,35 +229,9 @@ void tabulate_LED_STATE(void)
   #endif
 
 #if T36CTA	
-	for(i=0; i<1; i++)
-	{
-		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
-			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
-			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
-			{
-					if(AD_Value[i]<2048)  
-					{
-						led_bank1 &= ~(1<<(i+MAX_DO)) ;
-					}
-					else
-					{
-						led_bank1 |= (1<<(i+MAX_DO)) ;
-					}
-			}
-			else
-			{	
-					if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
-					{
-						led_bank1 &= ~(1<<(i+MAX_DO)) ;
-					}
-					else
-					{
-						led_bank1 |= (1<<(i+MAX_DO)) ;
-					}
-			}
-		}
-	
-	for(i=1; i<6; i++)
+	#if T36CTA_REV1
+
+	for(i=0; i<5; i++)
 	{
 		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
 			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
@@ -284,37 +258,37 @@ void tabulate_LED_STATE(void)
 					}
 			}
 		}
-//	for(i=6; i< 13;i++)
-//	{
-//			if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
-//			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
-//			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
-//			{
-//				if(AD_Value[i]<2048)  
-//				{
-//							led_bank1 &= ~(1<<(i+MAX_DO+1)) ;
-//				}
-//				else
-//				{
-//							led_bank1 |= (1<<(i+MAX_DO+1)) ;
-//				}
-//			
-//			}
-//			else
-//			{
-//				if(AD_Value[i]>2048)  
-//				{
-//							led_bank1 &= ~(1<<(i+MAX_DO+1)) ;
-//				}
-//				else
-//				{
-//							led_bank1 |= (1<<(i+MAX_DO+1)) ;
-//				}
-//			}
-//	}	
+	for(i=5; i< 13;i++)
+	{
+			if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
+			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
+			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
+			{
+				if(AD_Value[i]<2048)  
+				{
+							led_bank1 &= ~(1<<(i+MAX_DO-5)) ;
+				}
+				else
+				{
+							led_bank1 |= (1<<(i+MAX_DO-5)) ;
+				}
+			
+			}
+			else
+			{
+				if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+				{
+							led_bank1 &= ~(1<<(i+MAX_DO-5)) ;
+				}
+				else
+				{
+							led_bank1 |= (1<<(i+MAX_DO-5)) ;
+				}
+			}
+	}	
 	for(i=13; i< 19;i++)
 	{
-		if(AD_Value[i]>5)  
+		if((CT_Vaule[i-13]>50) && (CT_Vaule[i-13]<10000))
 		{
 					led_bank2 &= ~(1<<(i-13)) ;
 		}
@@ -324,6 +298,48 @@ void tabulate_LED_STATE(void)
 		}
 			
 	}	
+	#endif
+	#if T36CTA_REV2
+	for(i=0; i<8; i++)
+	{
+		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
+			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
+			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
+			{
+					if(AD_Value[i]<2048)  
+					{
+						led_bank1 &= ~(1<<(i+MAX_DO)) ;
+					}
+					else
+					{
+						led_bank1 |= (1<<(i+MAX_DO)) ;
+					}
+			}
+			else
+			{	
+					if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+					{
+						led_bank1 &= ~(1<<(i+MAX_DO)) ;
+					}
+					else
+					{
+						led_bank1 |= (1<<(i+MAX_DO)) ;
+					}
+			}
+	}
+	for(i=0; i< 6;i++)
+	{
+		if((CT_Vaule[i]>50) && (CT_Vaule[i]<10000))
+		{
+					led_bank2 &= ~(1<<(i+5)) ;
+		}
+		else
+		{
+					led_bank2 |= (1<<(i+5)) ;
+		}
+			
+	}	
+	#endif
 	
   for(i=0; i<MAX_DO; i++)
   {

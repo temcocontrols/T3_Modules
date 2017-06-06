@@ -39,6 +39,7 @@
 #define EN_OUT 0 
 #define EN_IN  1
 #define EN_VAR 2
+#define EN_CUSTOMER_RANGE 3
 
 #ifdef  T3PT12
 #define HW_VER			1
@@ -152,15 +153,19 @@
 #define SWITCH_NUM 			2
 
 #define PRODUCT_ID 		T36CTA
-#define HW_VER				1
 	#if T36CTA_REV1
+		#define HW_VER				1
 		#define MAX_AI_CHANNEL	 	19
 		#define MAX_AIS         MAX_AI_CHANNEL
 		#define MAX_INS  				MAX_AIS 
 	#elif T36CTA_REV2
+		#define HW_VER				2
 		#define MAX_AI_CHANNEL	 	15    // 8 input 6 ct 1 airflow
 		#define MAX_AIS         MAX_AI_CHANNEL
 		#define MAX_INS  				MAX_AIS 
+		#define   FAC_TABLE                    0
+		#define   USER_TABLE                   1
+		#define AIR_FLOW_SENSOR
 	#endif
 
 #define MAX_AO					0

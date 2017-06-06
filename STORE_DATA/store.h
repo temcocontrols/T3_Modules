@@ -12,7 +12,7 @@ void Flash_Write_Mass(void) ;
 void mass_flash_init(void) ;
 
 
-extern uint8_t write_page_en[3]  ;
+extern uint8_t write_page_en[]  ;
 
 extern const uint8_t Variable_name[][9] ;
 

@@ -22,6 +22,7 @@
 #if defined T36CTA
 #include "rfm69.h"
 #include "accelero_meter.h"
+#include "air_flow.h"
 #endif
 //#include "ud_str.h"
 void Timer_Silence_Reset(void);
@@ -299,7 +300,7 @@ void internalDeal(u8 type,  u8 *pData)
 	  #endif
 	  
 	  
-      #if (defined T38AI8AO6DO)
+      #if (defined T38AI8AO6DO) 
       else if(StartAdd  >= MODBUS_OUTPUT_BLOCK_FIRST && StartAdd  <= MODBUS_OUTPUT_BLOCK_LAST)
       {
          write_page_en[0] =1 ;
@@ -341,7 +342,15 @@ void internalDeal(u8 type,  u8 *pData)
             memcpy(&var[i],&pData[HeadLen + 7],sizeof(Str_variable_point)); 
          }
       }
-      
+      else if(StartAdd  >= MODBUS_CUSTOMER_RANGE_BLOCK_FIRST && StartAdd  <= MODBUS_CUSTOMER_RANGE_BLOCK_LAST)
+      {
+         write_page_en[3] = 1 ;
+         if((StartAdd - MODBUS_CUSTOMER_RANGE_BLOCK_FIRST) % ((sizeof(Str_table_point) + 1 ) / 2) == 0)
+         {
+            i = (StartAdd - MODBUS_CUSTOMER_RANGE_BLOCK_FIRST) / ((sizeof(Str_table_point) + 1) / 2);
+            memcpy(&custom_tab[i],&pData[HeadLen + 7],sizeof(Str_table_point)); 
+         }
+      }
    }
    else if(pData[HeadLen + 1] == WRITE_VARIABLES)
    {
@@ -681,6 +690,18 @@ void internalDeal(u8 type,  u8 *pData)
 				 RFM69_encrypt(rfm69_key);
 			 else
 				 RFM69_encrypt(0);
+		 }
+		 else if( StartAdd == MODBUS_CT_FIRST_AD)
+		 {
+			 CT_first_AD = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_HI, pData[HeadLen+4]);
+			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_LO, pData[HeadLen+5]);
+		 }
+		 else if( StartAdd == MODBUS_CT_MULTIPLE)
+		 {
+			 CT_multiple = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_HI, pData[HeadLen+4]);
+			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_LO, pData[HeadLen+5]);
 		 }
 	  #endif
 	  
@@ -1090,6 +1111,138 @@ void internalDeal(u8 type,  u8 *pData)
             AT24CXX_WriteOneByte(EEP_UPDATE_STATUS, 0);
             SoftReset();
          }
+		 #ifdef AIR_FLOW_SENSOR
+		 else if(StartAdd == MODBUS_PRESSURE_FILTER)
+		{
+			Pressure.filter = pData[HeadLen+5];
+			AT24CXX_WriteOneByte(EEP_PRESSURE_FILTER,Pressure.filter);
+		}
+		else if(StartAdd == MODBUS_PREESURE_AD)
+		{
+			Pressure.ad = ((uint16) pData[HeadLen+4] << 8) |  pData[HeadLen+5];
+		}
+		else if(StartAdd == MODBUS_PRESSURE_VALUE_ORG)
+		{
+			s16 itemp; 
+			{
+				itemp = ((uint16) pData[HeadLen+4] << 8) |  pData[HeadLen+5];
+				if(Pressure.table_sel == FACTORY_TABLE)
+				{
+					Pressure.org_val_offset += (itemp - Pressure.org_val );
+					Pressure.org_val =  itemp;
+					AT24CXX_WriteOneByte(EEP_PRESSURE_VALUE_ORG_OFFSET,Pressure.org_val_offset);
+					AT24CXX_WriteOneByte(EEP_PRESSURE_VALUE_ORG_OFFSET + 1,Pressure.org_val_offset >> 8);
+				}
+				else
+				{
+					Pressure.user_val_offset += (itemp - Pressure.org_val );
+					Pressure.org_val =  itemp;
+					AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET,Pressure.user_val_offset);
+					AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET + 1,Pressure.user_val_offset >> 8);
+				}
+				Run_Timer = 0;
+			}	
+		} 
+		else if(StartAdd == MODBUS_PRESSURE_TABLE_SEL)
+		{
+			if((pData[HeadLen+5] == USER_TABLE)||(pData[HeadLen+5] == FACTORY_TABLE))
+			{
+				Pressure.table_sel = pData[HeadLen+5];
+				AT24CXX_WriteOneByte(EEP_TABLE_SEL , pData[HeadLen+5]);  
+				Pressure.cal_table_enable = 1;
+				Pressure.user_val_offset = 0;  
+				AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET,0);
+				AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET + 1,0);
+			} 
+		}
+		else if(StartAdd == MODBUS_PRESSURE_VALUE_ORG_OFFSET)
+		{
+			Pressure.org_val_offset = ((uint16)pData[HeadLen+4] << 8) | pData[HeadLen+5];  
+			AT24CXX_WriteOneByte(EEP_PRESSURE_VALUE_ORG_OFFSET,Pressure.org_val_offset);
+			AT24CXX_WriteOneByte(EEP_PRESSURE_VALUE_ORG_OFFSET + 1,Pressure.org_val_offset >> 8);
+		} 
+		else if(StartAdd == MODBUS_PRESSURE_OFFSET)
+		{
+			Pressure.user_val_offset = ((uint16)pData[HeadLen+4] << 8) | pData[HeadLen+5];  
+			AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET,Pressure.user_val_offset);
+			AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET + 1,Pressure.user_val_offset >> 8);
+		}
+		else if((StartAdd >= MODBUS_PRESSURE_CAL_PR0) && (StartAdd <= MODBUS_PRESSURE_CAL_AD9))
+		{
+			u8 temp;
+			temp = StartAdd- MODBUS_PRESSURE_CAL_PR0;
+			if(temp%2 == 0)
+			{
+				temp/=2;
+				Pressure.cal_pr[temp] =  ((uint16)pData[HeadLen+4] << 8) | pData[HeadLen+5];
+				if(Pressure.cal_pr[temp] == 0xffff)	Pressure.cal_ad[temp] = 0xffff; 
+				else
+					Pressure.cal_ad[temp] = Pressure.ad;
+				AT24CXX_WriteOneByte(EEP_CAL_PR0+temp*4 + 1 , pData[HeadLen+4]); 
+				AT24CXX_WriteOneByte(EEP_CAL_PR0+temp*4     , pData[HeadLen+5]); 
+				AT24CXX_WriteOneByte(EEP_CAL_AD0+temp*4 + 1 , Pressure.cal_ad[temp] >> 8);
+				AT24CXX_WriteOneByte(EEP_CAL_AD0+temp*4     , Pressure.cal_ad[temp]);
+				Pressure.cal_table_enable = 1;
+			}
+			 
+		}
+		else if(StartAdd == MODBUS_PRESSURE_USER_CAL_POINT)
+		{
+			Pressure.user_cal_point = pData[HeadLen+5];
+			AT24CXX_WriteOneByte(EEP_USER_CAL_POINT,pData[HeadLen+5]); 
+			Pressure.cal_table_enable = 1;
+			Pressure.user_val_offset = 0;  
+			AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET,0);
+			AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET + 1,0);
+		}
+		else if((StartAdd >= MODBUS_PRESSURE_USER_CAL_PR0) && (StartAdd <= MODBUS_PRESSURE_USER_CAL_AD9))
+		{
+			u8 temp;
+			temp = StartAdd- MODBUS_PRESSURE_USER_CAL_PR0;
+			if(temp%2 == 0)
+			{ 
+				temp/=2;
+				Pressure.user_cal_pr[temp] =  ((uint16)pData[HeadLen+4] << 8) | pData[HeadLen+5];
+				if(Pressure.user_cal_pr[temp] == 0xffff)	Pressure.user_cal_ad[temp] = 0xffff; 
+				else
+					Pressure.user_cal_ad[temp] = Pressure.ad;
+				AT24CXX_WriteOneByte(EEP_USER_CAL_PR0+temp*4 + 1 , pData[HeadLen+4]); 
+				AT24CXX_WriteOneByte(EEP_USER_CAL_PR0+temp*4     , pData[HeadLen+5]); 
+				AT24CXX_WriteOneByte(EEP_USER_CAL_AD0+temp*4 + 1 , Pressure.user_cal_ad[temp] >> 8);
+				AT24CXX_WriteOneByte(EEP_USER_CAL_AD0+temp*4     , Pressure.user_cal_ad[temp]);
+				Pressure.cal_table_enable = 1;
+			}  
+			if(Pressure.user_cal_point == 1)
+			{
+				Pressure.user_val_offset = Pressure.user_cal_pr[0] - Pressure.org_val;  
+				AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET,Pressure.user_val_offset);
+				AT24CXX_WriteOneByte(EEP_USER_CAL_OFFSET + 1,Pressure.user_val_offset>>8);
+			}
+		}
+		else if(StartAdd == MODBUS_PRESSURE_K)
+		{ 
+			Pressure.K_factor  =  ((uint16)pData[HeadLen+4] << 8) | pData[HeadLen+5];
+			AT24CXX_WriteOneByte(EEP_PRESSURE_K,pData[HeadLen+5]);
+			AT24CXX_WriteOneByte(EEP_PRESSURE_K + 1,pData[HeadLen+4]);
+		}
+		else if(StartAdd == MODBUS_K_FLOW_SPEED)
+		{ 
+			Pressure.K_Flow_Speed  =  ((uint16)pData[HeadLen+4] << 8) | pData[HeadLen+5];
+			AT24CXX_WriteOneByte(EEP_K_FLOW_SPEED,pData[HeadLen+5]);
+			AT24CXX_WriteOneByte(EEP_K_FLOW_SPEED + 1,pData[HeadLen+4]);
+		}
+		else if(StartAdd == MODBUS_AIR_FLOW_UNIT)
+		{ 
+			Pressure.air_flow_unit  =   pData[HeadLen+5];
+			AT24CXX_WriteOneByte(EEP_AIR_FLOW_UNIT,pData[HeadLen+5]); 
+		}
+		else if(StartAdd == MODBUS_DUCT_AREA)
+		{ 
+			Pressure.duct_area  =  ((uint16)pData[HeadLen+4] << 8) | pData[HeadLen+5];
+			AT24CXX_WriteOneByte(EEP_DUCT_AREA,pData[HeadLen+5]);
+			AT24CXX_WriteOneByte(EEP_DUCT_AREA + 1,pData[HeadLen+4]);
+		}
+		#endif
    }
    if (modbus.update == 0x7F)
    {
@@ -1540,6 +1693,21 @@ void responseCmd(u8 type, u8* pData)
          }
 		 
 		 #if REGISTER_DETAIL 
+		 else if( (address>=MODBUS_TEST_AC_START)&&(address<= MODBUS_TEST_AC_END))
+		 {
+			 address_temp = address - MODBUS_TEST_AC_START;
+			 temp1 = (vol_buf[0][address_temp]>>8)&0xff;
+			 temp2 = vol_buf[0][address_temp]&0xff;
+			 
+//			 temp1 = (DMA_Buffer[address_temp]>>8)&0xff;
+//			 temp2 = DMA_Buffer[address_temp]&0xff;
+			 sendbuf[send_cout++] = temp1 ;
+			   sendbuf[send_cout++] = temp2 ;
+			   crc16_byte(temp1);
+			   crc16_byte(temp2);
+			 
+		 }
+		 
 		 else if((address>=MODBUS_RFM69_REGISTER_OP_MODE)&&(address<= MODBUS_RFM69_REG_TEMP2))
 		 {
 			 temp1 = 0;
@@ -1638,6 +1806,34 @@ void responseCmd(u8 type, u8* pData)
 		 {
 			 temp1 = (axis_value[0]>>8) & 0xff ;
                temp2 = axis_value[0]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( (address>=MODBUS_CT_AMPERE_1)&&(address<=MODBUS_CT_AMPERE_6))
+		 {
+			 address_temp = address - MODBUS_CT_AMPERE_1 ;
+			 temp1 = (CT_Vaule[address_temp]>>8)&0xff;
+			 temp2 = CT_Vaule[address_temp]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_CT_FIRST_AD)
+		 {
+			 temp1 = (CT_first_AD>>8) & 0xff ;
+               temp2 = CT_first_AD&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_CT_MULTIPLE)
+		 {
+			 temp1 = (CT_multiple>>8) & 0xff ;
+               temp2 = CT_multiple&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
@@ -2543,6 +2739,186 @@ void responseCmd(u8 type, u8* pData)
             crc16_byte(temp1);
             crc16_byte(temp2);
          }
+		 #ifdef AIR_FLOW_SENSOR
+		 else if(address == MODBUS_PRESSURE_FILTER)
+		{ 
+			temp1= 0;
+			temp2= Pressure.filter;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_PREESURE_AD) 
+		{ 
+			temp1= Pressure.ad >> 8;
+			temp2= Pressure.ad ;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_PRESSURE_VALUE_ORG)
+		{ 
+			temp1= Pressure.org_val >> 8;
+			temp2= Pressure.org_val;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_PRESSURE_TABLE_SEL)
+		{ 
+			temp1= 0;
+			temp2= Pressure.table_sel;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_PRESSURE_VALUE_ORG_OFFSET)
+		{ 
+			temp1= Pressure.org_val_offset >> 8;
+			temp2= Pressure.org_val_offset;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_PRESSURE_OFFSET)
+		{ 
+			temp1= Pressure.user_val_offset >> 8;
+			temp2= Pressure.user_val_offset;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_PRESSURE_CAL_POINT)
+		{ 
+			temp1= 0;
+			temp2= Pressure.cal_point;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if((address >= MODBUS_PRESSURE_CAL_PR0) && (address <= MODBUS_PRESSURE_CAL_AD9))
+		{
+			u8 temp;
+			temp = address- MODBUS_PRESSURE_CAL_PR0;
+			if(temp%2 == 0)
+			{
+				temp/=2;
+				temp1 = Pressure.cal_pr[temp]>>8 ;
+				temp2 = Pressure.cal_pr[temp] ;
+			}
+			else
+			{
+				temp/=2;
+				temp1 = Pressure.cal_ad[temp]>>8 ;
+				temp2 = Pressure.cal_ad[temp] ;
+			} 
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_PRESSURE_USER_CAL_POINT)
+		{ 
+			temp1= 0;
+			temp2= Pressure.user_cal_point;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if((address >= MODBUS_PRESSURE_USER_CAL_PR0) && (address <= MODBUS_PRESSURE_USER_CAL_AD9))
+		{
+			u8 temp;
+			temp = address- MODBUS_PRESSURE_USER_CAL_PR0;
+			if(temp%2 == 0)
+			{
+				temp/=2;
+				temp1 = Pressure.user_cal_pr[temp]>>8 ;
+				temp2 = Pressure.user_cal_pr[temp] ;
+			}
+			else
+			{
+				temp/=2;
+				temp1 = Pressure.user_cal_ad[temp]>>8 ;
+				temp2 = Pressure.user_cal_ad[temp] ;
+			} 
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		
+		else if(address == MODBUS_PRESSURE_K)
+		{ 
+			temp1= Pressure.K_factor >> 8;
+			temp2= Pressure.K_factor;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_K_FLOW_SPEED)
+		{ 
+			temp1= Pressure.K_Flow_Speed >> 8;
+			temp2= Pressure.K_Flow_Speed;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_AIR_SPEED)
+		{ 
+			temp1= Pressure.air_speed >>8 ;
+			temp2= Pressure.air_speed;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_AIR_FLOW_H)
+		{ 
+			temp1= Pressure.air_flow.C_Type[3];
+			temp2= Pressure.air_flow.C_Type[2];
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_AIR_FLOW_L)
+		{ 
+			temp1= Pressure.air_flow.C_Type[1];
+			temp2= Pressure.air_flow.C_Type[0];
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_AIR_FLOW_UNIT)
+		{ 
+			temp1= 0;
+			temp2= Pressure.air_flow_unit;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		else if(address == MODBUS_DUCT_AREA)
+		{ 
+			temp1= Pressure.duct_area >>8;
+			temp2= Pressure.duct_area;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		}
+		#endif
 //         else if(address == MODBUS_TEST5)
 //         {             
 //            sendbuf[send_cout++] = temp1 ;
@@ -2633,6 +3009,20 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
             }
+			else if((address >= MODBUS_CUSTOMER_RANGE_BLOCK_FIRST)&&(address<= MODBUS_CUSTOMER_RANGE_BLOCK_LAST))
+            {
+               U8_T  index,item;   
+               U16_T  *block ;
+               index = (address - MODBUS_CUSTOMER_RANGE_BLOCK_FIRST) / ((sizeof(Str_table_point) + 1) / 2);
+               block = (U16_T *)&custom_tab[index];
+               item = (address - MODBUS_CUSTOMER_RANGE_BLOCK_FIRST) % ((sizeof(Str_table_point) + 1) / 2);      
+               temp1 = (block[item] >> 8) & 0xff;
+               temp2 = block[item] & 0xff;
+               sendbuf[send_cout++] = temp1;
+               sendbuf[send_cout++] = temp2;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+            }
 /*********************read IN OUT by block endf ***************************************/
 /********************************************************************************/
 				 else
@@ -2660,8 +3050,11 @@ void responseCmd(u8 type, u8* pData)
 	  {
 		  if( send_cout<=RF69_MAX_DATA_LEN)
 		  {
-			  rfm69_length = send_cout;
+			  rfm69_length = send_cout+1;
 			  memcpy(RFM69_SEND, sendbuf, send_cout);
+//			  uint8 tempf = 5;
+//			  rfm69_length = 1;
+//			  memcpy(RFM69_SEND, &tempf, rfm69_length);
 		  }
 	  }
 	  #endif

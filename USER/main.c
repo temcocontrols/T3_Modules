@@ -49,6 +49,7 @@
 #include "watchdog.h"
 #include "rfm69.h"
 #include "accelero_meter.h"
+#include "air_flow.h"
 
 #if (defined T38AI8AO6DO)||(defined T322AI)||(defined T36CTA)
 void vSTORE_EEPTask(void *pvParameters ) ;
@@ -69,6 +70,7 @@ void vOUTPUTSTask( void *pvParameters );
 void vAcceleroTask( void *pvParameters);
 void vRFMTask(void *pvParameters);
 void vAirFlowTask( void *pvParameters);
+void vGetACTask( void *pvParameters);
 #endif
 #ifdef T3PT12
 void vI2C_READ(void *pvParameters) ;
@@ -133,6 +135,7 @@ int main(void)
 	#if defined T36CTA
 	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vGetACTask, ( signed portCHAR * ) "GETAC", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#if T36CTA_REV2
 			xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "AIRFLOW", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#endif
@@ -144,21 +147,105 @@ int main(void)
 	vTaskStartScheduler();
 }
 #if defined T36CTA
-void vAirFlowTask( void *pvParameters)
+
+
+uint32_t vol_sum[6];
+
+void vGetACTask( void *pvParameters)
 {
+	static uint8 avg_count = 0;
+	uint8 i;
 	for(;;)
 	{
-		air_flow_ad = ADC_getChannal(ADC2,ADC_Channel_12);
-		AD_Value[8] = air_flow_ad;
+		vol_buf[0][avg_count] = ADC_getChannal(ADC2,ADC_Channel_0);
+		vol_buf[1][avg_count] = ADC_getChannal(ADC2,ADC_Channel_1);
+		vol_buf[2][avg_count] = ADC_getChannal(ADC2,ADC_Channel_2);
+		vol_buf[3][avg_count] = ADC_getChannal(ADC2,ADC_Channel_3);
+		vol_buf[4][avg_count] = ADC_getChannal(ADC2,ADC_Channel_4);
+		vol_buf[5][avg_count] = ADC_getChannal(ADC2,ADC_Channel_5);
+		avg_count++;
+		if(avg_count == 100)
+		{
+			vol_sum[0] = 0;
+			vol_sum[1] = 0;
+			vol_sum[2] = 0;
+			vol_sum[3] = 0;
+			vol_sum[4] = 0;
+			vol_sum[5] = 0;
+			
+			for(i=0;i<avg_count;i++)
+			{
+				vol_sum[0]+=vol_buf[0][i];
+				vol_sum[1]+=vol_buf[1][i];
+				vol_sum[2]+=vol_buf[2][i];
+				vol_sum[3]+=vol_buf[3][i];
+				vol_sum[4]+=vol_buf[4][i];
+				vol_sum[5]+=vol_buf[5][i];
+			}
+		}
+		avg_count %= 100;
+	
 		delay_ms(10);
 	}
+//	for(;;)
+//	{
+////		read_current();
+////		delay_ms(25);
+//		
+//	}
+}
+void vAirFlowTask( void *pvParameters)
+{
+
+	#if T36CTA_REV2
+	vUpdate_Pressure_Task(  pvParameters );
+	#endif
 }
 
 extern u8 rfm69_tx_count;
+u8 rfm69_checkData(void)
+{
+   u16 crc_val;
+   u8 i;
+
+   // check if talking to correct device ID
+   if(rfm69_sendBuf[0] != 255 && rfm69_sendBuf[0] != modbus.address && rfm69_sendBuf[0] != 0)
+      return 0;   
+
+
+   // check that message is one of the following
+   if( (rfm69_sendBuf[1]!=READ_VARIABLES) && (rfm69_sendBuf[1]!=WRITE_VARIABLES) && (rfm69_sendBuf[1]!=MULTIPLE_WRITE) )
+      return 0;
+   // ------------------------------------------------------------------------------------------------------
+      // ------------------------------------------------------------------------------------------------------
+
+//   if( rfm69_sendBuf[7] == 0)
+//   {
+//	   return 1;
+//   }
+
+//   printf( "rfm69_size = %d\r\n",rfm69_size);
+   //crc_val = crc16(rfm69_sendBuf, 6);//rfm69_size-2);
+
+  // if(crc_val == (rfm69_sendBuf[rfm69_size-2]<<8) + rfm69_sendBuf[rfm69_size-1] )
+   //if(crc_val == (rfm69_sendBuf[6]<<8) + rfm69_sendBuf[7] )
+   if(rfm69_sendBuf[7]==0)
+   {
+      return 1;
+   }
+   else
+   {
+      return 0;
+   }
+   return 1;
+
+ }
+
 extern bool rfm69_send_flag;
 extern u8 rfm69_length;
 extern u8 RFM69_SEND[];
 bool rfm_exsit = false;
+ bool test_print = false;
 void vRFMTask( void *pvParameters)
 {
 	u8 temp;
@@ -172,19 +259,42 @@ void vRFMTask( void *pvParameters)
 	RFM69_setMode(RF69_MODE_RX);
 	for( ;; )
 	{
-		if(RFM69_getFrequency() == 0)
-		{
-			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
-		}
+//		if(RFM69_getFrequency() == 0)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 915000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 433000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 868000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 315000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
 		delay_ms(300);
 
 		RFM69_setMode(RF69_MODE_RX);
 		if(rfm69_send_flag)
 		{
-			if(rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
+			if(rfm69_checkData())//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
 			{
+				//test_print = true;
+				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
-				internalDeal(10, USART_RX_BUF);
+				internalDeal(10, rfm69_sendBuf);
 				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 1);
 			}
 			rfm69_send_flag = false;
@@ -203,6 +313,14 @@ void vAcceleroTask(void *pvParameters)
 	for( ;; )
 	{
 		axis_value[0]=ACCELERO_Read_Data(0x2a);
+//		if( test_print)
+//		{
+//			test_print = false;
+//			//printf("rfm69_size = %d\r\n\r\n", rfm69_size);
+////			printf( "%d, %d,%d, %d,%d, %d,%d, %d\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],
+////									rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
+////			printf( " %d\r\n", rfm69_sendBuf[6]);
+//		}
 		delay_ms(10);
 	}
 }
@@ -699,6 +817,18 @@ void EEP_Dat_Init(void)
 				{
 					RFM69_freq = 433000000;
 				}
+				CT_first_AD = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_LO);
+				if((CT_first_AD== 0xffff)||(CT_first_AD == 0))
+				{
+					
+					CT_first_AD = 2260;
+				}
+				CT_multiple = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_LO);
+				if((CT_multiple== 0xffff)||(CT_multiple == 0))
+				{
+					CT_multiple = 174;
+				}
+				
 				#endif
 				
 				modbus.protocal = AT24CXX_ReadOneByte(EEP_MODBUS_COM_CONFIG); 

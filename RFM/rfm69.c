@@ -40,6 +40,8 @@ extern u8 rfm69_tx_count;
 void RFM69_writeReg(uint8_t addr, uint8_t val);
 uint8_t RFM69_readReg(uint8_t addr);
 
+void RFM69_select(void);
+void RFM69_unselect(void);
 void RFM69_setHighPowerRegs(bool onOff);
 void RFM69_sleep(void);
 void RFM69_setPowerLevel(uint8_t level); // reduce/increase transmit power level
@@ -49,7 +51,6 @@ bool RFM69_ACKReceived(uint8_t fromNodeID);
 bool RFM69_receiveDone(void);
 bool RFM69_ACKRequested(void);
 void RFM69_sendACK(const void* buffer, uint8_t bufferSize);
-void RFM69_unselect(void);
 void RFM69_receiveBegin(void);
 void RFM69_promiscuous(bool onOff);
 void RFM69_readAllRegs(void);
@@ -57,7 +58,7 @@ void RFM69_readAllRegs(void);
 void RFM69_rcCalibration(void); // calibrate the internal RC oscillator for use in wide temperature variations - see datasheet section [4.3.5. RC Timer Accuracy]
 
 
-void RFM69_select(void);
+
 void RFM69_setHighPower(bool onOff);
 
 // extern functions
@@ -362,11 +363,11 @@ bool RFM69_sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSi
   for ( i = 0; i <= retries; i++)
   {
 //	  printf("go into RFM69_sendWithRetry\r\n");
-    RFM69_send(toAddress, buffer, bufferSize, true);
+    RFM69_send(toAddress, buffer, bufferSize, false);
     Timeout_SetTimeout1(retryWaitTime);
     while (!Timeout_IsTimeout1())
     {
-      if (RFM69_ACKReceived(toAddress))
+//      if (RFM69_ACKReceived(toAddress))
       {
         //Serial.print(" ~ms:"); Serial.print(millis() - sentTime);
 //		  printf("RFM69_ACKReceived and still have %d ms\r\n",rfm69_count);
@@ -483,7 +484,7 @@ void RFM69_interruptHandler() {
       return;
     }
 
-    datalen = payloadLen - 3;
+    datalen = payloadLen - 2;
     senderID = SPI_transfer8(0);
     CTLbyte = SPI_transfer8(0);
 
@@ -498,14 +499,17 @@ void RFM69_interruptHandler() {
     }
 	rfm69_size = datalen;
 	rfm69_id = senderID;
-	init_crc16(); 
+//	init_crc16(); 
 	memcpy(rfm69_sendBuf, data, datalen);
 	//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 	rfm69_send_flag = true;
 	//RFM69_sendWithRetry(senderID, data, 8, 0, 25);
 //	if(data[0] == 255 || data[0] == modbus.address || data[0] == 0)
 //		responseCmd(10, data);
-    if (datalen < RF69_MAX_DATA_LEN) data[datalen] = 0; // add null at end of string
+//	memcpy( uart_send, data, rfm69_size);
+//	TXEN = SEND;
+//	USART_SendDataString(rfm69_size);
+//    if (datalen < RF69_MAX_DATA_LEN) data[datalen] = 0; // add null at end of string
 	//SerialPrint((char*) data);
 	//printf("senderID= %d\r\n, targetID= %d", senderID, targetID);
 	//printf(data);
