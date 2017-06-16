@@ -5,7 +5,7 @@
 #include "bacnet.h"
 #include "stmflash.h"
 #include "delay.h"
-uint8_t write_page_en[3]  = {0} ;
+uint8_t write_page_en[4]  = {0} ;
 
 static uint8_t  tempbuf[1024] = {0};
 
@@ -18,6 +18,7 @@ Str_variable_point  var[MAX_AV] ;
 
 
 //#define OUT_PAGE_FLAG	0x803effe
+#define CUSR_PAGE_FLAG 	0x803e000	 // CUSTOMER RANGE
 #define OUT_PAGE_FLAG	0x803e800
 #define IN_PAGE_FLAG 	0x803f000	
 #define AV_PAGE_FLAG 	0x803f800	 
@@ -25,6 +26,7 @@ Str_variable_point  var[MAX_AV] ;
 #define OUT_PAGE	(OUT_PAGE_FLAG+2)	
 #define IN_PAGE		(IN_PAGE_FLAG+2)
 #define AV_PAGE		(AV_PAGE_FLAG+2)
+#define CUSR_PAGE	(CUSR_PAGE_FLAG+2)
 /* caclulate detailed position for every table */
 //void Flash_Inital(void)
 //{
@@ -104,6 +106,20 @@ void Flash_Write_Mass(void)
 				len = sizeof(Str_variable_point)*AVS ;
 				iap_write_appbin(AV_PAGE,(uint8_t*)tempbuf, len);
 				STMFLASH_WriteHalfWord(AV_PAGE_FLAG, 1000) ;
+				STMFLASH_Lock();
+			}	
+			if(write_page_en[EN_CUSTOMER_RANGE] == 1)
+			{
+				write_page_en[EN_CUSTOMER_RANGE] = 0 ;
+				STMFLASH_Unlock();
+				STMFLASH_ErasePage(CUSR_PAGE);
+				for(loop1 = 0;loop1 < MAX_TBLS;loop1++)
+				{
+					memcpy(&tempbuf[sizeof(Str_table_point) * loop1],&custom_tab[loop1],sizeof(Str_table_point));					
+				}
+				len = sizeof(Str_table_point)*MAX_TBLS ;
+				iap_write_appbin(CUSR_PAGE,(uint8_t*)tempbuf, len);
+				STMFLASH_WriteHalfWord(CUSR_PAGE_FLAG, 1000) ;
 				STMFLASH_Lock();
 			}				
 }
@@ -194,6 +210,8 @@ void mass_flash_init(void)
 		STMFLASH_WriteHalfWord(IN_PAGE_FLAG, 1000) ;
 		STMFLASH_Lock();
 	}
+	
+	
 	else
 	{
 		
@@ -234,6 +252,35 @@ void mass_flash_init(void)
 	{
 		len = MAX_AV * sizeof(Str_variable_point) ;
 		STMFLASH_MUL_Read(AV_PAGE,(void *)&var[0].description[0], len );
+	
+	}
+	
+	temp = STMFLASH_ReadHalfWord(CUSR_PAGE_FLAG);
+	if(temp == 0xffff)
+	{
+		STMFLASH_Unlock();
+		STMFLASH_ErasePage(CUSR_PAGE_FLAG);
+		memset(custom_tab,0,MAX_TBLS * sizeof(Str_table_point));
+//		for(loop=0; loop < MAX_TBLS; loop++ )
+//		{
+//			memcpy(var[loop].description, (char*)&Variable_name[loop], 9);
+//			memcpy(var[loop].label, (char*)&Variable_name[loop], 9);		
+//			var[loop].value = 0; 
+//			var[loop].control = 0 ;
+//			var[loop].auto_manual = 0 ;
+//			var[loop].digital_analog = 0 ;
+//			var[loop].range = 0 ; 
+//		}
+		len = MAX_TBLS * sizeof(Str_table_point) ;
+		memcpy(tempbuf,(void*)&custom_tab[0], len);		
+		iap_write_appbin(CUSR_PAGE,(uint8_t*)tempbuf, len);	
+		STMFLASH_WriteHalfWord(CUSR_PAGE_FLAG, 1000) ;
+		STMFLASH_Lock();
+	}
+	else
+	{
+		len = MAX_TBLS * sizeof(Str_table_point) ;
+		STMFLASH_MUL_Read(CUSR_PAGE,(void *)&custom_tab[0].table_name[0], len );
 	
 	}
 	

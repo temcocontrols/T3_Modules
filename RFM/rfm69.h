@@ -36,6 +36,7 @@
 // TWS: define CTLbyte bits
 #define RFM69_CTL_SENDACK   0x80
 #define RFM69_CTL_REQACK    0x40
+#define RFM69_CTL_RESERVE1  0x20
 
 // 
 #define ISRFM69HW  1
@@ -43,8 +44,13 @@
 #define HIGH 1
 #define LOW  0
 
-#define	RFM_CS	PDout(2) //RFM69片选引脚	
+#define REGISTER_DETAIL 1
 
+#define	RFM_CS	PDout(2) //RFM69片选引脚	
+#define RFM69_DEFAULT_DEADMASTER    50
+
+extern uint16_t rfm69_deadMaster;
+extern uint16_t rfm69_set_deadMaster;
 extern char rfm69_key[];
 extern uint16_t RFM69_networkID;
 extern uint8_t RFM69_nodeID;

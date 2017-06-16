@@ -14,8 +14,8 @@
 #define ACCELERO_ADDR_READ   0x3B
 #define ACCELERO_ADDR_WRITE  0x3A
 //IO方向设置
-#define ACCELERO_SDA_IN()	{GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)8 << 12);}
-#define ACCELERO_SDA_OUT()	{GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)3 << 12);}
+//#define ACCELERO_SDA_IN()	 {GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)8 << 12);}
+//#define ACCELERO_SDA_OUT()	 {GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)3 << 12);}
 
 //IO操作函数	 
 #define ACCELERO_SCL		PBout(10)	//SCL
@@ -40,15 +40,7 @@ void ACCELERO_I2C_Ack(void) ;
 void ACCELERO_I2C_write_byte(u8 byte) ;
 u8 ACCELERO_I2C_read_byte(u8 ack) ;
 u8 ACCELERO_I2C_wait_for_ack(void) ;
-u8 wait_for_ack(void);
-u8 CLK_ACK( void );
-void iic_write_byte(u8 byte);
-u8 iic_read_byte(u8 ack);
 
-u8 CLK_read( void );
-void CLK_write( unsigned char ch );
-void CLK_stop(void);
-void CLK_start(void);
 extern void ACCELERO_Write_Data(u8 Addr,u8 Value);
 extern u8 ACCELERO_Read_Data(u8 Addr);
 #endif

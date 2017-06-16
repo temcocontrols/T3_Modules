@@ -13,15 +13,23 @@ u8  net_tx_count = 0 ;
 //u8 dim_timer_setting[28];
 #if defined T36CTA
 bool t36ct_net_led = LED_OFF;
+//bool acc_led = LED_OFF;
 u8 rfm69_rx_count = 0;
 u8 rfm69_tx_count = 0;
+uint8 acc_led_count;
 #endif
 void LED_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE , ENABLE);
+#if T36CTA	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 |GPIO_Pin_1 |GPIO_Pin_2 |GPIO_Pin_3 |GPIO_Pin_4 |GPIO_Pin_5 |
+									GPIO_Pin_6|GPIO_Pin_7 |GPIO_Pin_8 |GPIO_Pin_9 |GPIO_Pin_10 |GPIO_Pin_11
+									|GPIO_Pin_12 | GPIO_Pin_15;
+#else
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+#endif
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
@@ -229,35 +237,9 @@ void tabulate_LED_STATE(void)
   #endif
 
 #if T36CTA	
-	for(i=0; i<1; i++)
-	{
-		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
-			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
-			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
-			{
-					if(AD_Value[i]<2048)  
-					{
-						led_bank1 &= ~(1<<(i+MAX_DO)) ;
-					}
-					else
-					{
-						led_bank1 |= (1<<(i+MAX_DO)) ;
-					}
-			}
-			else
-			{	
-					if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
-					{
-						led_bank1 &= ~(1<<(i+MAX_DO)) ;
-					}
-					else
-					{
-						led_bank1 |= (1<<(i+MAX_DO)) ;
-					}
-			}
-		}
-	
-	for(i=1; i<6; i++)
+	#if T36CTA_REV1
+
+	for(i=0; i<5; i++)
 	{
 		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
 			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
@@ -284,37 +266,37 @@ void tabulate_LED_STATE(void)
 					}
 			}
 		}
-//	for(i=6; i< 13;i++)
-//	{
-//			if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
-//			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
-//			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
-//			{
-//				if(AD_Value[i]<2048)  
-//				{
-//							led_bank1 &= ~(1<<(i+MAX_DO+1)) ;
-//				}
-//				else
-//				{
-//							led_bank1 |= (1<<(i+MAX_DO+1)) ;
-//				}
-//			
-//			}
-//			else
-//			{
-//				if(AD_Value[i]>2048)  
-//				{
-//							led_bank1 &= ~(1<<(i+MAX_DO+1)) ;
-//				}
-//				else
-//				{
-//							led_bank1 |= (1<<(i+MAX_DO+1)) ;
-//				}
-//			}
-//	}	
+	for(i=5; i< 13;i++)
+	{
+			if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
+			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
+			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
+			{
+				if(AD_Value[i]<2048)  
+				{
+							led_bank1 &= ~(1<<(i+MAX_DO-5)) ;
+				}
+				else
+				{
+							led_bank1 |= (1<<(i+MAX_DO-5)) ;
+				}
+			
+			}
+			else
+			{
+				if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+				{
+							led_bank1 &= ~(1<<(i+MAX_DO-5)) ;
+				}
+				else
+				{
+							led_bank1 |= (1<<(i+MAX_DO-5)) ;
+				}
+			}
+	}	
 	for(i=13; i< 19;i++)
 	{
-		if(AD_Value[i]>5)  
+		if((CT_Vaule[i-13]>50) && (CT_Vaule[i-13]<10000))
 		{
 					led_bank2 &= ~(1<<(i-13)) ;
 		}
@@ -324,6 +306,56 @@ void tabulate_LED_STATE(void)
 		}
 			
 	}	
+	#endif
+	#if T36CTA_REV2
+	for(i=0; i<8; i++)
+	{
+		if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
+			||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
+			||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
+			{
+					if(AD_Value[i]<2048)  
+					{
+						led_bank1 &= ~(1<<(i+MAX_DO)) ;
+					}
+					else
+					{
+						led_bank1 |= (1<<(i+MAX_DO)) ;
+					}
+			}
+			else
+			{	
+					if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+					{
+						led_bank1 &= ~(1<<(i+MAX_DO)) ;
+					}
+					else
+					{
+						led_bank1 |= (1<<(i+MAX_DO)) ;
+					}
+			}
+	}
+	for(i=0; i< 6;i++)
+	{
+		if((CT_Vaule[i]>50) && (CT_Vaule[i]<10000))
+		{
+					led_bank2 &= ~(1<<(i+5)) ;
+		}
+		else
+		{
+					led_bank2 |= (1<<(i+5)) ;
+		}
+			
+	}	
+	  if(acc_led_count>0)
+	  {
+		  led_bank2 &= ~(1<<3) ;
+	  }
+	  else
+	  {
+		  led_bank2 |= (1<<3) ;
+	  }
+	#endif
 	
   for(i=0; i<MAX_DO; i++)
   {
@@ -430,7 +462,8 @@ void tabulate_LED_STATE(void)
 	if(rfm69_tx_count>0)
 		led_bank1 &= ~(1<<10) ;
 	else
-		led_bank1 |= (1<<10) ;		
+		led_bank1 |= (1<<10) ;
+	
 #endif
   
   if(net_rx_count> 0) net_rx_count -- ;  
@@ -469,7 +502,7 @@ void tabulate_LED_STATE(void)
   
   if(tx_count>0) tx_count-- ;
   if(rx_count>0) rx_count-- ;
-  
+
   if(tx_count>0) 
   {
 	  led_bank2 &= ~(1<<11) ;
@@ -480,6 +513,7 @@ void tabulate_LED_STATE(void)
 	  led_bank2 &= ~(1<<12) ;
   else  		
 	  led_bank2 |= (1<<12) ;
+
 }
 
 void refresh_led(void)
@@ -529,7 +563,7 @@ void refresh_led(void)
 			GPIO_ResetBits(GPIOA, GPIO_Pin_13);
 		else
 			GPIO_SetBits(GPIOA, GPIO_Pin_13);
-		//GPIO_Write(GPIOE, (led_bank2|port_temp)) ;
+
 		for(i = 0; i< 13; i++)
 		{
 			if( led_bank2 & (1<<i))
