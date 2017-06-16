@@ -13,15 +13,23 @@ u8  net_tx_count = 0 ;
 //u8 dim_timer_setting[28];
 #if defined T36CTA
 bool t36ct_net_led = LED_OFF;
+//bool acc_led = LED_OFF;
 u8 rfm69_rx_count = 0;
 u8 rfm69_tx_count = 0;
+uint8 acc_led_count;
 #endif
 void LED_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE , ENABLE);
+#if T36CTA	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 |GPIO_Pin_1 |GPIO_Pin_2 |GPIO_Pin_3 |GPIO_Pin_4 |GPIO_Pin_5 |
+									GPIO_Pin_6|GPIO_Pin_7 |GPIO_Pin_8 |GPIO_Pin_9 |GPIO_Pin_10 |GPIO_Pin_11
+									|GPIO_Pin_12 | GPIO_Pin_15;
+#else
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+#endif
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
@@ -339,6 +347,17 @@ void tabulate_LED_STATE(void)
 		}
 			
 	}	
+<<<<<<< HEAD
+	  if(acc_led_count>0)
+	  {
+		  led_bank2 &= ~(1<<3) ;
+	  }
+	  else
+	  {
+		  led_bank2 |= (1<<3) ;
+	  }
+=======
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 	#endif
 	
   for(i=0; i<MAX_DO; i++)
@@ -446,7 +465,8 @@ void tabulate_LED_STATE(void)
 	if(rfm69_tx_count>0)
 		led_bank1 &= ~(1<<10) ;
 	else
-		led_bank1 |= (1<<10) ;		
+		led_bank1 |= (1<<10) ;
+	
 #endif
   
   if(net_rx_count> 0) net_rx_count -- ;  
@@ -485,7 +505,7 @@ void tabulate_LED_STATE(void)
   
   if(tx_count>0) tx_count-- ;
   if(rx_count>0) rx_count-- ;
-  
+
   if(tx_count>0) 
   {
 	  led_bank2 &= ~(1<<11) ;
@@ -496,6 +516,7 @@ void tabulate_LED_STATE(void)
 	  led_bank2 &= ~(1<<12) ;
   else  		
 	  led_bank2 |= (1<<12) ;
+
 }
 
 void refresh_led(void)
@@ -545,7 +566,7 @@ void refresh_led(void)
 			GPIO_ResetBits(GPIOA, GPIO_Pin_13);
 		else
 			GPIO_SetBits(GPIOA, GPIO_Pin_13);
-		//GPIO_Write(GPIOE, (led_bank2|port_temp)) ;
+
 		for(i = 0; i< 13; i++)
 		{
 			if( led_bank2 & (1<<i))

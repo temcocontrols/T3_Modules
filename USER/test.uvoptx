@@ -714,6 +714,7 @@
         </Bp>
         <Bp>
           <Number>34</Number>
+<<<<<<< HEAD
           <Type>0</Type>
           <LineNumber>381</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -764,6 +765,10 @@
           <Number>37</Number>
           <Type>0</Type>
           <LineNumber>384</LineNumber>
+=======
+          <Type>0</Type>
+          <LineNumber>381</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -777,9 +782,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>38</Number>
           <Type>0</Type>
           <LineNumber>391</LineNumber>
+=======
+          <Number>35</Number>
+          <Type>0</Type>
+          <LineNumber>382</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -793,9 +804,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>39</Number>
           <Type>0</Type>
           <LineNumber>392</LineNumber>
+=======
+          <Number>36</Number>
+          <Type>0</Type>
+          <LineNumber>383</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -809,9 +826,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>40</Number>
           <Type>0</Type>
           <LineNumber>393</LineNumber>
+=======
+          <Number>37</Number>
+          <Type>0</Type>
+          <LineNumber>384</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -825,9 +848,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>41</Number>
           <Type>0</Type>
           <LineNumber>394</LineNumber>
+=======
+          <Number>38</Number>
+          <Type>0</Type>
+          <LineNumber>391</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -841,9 +870,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>42</Number>
           <Type>0</Type>
           <LineNumber>385</LineNumber>
+=======
+          <Number>39</Number>
+          <Type>0</Type>
+          <LineNumber>392</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -857,9 +892,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>43</Number>
           <Type>0</Type>
           <LineNumber>395</LineNumber>
+=======
+          <Number>40</Number>
+          <Type>0</Type>
+          <LineNumber>393</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -873,9 +914,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>44</Number>
           <Type>0</Type>
           <LineNumber>396</LineNumber>
+=======
+          <Number>41</Number>
+          <Type>0</Type>
+          <LineNumber>394</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -889,9 +936,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>45</Number>
           <Type>0</Type>
           <LineNumber>397</LineNumber>
+=======
+          <Number>42</Number>
+          <Type>0</Type>
+          <LineNumber>385</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -905,9 +958,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>46</Number>
           <Type>0</Type>
           <LineNumber>398</LineNumber>
+=======
+          <Number>43</Number>
+          <Type>0</Type>
+          <LineNumber>395</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -921,9 +980,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>47</Number>
           <Type>0</Type>
           <LineNumber>399</LineNumber>
+=======
+          <Number>44</Number>
+          <Type>0</Type>
+          <LineNumber>396</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -937,9 +1002,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>48</Number>
           <Type>0</Type>
           <LineNumber>400</LineNumber>
+=======
+          <Number>45</Number>
+          <Type>0</Type>
+          <LineNumber>397</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -953,9 +1024,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>49</Number>
           <Type>0</Type>
           <LineNumber>401</LineNumber>
+=======
+          <Number>46</Number>
+          <Type>0</Type>
+          <LineNumber>398</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -969,9 +1046,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>50</Number>
           <Type>0</Type>
           <LineNumber>402</LineNumber>
+=======
+          <Number>47</Number>
+          <Type>0</Type>
+          <LineNumber>399</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -985,9 +1068,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>51</Number>
           <Type>0</Type>
           <LineNumber>403</LineNumber>
+=======
+          <Number>48</Number>
+          <Type>0</Type>
+          <LineNumber>400</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1001,9 +1090,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>52</Number>
           <Type>0</Type>
           <LineNumber>404</LineNumber>
+=======
+          <Number>49</Number>
+          <Type>0</Type>
+          <LineNumber>401</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1017,9 +1112,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>53</Number>
           <Type>0</Type>
           <LineNumber>405</LineNumber>
+=======
+          <Number>50</Number>
+          <Type>0</Type>
+          <LineNumber>402</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1033,9 +1134,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>54</Number>
           <Type>0</Type>
           <LineNumber>406</LineNumber>
+=======
+          <Number>51</Number>
+          <Type>0</Type>
+          <LineNumber>403</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1049,9 +1156,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>55</Number>
           <Type>0</Type>
           <LineNumber>407</LineNumber>
+=======
+          <Number>52</Number>
+          <Type>0</Type>
+          <LineNumber>404</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1065,9 +1178,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>56</Number>
           <Type>0</Type>
           <LineNumber>408</LineNumber>
+=======
+          <Number>53</Number>
+          <Type>0</Type>
+          <LineNumber>405</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1081,9 +1200,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>57</Number>
           <Type>0</Type>
           <LineNumber>353</LineNumber>
+=======
+          <Number>54</Number>
+          <Type>0</Type>
+          <LineNumber>406</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1097,9 +1222,15 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>58</Number>
           <Type>0</Type>
           <LineNumber>356</LineNumber>
+=======
+          <Number>55</Number>
+          <Type>0</Type>
+          <LineNumber>407</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1113,9 +1244,81 @@
           <Expression></Expression>
         </Bp>
         <Bp>
+<<<<<<< HEAD
           <Number>59</Number>
           <Type>0</Type>
           <LineNumber>409</LineNumber>
+=======
+          <Number>56</Number>
+          <Type>0</Type>
+          <LineNumber>408</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
+          <EnabledFlag>0</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\MODBUS\modbus.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+<<<<<<< HEAD
+          <Number>60</Number>
+          <Type>0</Type>
+          <LineNumber>354</LineNumber>
+=======
+          <Number>57</Number>
+          <Type>0</Type>
+          <LineNumber>353</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
+          <EnabledFlag>0</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\MODBUS\modbus.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+<<<<<<< HEAD
+          <Number>61</Number>
+          <Type>0</Type>
+          <LineNumber>410</LineNumber>
+=======
+          <Number>58</Number>
+          <Type>0</Type>
+          <LineNumber>356</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
+          <EnabledFlag>0</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\MODBUS\modbus.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+<<<<<<< HEAD
+          <Number>62</Number>
+          <Type>0</Type>
+          <LineNumber>411</LineNumber>
+=======
+          <Number>59</Number>
+          <Type>0</Type>
+          <LineNumber>409</LineNumber>
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -1225,7 +1428,7 @@
 
   <Group>
     <GroupName>FWLIB</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2124,7 +2327,7 @@
 
   <Group>
     <GroupName>T3PT12</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2171,7 +2374,7 @@
 
   <Group>
     <GroupName>BACLIB</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

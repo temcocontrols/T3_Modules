@@ -50,6 +50,8 @@ extern FIFO_BUFFER Receive_Buffer0;
 
 #if defined T36CTA
 extern bool rfm_exsit;
+extern uint16 acc_sensitivity[2];
+
 #endif
  
 void USART1_IRQHandler(void)                   //串口1中断服务程序
@@ -691,17 +693,113 @@ void internalDeal(u8 type,  u8 *pData)
 			 else
 				 RFM69_encrypt(0);
 		 }
+<<<<<<< HEAD
+		 else if(StartAdd == MODBUS_RFM69_DEADMASTER)
+		 {
+			 rfm69_set_deadMaster = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_HI, pData[HeadLen+4]);
+			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_LO, pData[HeadLen+5]);
+		 }
+=======
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		 else if( StartAdd == MODBUS_CT_FIRST_AD)
 		 {
 			 CT_first_AD = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
 			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_LO, pData[HeadLen+5]);
+<<<<<<< HEAD
+		 }		
+=======
 		 }
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		 else if( StartAdd == MODBUS_CT_MULTIPLE)
 		 {
 			 CT_multiple = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
 			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_LO, pData[HeadLen+5]);
+<<<<<<< HEAD
+		 }		 
+//		 else if( StartAdd == MODBUS_CT_FIRST_AD_1)
+//		 {
+//			 CT_first_AD[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_1_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_1_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_FIRST_AD_2)
+//		 {
+//			 CT_first_AD[1] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_2_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_2_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_FIRST_AD_3)
+//		 {
+//			 CT_first_AD[2] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_3_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_3_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_FIRST_AD_4)
+//		 {
+//			 CT_first_AD[3] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_4_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_4_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_FIRST_AD_5)
+//		 {
+//			 CT_first_AD[4] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_5_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_5_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_FIRST_AD_6)
+//		 {
+//			 CT_first_AD[5] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_6_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_6_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_MULTIPLE_1)
+//		 {
+//			 CT_multiple[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_1_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_1_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_MULTIPLE_2)
+//		 {
+//			 CT_multiple[1] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_2_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_2_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_MULTIPLE_3)
+//		 {
+//			 CT_multiple[2] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_3_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_3_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_MULTIPLE_4)
+//		 {
+//			 CT_multiple[3] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_4_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_4_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_MULTIPLE_5)
+//		 {
+//			 CT_multiple[4] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_5_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_5_LO, pData[HeadLen+5]);
+//		 }
+//		 else if( StartAdd == MODBUS_CT_MULTIPLE_6)
+//		 {
+//			 CT_multiple[5] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_6_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_6_LO, pData[HeadLen+5]);
+//		 }
+		 else if( StartAdd == MODBUS_ACC_SENSITIVITY_LO)
+		 {
+			 acc_sensitivity[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+		 }
+		 else if( StartAdd == MODBUS_ACC_SENSITIVITY_HI)
+		 {
+			 acc_sensitivity[1] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+=======
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		 }
 	  #endif
 	  
@@ -1773,6 +1871,15 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
+		 else if( address == MODBUS_RFM69_DEADMASTER)
+		 {
+			 temp1 = (rfm69_set_deadMaster>>8) & 0xff ;
+               temp2 = rfm69_set_deadMaster&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
 //		 else if( address == MODBUS_RFM69_MODE)
 //		 {
 //			 temp1 = (RFM69_networkID>>8) & 0xff ;
@@ -1802,10 +1909,193 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp2);
 		 }
 		 
+		 else if( address == MODBUS_ACCELERO_ID)
+		 {
+			 temp1 = (ACCELERO_Read_Data(0x0d)>>8) & 0xff ;
+               temp2 = ACCELERO_Read_Data(0x0d)&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( (address>=MODBUS_CT_AMPERE_1)&&(address<=MODBUS_CT_AMPERE_6))
+		 {
+			 address_temp = address - MODBUS_CT_AMPERE_1 ;
+			 temp1 = (CT_Vaule[address_temp]>>8)&0xff;
+			 temp2 = CT_Vaule[address_temp]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_CT_FIRST_AD)
+		 {
+			 temp1 = (CT_first_AD>>8) & 0xff ;
+               temp2 = CT_first_AD&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }	
+		 else if( address == MODBUS_CT_MULTIPLE)
+		 {
+			 temp1 = (CT_multiple>>8) & 0xff ;
+               temp2 = CT_multiple&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }		 
+//		 else if( address == MODBUS_CT_FIRST_AD_1)
+//		 {
+//			 temp1 = (CT_first_AD[0]>>8) & 0xff ;
+//               temp2 = CT_first_AD[0]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_FIRST_AD_2)
+//		 {
+//			 temp1 = (CT_first_AD[1]>>8) & 0xff ;
+//               temp2 = CT_first_AD[1]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_FIRST_AD_3)
+//		 {
+//			 temp1 = (CT_first_AD[2]>>8) & 0xff ;
+//               temp2 = CT_first_AD[2]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_FIRST_AD_4)
+//		 {
+//			 temp1 = (CT_first_AD[3]>>8) & 0xff ;
+//               temp2 = CT_first_AD[3]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_FIRST_AD_5)
+//		 {
+//			 temp1 = (CT_first_AD[4]>>8) & 0xff ;
+//               temp2 = CT_first_AD[4]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_FIRST_AD_6)
+//		 {
+//			 temp1 = (CT_first_AD[5]>>8) & 0xff ;
+//               temp2 = CT_first_AD[5]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_MULTIPLE_1)
+//		 {
+//			 temp1 = (CT_multiple[0]>>8) & 0xff ;
+//               temp2 = CT_multiple[0]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_MULTIPLE_2)
+//		 {
+//			 temp1 = (CT_multiple[1]>>8) & 0xff ;
+//               temp2 = CT_multiple[1]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_MULTIPLE_3)
+//		 {
+//			 temp1 = (CT_multiple[2]>>8) & 0xff ;
+//               temp2 = CT_multiple[2]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_MULTIPLE_4)
+//		 {
+//			 temp1 = (CT_multiple[3]>>8) & 0xff ;
+//               temp2 = CT_multiple[3]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_MULTIPLE_5)
+//		 {
+//			 temp1 = (CT_multiple[4]>>8) & 0xff ;
+//               temp2 = CT_multiple[4]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_MULTIPLE_6)
+//		 {
+//			 temp1 = (CT_multiple[5]>>8) & 0xff ;
+//               temp2 = CT_multiple[5]&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
 		 else if( address == MODBUS_ACCELERO_X)
 		 {
 			 temp1 = (axis_value[0]>>8) & 0xff ;
                temp2 = axis_value[0]&0xff ;
+//			 temp1 = (ACCELERO_Read_Data(1)>>8)&0xff;
+//			 temp2 = ACCELERO_Read_Data(1)&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_ACCELERO_Y)
+		 {
+			 temp1 = (axis_value[1]>>8) & 0xff ;
+               temp2 = axis_value[1]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_ACCELERO_Z)
+		 {
+			 temp1 = (axis_value[2]>>8) & 0xff ;
+               temp2 = axis_value[2]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_ACC_SENSITIVITY_LO)
+		 {
+			 temp1 = (acc_sensitivity[0]>>8) & 0xff ;
+               temp2 = acc_sensitivity[0]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_ACC_SENSITIVITY_HI)
+		 {
+			 temp1 = (acc_sensitivity[1]>>8) & 0xff ;
+               temp2 = acc_sensitivity[1]&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);

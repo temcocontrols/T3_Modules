@@ -59,8 +59,9 @@
 #define T36CTA_REV2    1
 #define INPUT_CONTROL
 #define OUTPUT_CONTROL
-#define  MAX_AVS  	41
+#define  MAX_AVS  	10//41
 #define MAX_AV					MAX_AVS
+#define ABS(n)     (((n) < 0) ? -(n) : (n))
 #endif
 
 
