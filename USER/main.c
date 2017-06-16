@@ -264,8 +264,9 @@ void vRFMTask( void *pvParameters)
 		rfm69_deadMaster--;
 		if(rfm69_deadMaster == 0)
 		{
-			RFM69_initialize(0, RFM69_nodeID, 0);
+			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
 			RFM69_encrypt(rfm69_key);
+			rfm69_deadMaster = rfm69_set_deadMaster;
 		}
 		if(rfm69_send_flag)
 		{

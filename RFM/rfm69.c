@@ -343,6 +343,7 @@ bool RFM69_canSend()
 
 void RFM69_send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool requestACK)
 {
+	rfm69_tx_count = 7;
 //	printf("go into RFM69_send\r\n");
   RFM69_writeReg(REG_PACKETCONFIG2, (RFM69_readReg(REG_PACKETCONFIG2) & 0xFB) | RF_PACKET2_RXRESTART); // avoid RX deadlocks
 //	printf("after RFM69_writeReg\r\n");
@@ -419,7 +420,6 @@ static void RFM69_sendFrame(uint8_t toAddress, const void* buffer, uint8_t buffe
 	uint8_t i;
 	uint32_t freq;
 //	printf("go into RFM69_sendFrame\r\n");
-	rfm69_tx_count = 7;
   RFM69_setMode(RF69_MODE_STANDBY); // turn off receiver to prevent reception while filling fifo
   while ((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
 //	printf("after RFM69_readReg(REG_IRQFLAGS1)\r\n");
