@@ -134,7 +134,11 @@ int main(void)
 	#endif
 	#if defined T36CTA
 	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+<<<<<<< HEAD
  	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+=======
+	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 	xTaskCreate( vGetACTask, ( signed portCHAR * ) "GETAC", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#if T36CTA_REV2
 			xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "AIRFLOW", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
@@ -164,7 +168,11 @@ void vGetACTask( void *pvParameters)
 		vol_buf[4][avg_count] = ADC_getChannal(ADC2,ADC_Channel_4);
 		vol_buf[5][avg_count] = ADC_getChannal(ADC2,ADC_Channel_5);
 		avg_count++;
+<<<<<<< HEAD
 		if(avg_count == (VOL_BUF_NUM-1))
+=======
+		if(avg_count == 100)
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		{
 			vol_sum[0] = 0;
 			vol_sum[1] = 0;
@@ -183,10 +191,27 @@ void vGetACTask( void *pvParameters)
 				vol_sum[5]+=vol_buf[5][i];
 			}
 		}
+<<<<<<< HEAD
 		avg_count %= (VOL_BUF_NUM-1);
+=======
+		avg_count %= 100;
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 	
 		delay_ms(10);
 	}
+//	for(;;)
+//	{
+////		read_current();
+////		delay_ms(25);
+//		
+//	}
+}
+void vAirFlowTask( void *pvParameters)
+{
+
+	#if T36CTA_REV2
+	vUpdate_Pressure_Task(  pvParameters );
+	#endif
 }
 void vAirFlowTask( void *pvParameters)
 {
@@ -197,11 +222,50 @@ void vAirFlowTask( void *pvParameters)
 }
 
 extern u8 rfm69_tx_count;
+u8 rfm69_checkData(void)
+{
+   u16 crc_val;
+   u8 i;
+
+   // check if talking to correct device ID
+   if(rfm69_sendBuf[0] != 255 && rfm69_sendBuf[0] != modbus.address && rfm69_sendBuf[0] != 0)
+      return 0;   
+
+
+   // check that message is one of the following
+   if( (rfm69_sendBuf[1]!=READ_VARIABLES) && (rfm69_sendBuf[1]!=WRITE_VARIABLES) && (rfm69_sendBuf[1]!=MULTIPLE_WRITE) )
+      return 0;
+   // ------------------------------------------------------------------------------------------------------
+      // ------------------------------------------------------------------------------------------------------
+
+//   if( rfm69_sendBuf[7] == 0)
+//   {
+//	   return 1;
+//   }
+
+//   printf( "rfm69_size = %d\r\n",rfm69_size);
+   //crc_val = crc16(rfm69_sendBuf, 6);//rfm69_size-2);
+
+  // if(crc_val == (rfm69_sendBuf[rfm69_size-2]<<8) + rfm69_sendBuf[rfm69_size-1] )
+   //if(crc_val == (rfm69_sendBuf[6]<<8) + rfm69_sendBuf[7] )
+   if(rfm69_sendBuf[7]==0)
+   {
+      return 1;
+   }
+   else
+   {
+      return 0;
+   }
+   return 1;
+
+ }
+
 extern bool rfm69_send_flag;
 extern u8 rfm69_length;
 extern u8 RFM69_SEND[];
 bool rfm_exsit = false;
  bool test_print = false;
+<<<<<<< HEAD
  uint16 acc_sensitivity[2];
 extern uint8 acc_led_count;
 u8 rfm69_checkData(u8 len)
@@ -245,6 +309,8 @@ u8 rfm69_checkData(u8 len)
  }
 
 
+=======
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 void vRFMTask( void *pvParameters)
 {
 	u8 temp;
@@ -258,7 +324,36 @@ void vRFMTask( void *pvParameters)
 	RFM69_setMode(RF69_MODE_RX);
 	for( ;; )
 	{
+<<<<<<< HEAD
 		delay_ms(100);
+=======
+//		if(RFM69_getFrequency() == 0)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 915000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 433000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 868000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+//		else if(RFM69_getFrequency() != 315000000)
+//		{
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			//RFM69_encrypt(rfm69_key);
+//		}
+		delay_ms(300);
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 
 		RFM69_setMode(RF69_MODE_RX);
 		rfm69_deadMaster--;
@@ -270,16 +365,24 @@ void vRFMTask( void *pvParameters)
 		}
 		if(rfm69_send_flag)
 		{
+<<<<<<< HEAD
 			rfm69_deadMaster = rfm69_set_deadMaster;
 			//RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 1);
 			//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
 			if(rfm69_checkData(rfm69_size))//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
+=======
+			if(rfm69_checkData())//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 			{
 				//test_print = true;
 				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
 				internalDeal(10, rfm69_sendBuf);
+<<<<<<< HEAD
 				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 25);
+=======
+				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 1);
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 			}
 			rfm69_send_flag = false;
 		}
@@ -301,6 +404,7 @@ void vAcceleroTask(void *pvParameters)
 //    ACCELERO_Write_Data(0x2a, 0x01);
 	for( ;; )
 	{
+<<<<<<< HEAD
 		ACCELERO_Write_Data(0x2a, 0x01);
 		if( 0x5a == ACCELERO_Read_Data(0x0d))
 		{
@@ -323,6 +427,18 @@ void vAcceleroTask(void *pvParameters)
 //				led_bank2 |= (1<<3) ;
 		}
 		delay_ms(200);
+=======
+		axis_value[0]=ACCELERO_Read_Data(0x2a);
+//		if( test_print)
+//		{
+//			test_print = false;
+//			//printf("rfm69_size = %d\r\n\r\n", rfm69_size);
+////			printf( "%d, %d,%d, %d,%d, %d,%d, %d\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],
+////									rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
+////			printf( " %d\r\n", rfm69_sendBuf[6]);
+//		}
+		delay_ms(10);
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 	}
 }
 #endif
@@ -817,6 +933,7 @@ void EEP_Dat_Init(void)
 				{
 					RFM69_freq = 433000000;
 				}
+<<<<<<< HEAD
 				rfm69_set_deadMaster = (AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_HI)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_LO));
 				rfm69_deadMaster = rfm69_set_deadMaster;
 				if((rfm69_set_deadMaster == 0) || (rfm69_set_deadMaster == 0xffff))
@@ -826,11 +943,16 @@ void EEP_Dat_Init(void)
 				}
 				CT_first_AD = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_LO);
 				if((CT_first_AD == 0xffff)||(CT_first_AD == 0))
+=======
+				CT_first_AD = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_LO);
+				if((CT_first_AD== 0xffff)||(CT_first_AD == 0))
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 				{
 					
 					CT_first_AD = 2260;
 				}
 				CT_multiple = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_LO);
+<<<<<<< HEAD
 				if((CT_multiple== 0xffff)||(CT_multiple== 0))
 				{
 					CT_multiple = 174;
@@ -906,6 +1028,12 @@ void EEP_Dat_Init(void)
 //				{
 //					CT_multiple[5] = 174;
 //				}
+=======
+				if((CT_multiple== 0xffff)||(CT_multiple == 0))
+				{
+					CT_multiple = 174;
+				}
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 				
 				#endif
 				

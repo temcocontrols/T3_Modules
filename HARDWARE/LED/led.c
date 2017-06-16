@@ -347,6 +347,7 @@ void tabulate_LED_STATE(void)
 		}
 			
 	}	
+<<<<<<< HEAD
 	  if(acc_led_count>0)
 	  {
 		  led_bank2 &= ~(1<<3) ;
@@ -355,6 +356,8 @@ void tabulate_LED_STATE(void)
 	  {
 		  led_bank2 |= (1<<3) ;
 	  }
+=======
+>>>>>>> refs/remotes/origin/T3_MODULE_ARM
 	#endif
 	
   for(i=0; i<MAX_DO; i++)
