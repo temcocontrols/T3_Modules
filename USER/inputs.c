@@ -193,7 +193,6 @@ void inputs_adc_init(void)
 
 
  int16_t vol_buf[ADC2_CHANNEL][VOL_BUF_NUM]; 
-<<<<<<< HEAD
 //__IO uint16_t DMA_Buffer[192];
 
 //uint8 ch_cout = 0;
@@ -303,97 +302,6 @@ unsigned int ctFilter(uint8_t channel,uint16_t input)
 	return uiResult;	
 }
 
-=======
-__IO uint16_t DMA_Buffer[192];
-
-uint8 ch_cout = 0;
- void TIM4_IRQHandler(void)
-{ 		    		  			    
-//	if(TIM3->SR & 0X0001)		//溢出中断
-	
-	if(TIM_GetFlagStatus(TIM4, TIM_IT_Update) == SET)
-	{
-//		for(j = 0; j<VOL_BUF_NUM; j++)
-//			vol_buf[0][j] = ADC_getChannal(ADC2,ADC_Channel_0);
-//		for(i=0; i<ADC2_CHANNEL; i++)
-//		{
-//			for (j= 0; j<VOL_BUF_NUM; j++)
-//			{
-//				vol_buf[i][j] = ADC_getChannal(ADC2,ADC_Channel_0);
-//			}
-//		}
-		vol_buf[0][ch_cout] = ADC_getChannal(ADC2,ADC_Channel_0);
-		ch_cout++;
-		ch_cout %= 192;
-	}
-	TIM_ClearFlag(TIM4, TIM_IT_Update);	
-}
-
-void TIM4_Int_Init(u16 arr, u16 psc)
-{
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
-	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-	
-	TIM_TimeBaseStructure.TIM_Period = arr;
-	TIM_TimeBaseStructure.TIM_Prescaler = psc; 
-	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
-	
-	//Timer3 NVIC 配置
-    NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级3
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;			//子优先级3
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//IRQ通道使能
-	NVIC_Init(&NVIC_InitStructure);								//根据指定的参数初始化NVIC寄存器
-	
-	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
-	TIM_Cmd(TIM4, ENABLE);
-}
-
-void  DMA1_Channel1_IRQHandler(void)
-{
-   if(DMA_GetITStatus(DMA1_IT_TC1)!=RESET){
-   
-         DMA_ClearITPendingBit(DMA1_IT_TC1);
- }
- }
-
-void dma_adc_init(void)
-{
-	DMA_InitTypeDef DMA_InitStructure;
-	
-	 NVIC_InitTypeDef NVIC_InitStructure;  
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-    NVIC_InitStructure.NVIC_IRQChannel =DMA1_Channel1_IRQn;  
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; 
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure); 
-	
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);  
-	DMA_DeInit(DMA1_Channel1);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC2->DR; ;
-	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&DMA_Buffer[0];//vol_buf[0][0];
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	DMA_InitStructure.DMA_BufferSize = 192;//ADC2_CHANNEL*VOL_BUF_NUM; 
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable; 
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;  
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable; 
-	DMA_Init(DMA1_Channel1, &DMA_InitStructure); 
-	DMA_Cmd(DMA1_Channel1, ENABLE); 
-	
-}
-
-
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 /* 
  * Function Name  : ADC_SampleRate 
  * Description    : ??ADC????? 
@@ -441,7 +349,6 @@ void ADC_SampleRate(uint32_t freq)
   TIM_CtrlPWMOutputs(TIM1, ENABLE);    
 } 
 
-<<<<<<< HEAD
 //#define WAVE_TIME 48
 
 //int16_t ac_test[3];
@@ -554,120 +461,6 @@ void ADC_SampleRate(uint32_t freq)
 //   return itemp;   
 //      
 //}
-=======
-#define WAVE_TIME 48
-
-int16_t ac_test[3];
-
-int16_t ims_count(int16_t* ims_buf )
-{
-   int32_t itemp;
-   int8_t i;
-   int16_t temp;
-   int8_t start_loc,end_loc,min1_loc,min2_loc,loc_temp;
-   int32_t vol_sum;
-	
-      start_loc = 0;                            //first more 1/2 cycle   0~19
-      end_loc = WAVE_TIME;
-      loc_temp = start_loc;
-      temp = ims_buf[loc_temp];
-      for(i=start_loc;i<end_loc;i++) // 1/4 cycle
-      {
-         if(temp >ims_buf[i])
-         {
-            loc_temp = i;
-            temp = ims_buf[i];
-         }
-      }
-      min1_loc = loc_temp; 
-   
-      
-      start_loc = WAVE_TIME;                       //sencod more 1/2 cycle  20~39
-      end_loc = start_loc + WAVE_TIME;
-      
-      loc_temp = start_loc;
-      temp = ims_buf[loc_temp];
-      for(i=start_loc;i<end_loc;i++) // 1/4 cycle
-      {
-         if(temp >ims_buf[i])
-         {
-            loc_temp = i;
-            temp = ims_buf[i];
-         }
-      }
-      min2_loc = loc_temp; 
-   
-      
-      if(ims_buf[min1_loc] > ims_buf[min2_loc])                              //select the first zero point 
-      {
-         min1_loc = min2_loc;
-      }
-      
-      start_loc = min1_loc+WAVE_TIME;                        //more 1/2 cycle
-      end_loc = WAVE_TIME + start_loc;                       //more one cycle
-      
-      loc_temp = start_loc;
-      temp = ims_buf[loc_temp];
-      for(i=start_loc;i<end_loc;i++) // 1/4 cycle
-      {
-         if(temp >ims_buf[i])
-         {
-            loc_temp = i;
-            temp = ims_buf[i];
-         }
-      }
-      min2_loc = loc_temp;         
-      temp = min2_loc - min1_loc;                   //to decide if it is right;60hz 30cycle,50hz  35cycle
-   
-   
-      ac_test[0] = min1_loc;
-      ac_test[1] = min2_loc;
-      ac_test[2] = temp;
-      
-      if((temp>100)&&(temp<140))                       //count the value of ac
-      {
-         vol_sum = 0;
-         for(i=min1_loc;i<min2_loc;i++)
-         {
-           
-            itemp = ims_buf[i];
-            itemp = itemp*ims_buf[i];
-            vol_sum += itemp;
-         }  
-         itemp = vol_sum/temp;
-         temp = sqrt(itemp);
-      }
-      else  
-         temp = 0;
-   
-   
-      return temp;
-}
-
-uint8_t read_current(uint8_t ch)
-{
-   uint16_t itemp;
-   static int8_t current_error = 0;
-   itemp = ims_count(vol_buf[ch]);
-   
-	
-   {
-   /*****************************************************/
-   // get current:  ad_value*4.094*100/1024(0.01ma)//VREF = 4.094V   
-   // multiple:     result*current_multiple[_0_10A]/100;                                                                           
-   // get current:  result/R      
-   /*****************************************************/
-//       itemp = (int32)itemp *4*current_multiple[current_mode]/1000;
-        //  itemp = (int32_t)itemp *current_multiple[sensor_type][current_mode]/1000;  
-       //itemp = itemp/1000;                  
-   }
-                                         
-   //if(abs(itemp) <20)  itemp = 0; 
-   //current_value = output_filter(itemp,current_value,CHANNEL_I);
-   return itemp;   
-      
-}
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 
 #endif
 //void dma_adc_init(void)
@@ -709,18 +502,11 @@ void inputs_init(void)
 #if defined T36CTA
 extern uint32_t vol_sum[6];
 uint16_t CT_Vaule[6];
-<<<<<<< HEAD
 //uint16_t CT_first_AD[6];
 //uint16_t CT_multiple[6];
 uint16_t CT_first_AD;
 uint16_t CT_multiple;
 
-=======
-uint16_t CT_first_AD;
-uint16_t CT_multiple;
-
-
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 void inputs_scan(void)
 {
 	static u16 new_ad[19] ;
@@ -830,7 +616,6 @@ void inputs_scan(void)
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3));
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4));
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5));
-<<<<<<< HEAD
 
 //		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
 //		channel_count++;
@@ -862,14 +647,6 @@ void inputs_scan(void)
 //		CT_Vaule[3] = (AD_Value[16]-CT_first_AD[3])*100/CT_multiple[3];
 //		CT_Vaule[4] = (AD_Value[17]-CT_first_AD[4])*100/CT_multiple[4];
 //		CT_Vaule[5] = (AD_Value[18]-CT_first_AD[5])*100/CT_multiple[5];
-=======
-		AD_Value[channel_count++]= vol_sum[0]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-		AD_Value[channel_count++]= vol_sum[1]/100;//ADC_getChannal(ADC2,ADC_Channel_1);
-		AD_Value[channel_count++]= vol_sum[2]/100;//ADC_getChannal(ADC2,ADC_Channel_2);
-		AD_Value[channel_count++]= vol_sum[3]/100;//ADC_getChannal(ADC2,ADC_Channel_3);
-		AD_Value[channel_count++]= vol_sum[4]/100;//ADC_getChannal(ADC2,ADC_Channel_4);
-		AD_Value[channel_count++]= vol_sum[5]/100;//ADC_getChannal(ADC2,ADC_Channel_5);
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		CT_Vaule[0] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[1] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[2] = (AD_Value[15]-CT_first_AD)*100/CT_multiple;
@@ -940,7 +717,6 @@ void inputs_scan(void)
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3)*10/75);
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4)*10/75);
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5)*10/75);//air_flow_ad;//(ADC_getChannal(ADC2,ADC_Channel_5)*10/75);
-<<<<<<< HEAD
 		AD_Value[channel_count++]= vol_sum[0]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
 		AD_Value[channel_count++]= vol_sum[1]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_1);
 		AD_Value[channel_count++]= vol_sum[2]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_2);
@@ -971,14 +747,6 @@ void inputs_scan(void)
 //		CT_Vaule[3] = (AD_Value[12]-CT_first_AD[3])*100/CT_multiple[3];
 //		CT_Vaule[4] = (AD_Value[13]-CT_first_AD[4])*100/CT_multiple[4];
 //		CT_Vaule[5] = (AD_Value[14]-CT_first_AD[5])*100/CT_multiple[5];
-=======
-		AD_Value[channel_count++]= vol_sum[0]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-		AD_Value[channel_count++]= vol_sum[1]/100;//ADC_getChannal(ADC2,ADC_Channel_1);
-		AD_Value[channel_count++]= vol_sum[2]/100;//ADC_getChannal(ADC2,ADC_Channel_2);
-		AD_Value[channel_count++]= vol_sum[3]/100;//ADC_getChannal(ADC2,ADC_Channel_3);
-		AD_Value[channel_count++]= vol_sum[4]/100;//ADC_getChannal(ADC2,ADC_Channel_4);
-		AD_Value[channel_count++]= vol_sum[5]/100;//ADC_getChannal(ADC2,ADC_Channel_5);
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		CT_Vaule[0] = (AD_Value[9]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[1] = (AD_Value[10]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[2] = (AD_Value[11]-CT_first_AD)*100/CT_multiple;
