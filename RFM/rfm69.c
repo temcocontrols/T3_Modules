@@ -370,7 +370,7 @@ bool RFM69_sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSi
     Timeout_SetTimeout1(retryWaitTime);
     while (!Timeout_IsTimeout1())
     {
-//      if (RFM69_ACKReceived(toAddress))
+      if (RFM69_ACKReceived(toAddress))
       {
         //Serial.print(" ~ms:"); Serial.print(millis() - sentTime);
 //		  printf("RFM69_ACKReceived and still have %d ms\r\n",rfm69_count);
@@ -499,7 +499,7 @@ void RFM69_interruptHandler() {
       return;
     }
 
-    datalen = payloadLen - 2;
+    datalen = payloadLen - 3;
     senderID = SPI_transfer8(0);
     CTLbyte = SPI_transfer8(0);
 

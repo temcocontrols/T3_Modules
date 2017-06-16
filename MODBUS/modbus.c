@@ -693,31 +693,23 @@ void internalDeal(u8 type,  u8 *pData)
 			 else
 				 RFM69_encrypt(0);
 		 }
-<<<<<<< HEAD
 		 else if(StartAdd == MODBUS_RFM69_DEADMASTER)
 		 {
 			 rfm69_set_deadMaster = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
 			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_LO, pData[HeadLen+5]);
 		 }
-=======
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		 else if( StartAdd == MODBUS_CT_FIRST_AD)
 		 {
 			 CT_first_AD = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
 			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_LO, pData[HeadLen+5]);
-<<<<<<< HEAD
 		 }		
-=======
-		 }
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		 else if( StartAdd == MODBUS_CT_MULTIPLE)
 		 {
 			 CT_multiple = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
 			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_LO, pData[HeadLen+5]);
-<<<<<<< HEAD
 		 }		 
 //		 else if( StartAdd == MODBUS_CT_FIRST_AD_1)
 //		 {
@@ -798,8 +790,6 @@ void internalDeal(u8 type,  u8 *pData)
 		 else if( StartAdd == MODBUS_ACC_SENSITIVITY_HI)
 		 {
 			 acc_sensitivity[1] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-=======
->>>>>>> refs/remotes/origin/T3_MODULE_ARM
 		 }
 	  #endif
 	  
@@ -2096,34 +2086,6 @@ void responseCmd(u8 type, u8* pData)
 		 {
 			 temp1 = (acc_sensitivity[1]>>8) & 0xff ;
                temp2 = acc_sensitivity[1]&0xff ;
-               sendbuf[send_cout++] = temp1 ;
-               sendbuf[send_cout++] = temp2 ;
-               crc16_byte(temp1);
-               crc16_byte(temp2);
-		 }
-		 else if( (address>=MODBUS_CT_AMPERE_1)&&(address<=MODBUS_CT_AMPERE_6))
-		 {
-			 address_temp = address - MODBUS_CT_AMPERE_1 ;
-			 temp1 = (CT_Vaule[address_temp]>>8)&0xff;
-			 temp2 = CT_Vaule[address_temp]&0xff ;
-               sendbuf[send_cout++] = temp1 ;
-               sendbuf[send_cout++] = temp2 ;
-               crc16_byte(temp1);
-               crc16_byte(temp2);
-		 }
-		 else if( address == MODBUS_CT_FIRST_AD)
-		 {
-			 temp1 = (CT_first_AD>>8) & 0xff ;
-               temp2 = CT_first_AD&0xff ;
-               sendbuf[send_cout++] = temp1 ;
-               sendbuf[send_cout++] = temp2 ;
-               crc16_byte(temp1);
-               crc16_byte(temp2);
-		 }
-		 else if( address == MODBUS_CT_MULTIPLE)
-		 {
-			 temp1 = (CT_multiple>>8) & 0xff ;
-               temp2 = CT_multiple&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
