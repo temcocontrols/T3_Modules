@@ -7,6 +7,10 @@
 #include "../filter/filter.h"
 #include "controls.h"
 #include "math.h"
+#if (defined T36CTA)
+#include "air_flow.h"
+#endif
+
 #if (defined T322AI) || (T38AI8AO6DO)	|| (defined T36CTA)
 uint16_t data_change[MAX_AI_CHANNEL] = {0} ;
 #endif
@@ -641,12 +645,7 @@ void inputs_scan(void)
 		AD_Value[channel_count++]= vol_sum[4]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_4);
 		AD_Value[channel_count++]= vol_sum[5]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_5);
 		
-//		CT_Vaule[0] = (AD_Value[13]-CT_first_AD[0])*100/CT_multiple[0];
-//		CT_Vaule[1] = (AD_Value[14]-CT_first_AD[1])*100/CT_multiple[1];
-//		CT_Vaule[2] = (AD_Value[15]-CT_first_AD[2])*100/CT_multiple[2];
-//		CT_Vaule[3] = (AD_Value[16]-CT_first_AD[3])*100/CT_multiple[3];
-//		CT_Vaule[4] = (AD_Value[17]-CT_first_AD[4])*100/CT_multiple[4];
-//		CT_Vaule[5] = (AD_Value[18]-CT_first_AD[5])*100/CT_multiple[5];
+
 		CT_Vaule[0] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[1] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[2] = (AD_Value[15]-CT_first_AD)*100/CT_multiple;
@@ -707,6 +706,7 @@ void inputs_scan(void)
 	}
 	else if (channel_count== 8)
 	{
+		AD_Value[8] = Pressure.ad;
 		channel_count++;
 	}
 	else
@@ -741,12 +741,7 @@ void inputs_scan(void)
 //		AD_Value[channel_count]= vol_sum[5]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
 //		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
 //		channel_count++;
-//		CT_Vaule[0] = (AD_Value[9]-CT_first_AD[0])*100/CT_multiple[0];
-//		CT_Vaule[1] = (AD_Value[10]-CT_first_AD[1])*100/CT_multiple[1];
-//		CT_Vaule[2] = (AD_Value[11]-CT_first_AD[2])*100/CT_multiple[2];
-//		CT_Vaule[3] = (AD_Value[12]-CT_first_AD[3])*100/CT_multiple[3];
-//		CT_Vaule[4] = (AD_Value[13]-CT_first_AD[4])*100/CT_multiple[4];
-//		CT_Vaule[5] = (AD_Value[14]-CT_first_AD[5])*100/CT_multiple[5];
+
 		CT_Vaule[0] = (AD_Value[9]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[1] = (AD_Value[10]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[2] = (AD_Value[11]-CT_first_AD)*100/CT_multiple;
@@ -955,7 +950,7 @@ u16 ADC_getChannal(ADC_TypeDef* ADCx, u8 channal)
  void range_set_func(u8 channel)
  {
 	 
-	 #ifndef T3PT12
+	 #if 0//ndef T3PT12
 	if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range ==V0_5||inputs[channel].range ==P0_100_0_5V))
 	 {
 				RANGE_SET0 = 1 ;
@@ -984,6 +979,82 @@ u16 ADC_getChannal(ADC_TypeDef* ADCx, u8 channal)
 				RANGE_SET1 = 1 ;
 				inputs[channel].decom = inputs[channel].decom &0x0f ;
 				inputs[channel].decom |= (T3_NO_USE<<4) ;
+	 }
+	 #endif
+	 #ifndef T3PT12
+	 U8_T temp;
+	
+
+		temp = inputs[channel].decom;
+		temp = temp & 0x0f;
+		if ((inputs[channel].digital_analog == 1)&&((inputs[channel].range >= table1) && (inputs[channel].range <= table5)))	
+		{
+			if((inputs[channel].decom & 0xf0) >> 4 == T3_V05)
+			{
+				RANGE_SET0 = 1 ;
+				RANGE_SET1 = 0 ;
+				input_type[channel] = T3_V05;
+				//inputs[channel].decom = temp | (T3_V05 << 4);
+			}
+			else if((inputs[channel].decom & 0xf0) >> 4 == T3_V010)
+			{
+				RANGE_SET0 = 0 ;
+				RANGE_SET1 = 1 ;
+				input_type[channel] = T3_V010;
+				//inputs[channel].decom = temp | (T3_V010 << 4);
+			}
+			else if((inputs[channel].decom & 0xf0) >> 4 == T3_I020ma)
+			{
+				RANGE_SET0 = 0 ;
+				RANGE_SET1 = 0 ;
+				input_type[channel] = T3_I020ma;
+				//inputs[channel].decom = temp | (T3_I020ma<<4);
+			}
+			else
+			{
+				RANGE_SET0 = 1 ;
+				RANGE_SET1 = 1 ;
+				input_type[channel] = T3_NO_USE;
+				//inputs[channel].decom |= (T3_NO_USE<<4) ;
+			}
+		}
+		else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == V0_5||inputs[channel].range == P0_100_0_5V))
+	 //if(input_type[channel] == INPUT_V0_5)
+	 {
+				RANGE_SET0 = 1 ;
+				RANGE_SET1 = 0 ;
+				
+				inputs[channel].decom = temp | (T3_V05<<4);
+//				inputs[channel].decom = inputs[channel].decom &0x0f ;
+//				inputs[channel].decom |= (T3_V05<<4) ;
+		  input_type[channel] = T3_V05;
+	 }
+	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == V0_10_IN ))
+	 //if(input_type[channel] == INPUT_0_10V)
+	 {
+				RANGE_SET0 = 0 ;
+				RANGE_SET1 = 1 ;
+				inputs[channel].decom = inputs[channel].decom &0x0f ;
+				inputs[channel].decom |= (T3_V010<<4) ;
+		 input_type[channel] = T3_V010;
+	 }
+	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
+	 //if(input_type[channel] == INPUT_I0_20ma)
+	 {
+				RANGE_SET0 = 0 ;
+				RANGE_SET1 = 0 ;
+				inputs[channel].decom = inputs[channel].decom &0x0f ;
+				inputs[channel].decom |= (T3_I020ma<<4) ;
+		 input_type[channel] = T3_I020ma;
+	 }
+	 else /*if((inputs[channel].digital_analog == 0)||(inputs[channel].digital_analog == 1 &&((inputs[channel].range>=Y3K_40_150DegC)&&inputs[channel].range<= A10K_60_200DegF))
+		 ||(inputs[channel].range == Frequence)||(inputs[channel].range == HI_spd_count)||(inputs[channel].range == HI_spd_count))*/
+	 {
+				RANGE_SET0 = 1 ;
+				RANGE_SET1 = 1 ;
+				inputs[channel].decom = inputs[channel].decom &0x0f ;
+				inputs[channel].decom |= (T3_NO_USE<<4) ;
+				input_type[channel] = T3_NO_USE;
 	 }
 	 #endif
  }

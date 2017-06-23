@@ -22,7 +22,7 @@ Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
 G:\T3_6CT\T3_ARM\USER\test.uvprojx
-Project File Date:  06/20/2017
+Project File Date:  06/16/2017
 
 <h2>Output:</h2>
 Build target 'STM32F103'
@@ -41,15 +41,19 @@ compiling main.c...
   //#endif
 ..\ACCELERO\accelero_meter.h(47): warning:  #1-D: last line of file ends without a newline
   //#endif
+main.c(245): warning:  #940-D: missing return statement at end of non-void function "rfm69_checkData"
+   }
+main.c(209): warning:  #550-D: variable "crc_val" was set but never used
+     u16 crc_val;
 main.c(210): warning:  #177-D: variable "i" was declared but never referenced
      u8 i;
 main.c(250): warning:  #177-D: variable "temp" was declared but never referenced
         u8 temp;
-main.c: 9 warnings, 0 errors
+main.c: 11 warnings, 0 errors
 linking...
-Program Size: Code=93114 RO-data=2458 RW-data=648 ZI-data=62456  
+Program Size: Code=109378 RO-data=2470 RW-data=676 ZI-data=62476  
 FromELF: creating hex file...
-"..\OBJ\T3_6cta_REV2_2.axf" - 0 Error(s), 9 Warning(s).
+"..\OBJ\T3_6cta_REV2_2_forTest.axf" - 0 Error(s), 11 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   G:\T3_6CT\T3_ARM\USER\RTE

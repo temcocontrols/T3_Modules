@@ -3,7 +3,9 @@
 #include "modbus.h"
 extern volatile uint16_t SilenceTime;
 //u32 dhcp_run_time = 30000;
-uint16_t rfm69_count;
+#if (defined T36CTA)
+uint16_t rfm69_count; //for wireless modules TBD: move this to a define for this particular project
+#endif
 //定时器3中断服务程序	 
 void TIM3_IRQHandler(void)
 { 		    		  			    
@@ -138,8 +140,10 @@ void TIM6_IRQHandler(void)//1ms
 		refresh_led();
 		led_count= 0 ;
 	}
+#if (defined T36CTA)	
 	if(rfm69_count>0)
 		rfm69_count--;
+#endif		
 //	TIM6->SR &= ~(1 << 0);	//清除中断标志位 
 	TIM_ClearFlag(TIM6, TIM_IT_Update);		
 }

@@ -77,7 +77,7 @@ extern uint8_t get_max_input(void);
 
 extern uint32_t conver_by_unit_5v(uint32_t sample);
 extern uint32_t conver_by_unit_10v(uint32_t sample);
-extern uint32_t conver_by_unit_custable(uint8_t point,uint8 sample);
+extern uint32_t conver_by_unit_custable(uint8_t point,uint32_t sample);
 extern uint32_t get_high_spd_counter(uint8_t point);
 
 #if (defined T38AI8AO6DO) || (defined T36CTA)

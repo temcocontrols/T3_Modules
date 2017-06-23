@@ -22,11 +22,11 @@ Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
 G:\T3_6CT\T3_ARM\USER\test.uvprojx
-Project File Date:  06/20/2017
+Project File Date:  06/21/2017
 
 <h2>Output:</h2>
 Build target 'STM32F103'
-compiling main.c...
+compiling modbus.c...
 ..\RFM\rfm69.h(64): warning:  #1295-D: Deprecated declaration noInterrupts - give arg types
   extern void noInterrupts();                // function to disable interrupts
 ..\RFM\rfm69.h(65): warning:  #1295-D: Deprecated declaration interrupts - give arg types
@@ -41,15 +41,25 @@ compiling main.c...
   //#endif
 ..\ACCELERO\accelero_meter.h(47): warning:  #1-D: last line of file ends without a newline
   //#endif
-main.c(210): warning:  #177-D: variable "i" was declared but never referenced
-     u8 i;
-main.c(250): warning:  #177-D: variable "temp" was declared but never referenced
-        u8 temp;
-main.c: 9 warnings, 0 errors
+..\MODBUS\modbus.c(585): warning:  #177-D: variable "modbus_temp" was declared but never referenced
+              u16 modbus_temp ;
+..\MODBUS\modbus.c(586): warning:  #177-D: variable "cal_temp" was declared but never referenced
+              s16 cal_temp = 0 ;
+..\MODBUS\modbus.c(210): warning:  #177-D: variable "div_buf" was declared but never referenced
+     u8 div_buf ;
+..\MODBUS\modbus.c(1807): warning:  #223-D: function "RFM69_select" declared implicitly
+                         RFM69_select();
+..\MODBUS\modbus.c(1810): warning:  #223-D: function "RFM69_unselect" declared implicitly
+                                RFM69_unselect();
+..\MODBUS\modbus.c(1488): warning:  #177-D: variable "div_temp" was declared but never referenced
+        u16 div_temp ;
+..\MODBUS\modbus.c(1489): warning:  #177-D: variable "address_buf" was declared but never referenced
+        u16 address_buf ;
+..\MODBUS\modbus.c: 14 warnings, 0 errors
 linking...
-Program Size: Code=93114 RO-data=2458 RW-data=648 ZI-data=62456  
+Program Size: Code=93434 RO-data=2458 RW-data=644 ZI-data=62452  
 FromELF: creating hex file...
-"..\OBJ\T3_6cta_REV2_2.axf" - 0 Error(s), 9 Warning(s).
+"..\OBJ\T3_6cta_REV2_3_testCT.axf" - 0 Error(s), 14 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   G:\T3_6CT\T3_ARM\USER\RTE

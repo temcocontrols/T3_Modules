@@ -101,7 +101,7 @@ void KEY_Status_Scan(void)
 	GPIO_SetBits(GPIOA, GPIO_Pin_14);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_15 );
 	auto_status = GPIO_ReadInputData(GPIOD);
-	auto_key3_status = GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_2);
+//	auto_key3_status = GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_2);
 	auto_key13_status =GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)  ;
 	auto_key14_status =GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_11)  ;
 	//printf("AUTO GPIOD is %d, %d,%d,%d\r\n", auto_status, auto_key3_status, auto_key13_status, auto_key14_status);
@@ -109,32 +109,15 @@ void KEY_Status_Scan(void)
 	GPIO_SetBits(GPIOA, GPIO_Pin_15);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_14);
 	hand_status = GPIO_ReadInputData(GPIOD);
-	hand_key3_status = GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_2);
+//	hand_key3_status = GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_2);
 	hand_key13_status =GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)  ;
 	hand_key14_status =GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_11)  ;
-	//printf("HAND GPIOD is %d, %d,%d,%d\r\n", hand_status, hand_key3_status, hand_key13_status, hand_key14_status);
-//	hand_status = (hand_status<<2)| hand_key13_status ;
-//	auto_status = (auto_status<<2)| auto_key13_status ;
-	
-//	key_analyse(hand_status, auto_status, (SWITCH_NUM-2),  (u8*)switch_state_buf);
-//	key_analyse(hand_key3_status, auto_key3_status, 1,  (u8*)switch_state_buf+2);
-	//key_analyse((hand_status>>3), (auto_status>>3), (SWITCH_NUM-5),  (u8*)switch_state_buf+3);
-//	key_analyse(hand_key13_status, auto_key13_status, 1,  (u8*)switch_state_buf+12);
-//	key_analyse(hand_key14_status, auto_key14_status, 1,  (u8*)switch_state_buf+13);
+
 	key_analyse(hand_key13_status, auto_key13_status, 1,  (u8*)switch_state_buf+1);
 	key_analyse(hand_key14_status, auto_key14_status, 1,  (u8*)switch_state_buf);
 	
 	modbus.switch_gourp[0] = 0 ;
 	modbus.switch_gourp[1] = 0 ;
-	
-//	
-//	modbus.switch_gourp[0]
-//	for(i=0; i<5; i++)
-//	{
-//		modbus.switch_gourp[0] = modbus.switch_gourp[0]<<2 ;
-//		modbus.switch_gourp[0] |= switch_state_buf[i] ;
-//	}
-	
 	
 	modbus.switch_gourp[0] =  switch_state_buf[0] + (switch_state_buf[1]<<2);//+(switch_state_buf[2]<<4)+(switch_state_buf[13]<<6)+(switch_state_buf[12]<<8)+(switch_state_buf[11]<<10);	
 //	modbus.switch_gourp[1] =  switch_state_buf[10] + (switch_state_buf[9]<<2)+(switch_state_buf[8]<<4)+(switch_state_buf[7]<<6)+(switch_state_buf[6]<<8)+(switch_state_buf[5]<<10)+(switch_state_buf[4]<<12)
@@ -149,18 +132,7 @@ void KEY_Status_Scan(void)
 
 				outputs[0].switch_status = switch_state_buf[0] ;
 				outputs[1].switch_status = switch_state_buf[1] ;
-//				outputs[2].switch_status = switch_state_buf[2] ;
-//				outputs[3].switch_status = switch_state_buf[13] ;
-//				outputs[4].switch_status = switch_state_buf[12] ;
-//				outputs[5].switch_status = switch_state_buf[11] ;
-//				outputs[6].switch_status = switch_state_buf[10] ;
-//				outputs[7].switch_status = switch_state_buf[9] ;
-//				outputs[8].switch_status = switch_state_buf[8] ;
-//				outputs[9].switch_status = switch_state_buf[7] ;
-//				outputs[10].switch_status = switch_state_buf[6] ;
-//				outputs[11].switch_status = switch_state_buf[5] ;
-//				outputs[12].switch_status = switch_state_buf[4] ;
-//				outputs[13].switch_status = switch_state_buf[3] ;				
+			
 //		for(i = 0; i< MAX_AO; i++)
 //		{
 //			outputs[i+MAX_DO].switch_status = modbus.switch_gourp[1]>>(i*2) & 0x03 ;

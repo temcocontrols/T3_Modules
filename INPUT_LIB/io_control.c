@@ -55,11 +55,11 @@ unsigned int conver_by_unit_10v(uint32_t sample)
 
 // 把adc值转化成customer table的range显示
 // 如果是input最新模块不需要修改
-unsigned int conver_by_unit_custable(uint8_t point,uint8_t sample)
+uint32_t conver_by_unit_custable(uint8_t point,uint32_t sample)
 {	
 	if(input_type[point] == INPUT_V0_5)
 	{
-			return  ( sample * 50L ) >> 10;		
+			return  ( 5000L * sample) >> 10;		
 	}
 	else if(input_type[point] == INPUT_I0_20ma)
 	{
@@ -67,13 +67,13 @@ unsigned int conver_by_unit_custable(uint8_t point,uint8_t sample)
 	}
 	else if(input_type[point] == INPUT_0_10V)
 	{
-		return (sample * 10000) >> 10;
-	}	
+			return ( 10000l * sample) >> 10;		
+
+	}
 	else if(input_type[point] == INPUT_THERM)
 	{
-		return get_input_value_by_range( inputs[point].range, inputs[point].value );
+		return 0;//get_input_value_by_range( inputs[point].range, sample );
 	}
-		
 }
 
 
