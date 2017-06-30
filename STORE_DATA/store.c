@@ -187,7 +187,26 @@ void mass_flash_init(void)
 		STMFLASH_ErasePage(IN_PAGE_FLAG);
 		for(loop=0; loop<MAX_INS; loop++ )
 		{
+			#if (defined T36CTA)
+				#if (defined T36CTA_REV1)
+				if( loop < 13)
+					sprintf((char*)label_buf, "AI%u", loop);
+				else
+					sprintf((char*)label_buf, "CT%u", loop-12);
+				#endif
+				#if (defined T36CTA_REV2)
+				if( loop < 8)
+					sprintf((char*)label_buf, "AI%u", loop);
+				else if(loop == 8)
+					sprintf((char*)label_buf, "AIR FLOW");
+				else if(loop == 9)
+					sprintf((char*)label_buf, "ACCELEROMETER");
+				else
+					sprintf((char*)label_buf, "CT%u", loop-9);
+				#endif
+			#else
 			sprintf((char*)label_buf, "AI%u", loop);
+			#endif
 			memcpy(inputs[loop].description, label_buf, 21);
 			memcpy(inputs[loop].label, label_buf, 9);		
 			inputs[loop].value = 0; 

@@ -699,6 +699,13 @@ void internalDeal(u8 type,  u8 *pData)
 			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_LO, pData[HeadLen+5]);
 		 }
+		 else if(StartAdd == MODBUS_RFM69_BITRATE)
+		 {
+			 RFM69_biterate = (pData[HeadLen+4]<<8)|pData[HeadLen+5];
+			 RFM69_setBitRate(RFM69_biterate);
+			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_HI, pData[HeadLen+4]);
+			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_LO, pData[HeadLen+5]);
+		 }
 		 else if( StartAdd == MODBUS_CT_FIRST_AD)
 		 {
 			 CT_first_AD = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
@@ -1870,6 +1877,15 @@ void responseCmd(u8 type, u8* pData)
 			 temp1 = (rfm69_set_deadMaster>>8) & 0xff ;
                temp2 = rfm69_set_deadMaster&0xff ;
                sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if(address == MODBUS_RFM69_BITRATE)
+		 {
+			 temp1 = (uint8)(RFM69_getBitRate()>>8) & 0xff;
+			 temp2 = (uint8)RFM69_getBitRate()&0xff ;
+			 sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
                crc16_byte(temp2);

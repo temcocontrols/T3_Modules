@@ -148,7 +148,7 @@ int main(void)
 }
 #if defined T36CTA
 
-
+//uint8_t t36ct_ver = T36CTA_REV1;
 uint32_t vol_sum[6];
 
 void vGetACTask( void *pvParameters)
@@ -254,6 +254,7 @@ void vRFMTask( void *pvParameters)
 
 	rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
 	RFM69_encrypt(rfm69_key);
+	RFM69_setBitRate(RFM69_biterate);
 
 	RFM69_setMode(RF69_MODE_RX);
 	for( ;; )
@@ -266,6 +267,7 @@ void vRFMTask( void *pvParameters)
 		{
 			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
 			RFM69_encrypt(rfm69_key);
+			RFM69_setBitRate(RFM69_biterate);
 			rfm69_deadMaster = rfm69_set_deadMaster;
 		}
 		if(rfm69_send_flag)
@@ -294,7 +296,7 @@ void vAcceleroTask(void *pvParameters)
 	int16 tempAcc;
 	ACCELERO_IO_Init();
 	/* Write CTL REG1 register, set ACTIVE mode */
-	delay_ms(1000);
+	//delay_ms(1000);
  	ACCELERO_I2C_init();
 //    ACCELERO_Write_Data(0x2a, 0x01);
 	for( ;; )
@@ -302,6 +304,7 @@ void vAcceleroTask(void *pvParameters)
 		ACCELERO_Write_Data(0x2a, 0x01);
 		if( 0x5a == ACCELERO_Read_Data(0x0d))
 		{
+	//		t36ct_ver = T36CTA_REV2;
 			//axis_value[0] = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
 			acc_temp = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
 			tempAcc = axis_value[asix_sequence] - acc_temp;
@@ -801,7 +804,7 @@ void EEP_Dat_Init(void)
 				RFM69_networkID = (AT24CXX_ReadOneByte(EEP_RFM69_NETWORK_ID_HI)<<8)|AT24CXX_ReadOneByte(EEP_RFM69_NETWORK_ID_LO);
 				if((RFM69_networkID == 0xffff)||(RFM69_networkID == 0))
 				{
-					RFM69_networkID = 0x55AA;
+					RFM69_networkID = 0x1;
 				}
 				
 				RFM69_nodeID = AT24CXX_ReadOneByte(EEP_RFM69_NODE_ID);
@@ -813,7 +816,7 @@ void EEP_Dat_Init(void)
 								|(AT24CXX_ReadOneByte(EEP_RFM69_FREQ_3)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_FREQ_4)));
 				if((RFM69_freq == 0xffffffff) || (RFM69_freq == 0))
 				{
-					RFM69_freq = 433000000;
+					RFM69_freq = 915000000;
 				}
 				rfm69_set_deadMaster = (AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_HI)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_LO));
 				rfm69_deadMaster = rfm69_set_deadMaster;
@@ -821,6 +824,12 @@ void EEP_Dat_Init(void)
 				{
 					rfm69_deadMaster = RFM69_DEFAULT_DEADMASTER;
 					rfm69_set_deadMaster = RFM69_DEFAULT_DEADMASTER;
+				}
+				RFM69_biterate = (AT24CXX_ReadOneByte(EEP_RFM69_BITRATE_HI)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_BITRATE_LO));
+				if((RFM69_biterate == 0) || (RFM69_biterate == 0xffff))
+				{
+					//RFM69_setBitRate(0x0d05);
+					RFM69_biterate = 0x0d05;
 				}
 				CT_first_AD = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_LO);
 				if((CT_first_AD == 0xffff)||(CT_first_AD == 0))

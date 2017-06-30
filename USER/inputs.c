@@ -644,7 +644,6 @@ void inputs_scan(void)
 		AD_Value[channel_count++]= vol_sum[3]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_3);
 		AD_Value[channel_count++]= vol_sum[4]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_4);
 		AD_Value[channel_count++]= vol_sum[5]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_5);
-		
 
 		CT_Vaule[0] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
 		CT_Vaule[1] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
@@ -717,6 +716,8 @@ void inputs_scan(void)
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3)*10/75);
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4)*10/75);
 //		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5)*10/75);//air_flow_ad;//(ADC_getChannal(ADC2,ADC_Channel_5)*10/75);
+		
+		AD_Value[channel_count++] = 0;
 		AD_Value[channel_count++]= vol_sum[0]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
 		AD_Value[channel_count++]= vol_sum[1]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_1);
 		AD_Value[channel_count++]= vol_sum[2]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_2);

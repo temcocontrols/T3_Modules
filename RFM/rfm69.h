@@ -59,6 +59,7 @@ extern bool RFM69_enable;
 extern uint8_t rfm69_id;
 extern uint8_t rfm69_size;
 extern uint8_t rfm69_sendBuf[];
+extern uint16_t RFM69_biterate;
 
 // module interface, platform specific
 extern void noInterrupts();                // function to disable interrupts
@@ -77,6 +78,8 @@ extern void RFM69_interruptHandler(void);
 extern void RFM69_encrypt(const char* key) ;
 extern void RFM69_setFrequency(uint32_t freqHz);
 extern int16_t RFM69_readRSSI(bool forceTrigger); 
+extern uint16_t RFM69_getBitRate(void);
+extern void RFM69_setBitRate(uint16_t bitRate);
 
 extern void RFM69_setAddress(uint8_t addr);
 extern void RFM69_GPIO_init(void);

@@ -31,6 +31,7 @@ char rfm69_key[16] = "ABCDEFGHIJKLMNOP";
 uint16_t RFM69_networkID;
 uint8_t RFM69_nodeID;
 uint32_t RFM69_freq;
+uint16_t RFM69_biterate;
 bool RFM69_enable = true;
 
 extern uint16_t rfm69_count;
@@ -143,8 +144,8 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   {
     /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
     /* 0x02 */ { REG_DATAMODUL, RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00 }, // no shaping
-    /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_55555}, // default: 4.8 KBPS
-    /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_55555},
+//    /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_9600}, // default: 4.8 KBPS
+//    /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_9600},
     /* 0x05 */ { REG_FDEVMSB, RF_FDEVMSB_50000}, // default: 5KHz, (FDEV + BitRate / 2 <= 500KHz)
     /* 0x06 */ { REG_FDEVLSB, RF_FDEVLSB_50000},
 
@@ -247,6 +248,17 @@ void RFM69_setFrequency(uint32_t freqHz)
     RFM69_setMode(RF69_MODE_SYNTH);
   }
   RFM69_setMode(oldMode);
+}
+
+uint16_t RFM69_getBitRate(void)
+{
+	return ((uint16_t) RFM69_readReg(REG_BITRATEMSB) << 8) + RFM69_readReg(REG_BITRATELSB);
+}
+
+void RFM69_setBitRate(uint16_t bitRate)
+{
+	RFM69_writeReg(REG_BITRATEMSB, bitRate >> 8);
+  RFM69_writeReg(REG_BITRATELSB, bitRate);
 }
 
 void RFM69_setMode(uint8_t newMode)
