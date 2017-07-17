@@ -47,7 +47,7 @@
 #define REGISTER_DETAIL 1
 
 #define	RFM_CS	PDout(2) //RFM69Æ¬Ñ¡Òý½Å	
-#define RFM69_DEFAULT_DEADMASTER    50
+#define RFM69_DEFAULT_DEADMASTER    200
 
 extern uint16_t rfm69_deadMaster;
 extern uint16_t rfm69_set_deadMaster;

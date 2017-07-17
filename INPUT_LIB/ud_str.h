@@ -207,9 +207,11 @@ typedef enum { not_used_input, Y3K_40_150DegC, Y3K_40_300DegF, R10K_40_120DegC,
 	I0_20ma, I0_20psi, N0_2_32counts, N0_3000FPM_0_10V, P0_100_0_5V,
 	P0_100_4_20ma/*, P0_255p_min*/, V0_10_IN, table1, table2, table3, table4,
 	table5, HI_spd_count, Frequence
-#if (defined T36CTA)
+#if 1 //(defined T36CTA)
+	#if 1//(defined T36CTA_REV2)
 	,Humidty, co2,pressureInWc, pressureKpa, pressurePsi, pressureMmHg,pressureInHg,
 	pressureKgcm, pressureAtmos,pressureBar, Reserved1,Reserved2,Reserved3
+	#endif
 #endif
 	} Analog_input_range_equate;
 

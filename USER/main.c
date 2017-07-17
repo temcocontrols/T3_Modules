@@ -265,7 +265,21 @@ void vRFMTask( void *pvParameters)
 		rfm69_deadMaster--;
 		if(rfm69_deadMaster == 0)
 		{
+			RFM_CS = 0;
+			delay_ms(5);
+			//printf("deadmaster...");
+			RFM69_GPIO_init();
 			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+			RFM69_freq = RFM69_getFrequency();
+			if( (RFM69_freq != 915000000) &&(RFM69_freq != 433000000)&&(RFM69_freq != 315000000)&&(RFM69_freq != 868000000))
+			{
+				RFM69_freq = 915000000;
+				RFM69_setFrequency(RFM69_freq);
+			}
+//			if( RFM69_freq!= RFM69_getFrequency())
+//			{
+//				
+//			}
 			RFM69_encrypt(rfm69_key);
 			RFM69_setBitRate(RFM69_biterate);
 			rfm69_deadMaster = rfm69_set_deadMaster;
