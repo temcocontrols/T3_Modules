@@ -10,7 +10,7 @@ extern vu16 AD_Value[MAX_AI_CHANNEL];
 
 #if defined T36CTA
 #define ADC2_CHANNEL			6
-#define  VOL_BUF_NUM              5
+#define  VOL_BUF_NUM              3
 extern int16_t vol_buf[ADC2_CHANNEL][VOL_BUF_NUM]; 
 //extern __IO uint16_t DMA_Buffer[192];
 extern uint16_t air_flow_ad;
@@ -19,6 +19,7 @@ extern uint16_t CT_Vaule[6];
 //extern uint16_t CT_multiple[6];
 extern uint16_t CT_first_AD;
 extern uint16_t CT_multiple;
+extern uint8_t t36ct_ver;
 #endif
 #ifndef  T3PT12
 

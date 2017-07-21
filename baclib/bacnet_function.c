@@ -1,3 +1,4 @@
+#ifndef T36CTA
 #include "stdint.h"
 #include "types.h"
 #include "define.h"
@@ -37,6 +38,52 @@ const u8 Variable_name[][9] = {
 					"GATEWAY_3" ,
 					"GATEWAY_4" ,
 					"IP_PORT"		,
+	                #if 0//(defined T36CTA_REV1)
+					"AI1_RANGE"	,
+					"AI2_RANGE"	,
+					"AI3_RANGE"	,
+					"AI4_RANGE"	,
+					"AI5_RANGE"	,
+					"AI6_RANGE"	,
+					"AI7_RANGE"	,
+					"AI8_RANGE"	,
+					"AI9_RANGE"	,
+					"AI10RANGE",
+					"AI11RANGE"	,
+					"AI12RANGE"	,
+					"AI13RANGE"	,
+					"AI14RANGE"	,
+					"AI15RANGE"	,
+					"AI16RANGE"	,
+					"AI17RANGE"	,
+					"AI18RANGE"	,
+					"AI19RANGE"	,
+					"DO1_SW",
+					"DO2_SW",
+					#endif
+					#if 0//(defined T36CTA_REV2)
+					"AI1_RANGE"	,
+					"AI2_RANGE"	,
+					"AI3_RANGE"	,
+					"AI4_RANGE"	,
+					"AI5_RANGE"	,
+					"AI6_RANGE"	,
+					"AI7_RANGE"	,
+					"AI8_RANGE"	,
+					"AI9_RANGE"	,
+					"AI10RANGE",
+					"AI11RANGE"	,
+					"AI12RANGE"	,
+					"AI13RANGE"	,
+					"CT1"	,
+					"CT2"	,
+					"CT3"	,
+					"CT4"	,
+					"CT5"	,
+					"CT6"	,
+					"DO1_SW",
+					"DO2_SW",
+					#endif
 					#if (defined T38AI8AO6DO) || (defined T36CTA)
 					"AI1_RANGE"	,
 					"AI2_RANGE"	,
@@ -732,3 +779,4 @@ char* Get_Object_Name(void)
 //    memcpy(uart_send, p, length);
 //   USART_SendDataString(length);
 //}
+#endif

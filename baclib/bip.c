@@ -31,7 +31,7 @@
  License.
  -------------------------------------------
 ####COPYRIGHTEND####*/
-
+#ifndef T36CTA
 #include <stdint.h>     /* for standard integer types uint8_t etc. */
 #include <stdbool.h>    /* for the standard bool type. */
 #include "bacdcode.h"
@@ -867,4 +867,4 @@ void bip_get_broadcast_address(
     return;
 }
 
-
+#endif

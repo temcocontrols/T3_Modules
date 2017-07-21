@@ -93,6 +93,10 @@ static void debug_config(void)
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 }
 
+#if defined T36CTA
+uint8_t t36ct_ver = T36CTA_REV1;
+#endif
+
 int main(void)
 {
 	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x8008000);
@@ -107,6 +111,15 @@ int main(void)
 	beeper_gpio_init();
 	beeper_on();
 	beeper_off();	
+	#if defined T36CTA
+	ACCELERO_IO_Init();
+	ACCELERO_I2C_init();
+	ACCELERO_Write_Data(0x2a, 0x01);
+	if( 0x5a == ACCELERO_Read_Data(0x0d))
+	{
+		t36ct_ver = T36CTA_REV2;
+	}
+	#endif
 	EEP_Dat_Init();
 	mass_flash_init() ;
 	//Lcd_Initial();
@@ -129,7 +142,7 @@ int main(void)
 	//xTaskCreate( vUSBTask, ( signed portCHAR * ) "USB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	/* Start the scheduler. */
  	#if (defined T38AI8AO6DO) || (defined T36CTA)
-	xTaskCreate( vOUTPUTSTask, ( signed portCHAR * ) "OUTPUTS", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vOUTPUTSTask, ( signed portCHAR * ) "OUTPUTS", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vKEYTask, ( signed portCHAR * ) "KEY", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	#endif
 	#if defined T36CTA
@@ -143,12 +156,14 @@ int main(void)
 	#ifdef T3PT12
 	xTaskCreate( vI2C_READ, ( signed portCHAR * ) "READ_I2C", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + 2, NULL );
 	#endif
+	#ifndef T36CTA
 	xTaskCreate( vMSTP_TASK, ( signed portCHAR * ) "MSTP", configMINIMAL_STACK_SIZE + 256  , NULL, tskIDLE_PRIORITY + 4, NULL );
+	#endif
 	vTaskStartScheduler();
 }
 #if defined T36CTA
 
-
+//uint8_t t36ct_ver = T36CTA_REV1;
 uint32_t vol_sum[6];
 
 void vGetACTask( void *pvParameters)
@@ -254,18 +269,32 @@ void vRFMTask( void *pvParameters)
 
 	rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
 	RFM69_encrypt(rfm69_key);
+	RFM69_setBitRate(RFM69_biterate);
 
 	RFM69_setMode(RF69_MODE_RX);
 	for( ;; )
 	{
-		delay_ms(100);
+		delay_ms(500);
 
 		RFM69_setMode(RF69_MODE_RX);
 		rfm69_deadMaster--;
 		if(rfm69_deadMaster == 0)
 		{
+			GPIO_SetBits(GPIOC,GPIO_Pin_12);
+			delay_us(1000);
+			GPIO_ResetBits(GPIOC,GPIO_Pin_12);
+			delay_ms(60);
+			RFM_CS = 0;
+			RFM69_GPIO_init();
 			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
 			RFM69_encrypt(rfm69_key);
+			if( RFM69_freq!= RFM69_getFrequency())
+			{
+				RFM69_setFrequency(RFM69_freq);
+			}
+			
+			RFM69_setBitRate(RFM69_biterate);
+			delay_ms(1000);
 			rfm69_deadMaster = rfm69_set_deadMaster;
 		}
 		if(rfm69_send_flag)
@@ -279,11 +308,10 @@ void vRFMTask( void *pvParameters)
 				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
 				internalDeal(10, rfm69_sendBuf);
-				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 25);
+				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, RFM69_RETRIES, RFM69_RETRIES_TIMEOUT);
 			}
 			rfm69_send_flag = false;
 		}
-		RFM69_setMode(RF69_MODE_RX);
 
 	}
 }
@@ -292,11 +320,9 @@ void vAcceleroTask(void *pvParameters)
 {
 	uint16 acc_temp;
 	int16 tempAcc;
-	acc_sensitivity[0] = 200;
-	acc_sensitivity[1] = 800;
 	ACCELERO_IO_Init();
 	/* Write CTL REG1 register, set ACTIVE mode */
-	delay_ms(1000);
+	//delay_ms(1000);
  	ACCELERO_I2C_init();
 //    ACCELERO_Write_Data(0x2a, 0x01);
 	for( ;; )
@@ -304,15 +330,16 @@ void vAcceleroTask(void *pvParameters)
 		ACCELERO_Write_Data(0x2a, 0x01);
 		if( 0x5a == ACCELERO_Read_Data(0x0d))
 		{
+			t36ct_ver = T36CTA_REV2;
 			//axis_value[0] = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
 			acc_temp = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
 			tempAcc = axis_value[asix_sequence] - acc_temp;
 			axis_value[asix_sequence++] = acc_temp;
 			asix_sequence %= 3;
 		}
-		if((ABS(tempAcc) > 200)&&(ABS(tempAcc) < 800))
+		if((ABS(tempAcc) > acc_sensitivity[0])&&(ABS(tempAcc) < acc_sensitivity[1]))
 		{
-			acc_led_count = 30;
+			acc_led_count = 100;
 			//led_bank2 &= ~(1<<3) ;
 		}
 		else
@@ -322,7 +349,7 @@ void vAcceleroTask(void *pvParameters)
 //			if(acc_led_count == 0)
 //				led_bank2 |= (1<<3) ;
 		}
-		delay_ms(200);
+		delay_ms(50);
 	}
 }
 #endif
@@ -476,7 +503,7 @@ void vOUTPUTSTask( void *pvParameters )
 	for( ;; )
 	{
 //		
-//		update_digit_output();		
+		update_digit_output();		
 		control_output();
 		output_refresh();
 		delay_ms(100);
@@ -502,7 +529,7 @@ void Inital_Bacnet_Server(void)
 //	u32 Instance = 0x0c;
 //	Device_Init();
 //	Device_Set_Object_Instance_Number(Instance);
-		
+#ifndef T36CTA		
  Device_Init();
  Device_Set_Object_Instance_Number(Instance);  
  address_init();
@@ -519,13 +546,12 @@ void Inital_Bacnet_Server(void)
   BOS = MAX_DO;
   AVS = MAX_AVS;
 #endif	
-
-
-
 #endif	
+#endif
 }
 void vMSTP_TASK(void *pvParameters )
 {
+	#ifndef T36CTA
 	uint16_t pdu_len = 0; 
 	BACNET_ADDRESS  src;
 	Inital_Bacnet_Server();
@@ -545,7 +571,7 @@ void vMSTP_TASK(void *pvParameters )
 //			modbus.stack[1] = uxTaskGetStackHighWaterMark(NULL);
 			delay_ms(5);
 	}
-	
+	#endif
 }
 
 void vNETTask( void *pvParameters )
@@ -803,7 +829,7 @@ void EEP_Dat_Init(void)
 				RFM69_networkID = (AT24CXX_ReadOneByte(EEP_RFM69_NETWORK_ID_HI)<<8)|AT24CXX_ReadOneByte(EEP_RFM69_NETWORK_ID_LO);
 				if((RFM69_networkID == 0xffff)||(RFM69_networkID == 0))
 				{
-					RFM69_networkID = 0x55AA;
+					RFM69_networkID = 0x1;
 				}
 				
 				RFM69_nodeID = AT24CXX_ReadOneByte(EEP_RFM69_NODE_ID);
@@ -815,7 +841,7 @@ void EEP_Dat_Init(void)
 								|(AT24CXX_ReadOneByte(EEP_RFM69_FREQ_3)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_FREQ_4)));
 				if((RFM69_freq == 0xffffffff) || (RFM69_freq == 0))
 				{
-					RFM69_freq = 433000000;
+					RFM69_freq = 915000000;
 				}
 				rfm69_set_deadMaster = (AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_HI)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_LO));
 				rfm69_deadMaster = rfm69_set_deadMaster;
@@ -823,6 +849,12 @@ void EEP_Dat_Init(void)
 				{
 					rfm69_deadMaster = RFM69_DEFAULT_DEADMASTER;
 					rfm69_set_deadMaster = RFM69_DEFAULT_DEADMASTER;
+				}
+				RFM69_biterate = (AT24CXX_ReadOneByte(EEP_RFM69_BITRATE_HI)<<8)|(AT24CXX_ReadOneByte(EEP_RFM69_BITRATE_LO));
+				if((RFM69_biterate == 0) || (RFM69_biterate == 0xffff))
+				{
+					//RFM69_setBitRate(0x0d05);
+					RFM69_biterate = 0x0d05;
 				}
 				CT_first_AD = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_LO);
 				if((CT_first_AD == 0xffff)||(CT_first_AD == 0))
@@ -835,77 +867,17 @@ void EEP_Dat_Init(void)
 				{
 					CT_multiple = 174;
 				}
-//				CT_first_AD[0] = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_1_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_1_LO);
-//				if((CT_first_AD[0]== 0xffff)||(CT_first_AD[0] == 0))
-//				{
-//					
-//					CT_first_AD[0] = 2260;
-//				}
-//				CT_multiple[0] = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_1_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_1_LO);
-//				if((CT_multiple[0]== 0xffff)||(CT_multiple[0] == 0))
-//				{
-//					CT_multiple[0] = 174;
-//				}
-//				
-//				CT_first_AD[1] = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_2_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_2_LO);
-//				if((CT_first_AD[1]== 0xffff)||(CT_first_AD[1] == 0))
-//				{
-//					
-//					CT_first_AD[1] = 2260;
-//				}
-//				CT_multiple[1] = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_2_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_2_LO);
-//				if((CT_multiple[1]== 0xffff)||(CT_multiple[1] == 0))
-//				{
-//					CT_multiple[1] = 174;
-//				}
-//				
-//				CT_first_AD[2] = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_3_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_3_LO);
-//				if((CT_first_AD[2]== 0xffff)||(CT_first_AD[2] == 0))
-//				{
-//					
-//					CT_first_AD[1] = 2260;
-//				}
-//				CT_multiple[2] = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_3_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_3_LO);
-//				if((CT_multiple[2]== 0xffff)||(CT_multiple[2] == 0))
-//				{
-//					CT_multiple[2] = 174;
-//				}
-//				
-//				CT_first_AD[3] = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_4_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_4_LO);
-//				if((CT_first_AD[3]== 0xffff)||(CT_first_AD[3] == 0))
-//				{
-//					
-//					CT_first_AD[3] = 2260;
-//				}
-//				CT_multiple[3] = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_4_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_4_LO);
-//				if((CT_multiple[3]== 0xffff)||(CT_multiple[3] == 0))
-//				{
-//					CT_multiple[3] = 174;
-//				}
-//				
-//				CT_first_AD[4] = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_5_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_5_LO);
-//				if((CT_first_AD[4]== 0xffff)||(CT_first_AD[4] == 0))
-//				{
-//					
-//					CT_first_AD[4] = 2260;
-//				}
-//				CT_multiple[4] = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_5_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_5_LO);
-//				if((CT_multiple[4]== 0xffff)||(CT_multiple[4] == 0))
-//				{
-//					CT_multiple[4] = 174;
-//				}
-//				
-//				CT_first_AD[5] = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_6_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_6_LO);
-//				if((CT_first_AD[5]== 0xffff)||(CT_first_AD[5] == 0))
-//				{
-//					
-//					CT_first_AD[5] = 2260;
-//				}
-//				CT_multiple[5] = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_6_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_6_LO);
-//				if((CT_multiple[5]== 0xffff)||(CT_multiple[5] == 0))
-//				{
-//					CT_multiple[5] = 174;
-//				}
+				acc_sensitivity[0] = (AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_LO_HI)<<8)|AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_LO_LO);
+				if( (acc_sensitivity[0]== 0xffff)||(acc_sensitivity[0]== 0))
+				{
+					acc_sensitivity[0] = 50;
+				}
+				acc_sensitivity[1] = (AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_HI_HI)<<8)|AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_HI_LO);
+				if( (acc_sensitivity[1]== 0xffff)||(acc_sensitivity[1]== 0))
+				{
+					acc_sensitivity[1] = 970;
+				}
+
 				
 				#endif
 				

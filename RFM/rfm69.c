@@ -31,6 +31,7 @@ char rfm69_key[16] = "ABCDEFGHIJKLMNOP";
 uint16_t RFM69_networkID;
 uint8_t RFM69_nodeID;
 uint32_t RFM69_freq;
+uint16_t RFM69_biterate;
 bool RFM69_enable = true;
 
 extern uint16_t rfm69_count;
@@ -106,6 +107,13 @@ void RFM69_GPIO_init(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	GPIO_SetBits(GPIOC,GPIO_Pin_11);						 //PC11上拉
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);//使能GPIOC时钟 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 ;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //SET PC11 AS INPUT PULL UP
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOC,GPIO_Pin_12);						 //PC12上拉
 
 	GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource11 ); 
 	//EXTI_InitStructure.EXTI_Line = (uint16_t)1<<GPIO_Pin ;
@@ -143,8 +151,8 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   {
     /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
     /* 0x02 */ { REG_DATAMODUL, RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00 }, // no shaping
-    /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_55555}, // default: 4.8 KBPS
-    /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_55555},
+    /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_9600}, // default: 4.8 KBPS
+    /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_9600},
     /* 0x05 */ { REG_FDEVMSB, RF_FDEVMSB_50000}, // default: 5KHz, (FDEV + BitRate / 2 <= 500KHz)
     /* 0x06 */ { REG_FDEVLSB, RF_FDEVLSB_50000},
 
@@ -152,9 +160,9 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
 //    /* 0x08 */ { REG_FRFMID, (uint8_t) (freqBand==RF69_315MHZ ? RF_FRFMID_315 : (freqBand==RF69_433MHZ ? RF_FRFMID_433 : (freqBand==RF69_868MHZ ? RF_FRFMID_868 : RF_FRFMID_915))) },
 //    /* 0x09 */ { REG_FRFLSB, (uint8_t) (freqBand==RF69_315MHZ ? RF_FRFLSB_315 : (freqBand==RF69_433MHZ ? RF_FRFLSB_433 : (freqBand==RF69_868MHZ ? RF_FRFLSB_868 : RF_FRFLSB_915))) },
 
-	/* 0x07 */ { REG_FRFMSB, RF_FRFMSB_433 },
-    /* 0x08 */ { REG_FRFMID, RF_FRFMID_433 },
-    /* 0x09 */ { REG_FRFLSB, RF_FRFLSB_433 },
+	/* 0x07 */ { REG_FRFMSB, RF_FRFMSB_915 },
+    /* 0x08 */ { REG_FRFMID, RF_FRFMID_915 },
+    /* 0x09 */ { REG_FRFLSB, RF_FRFLSB_915 },
     // looks like PA1 and PA2 are not implemented on RFM69W, hence the max output power is 13dBm
     // +17dBm and +20dBm are possible on RFM69HW
     // +13dBm formula: Pout = -18 + OutputPower (with PA0 or PA1**)
@@ -209,6 +217,8 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   }
   RFM69_setNetwork(RFM69_networkID);
   RFM69_setFrequency(RFM69_freq);
+  _address = nodeID;
+  RFM69_setAddress(nodeID);
   // Encryption is persistent between resets and can trip you up during debugging.
   // Disable it during initialization so we always start from a known state.
   RFM69_encrypt(0);
@@ -221,8 +231,6 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   {
     return false;
   }
-  _address = nodeID;
-  RFM69_setAddress(nodeID);
   return true;
 }
 
@@ -247,6 +255,17 @@ void RFM69_setFrequency(uint32_t freqHz)
     RFM69_setMode(RF69_MODE_SYNTH);
   }
   RFM69_setMode(oldMode);
+}
+
+uint16_t RFM69_getBitRate(void)
+{
+	return ((uint16_t) RFM69_readReg(REG_BITRATEMSB) << 8) + RFM69_readReg(REG_BITRATELSB);
+}
+
+void RFM69_setBitRate(uint16_t bitRate)
+{
+//	RFM69_writeReg(REG_BITRATEMSB, bitRate >> 8);
+//  RFM69_writeReg(REG_BITRATELSB, bitRate);
 }
 
 void RFM69_setMode(uint8_t newMode)
@@ -279,6 +298,7 @@ void RFM69_setMode(uint8_t newMode)
   // we are using packet mode, so this check is not really needed
   // but waiting for mode ready is necessary when going from sleep because the FIFO may not be immediately available from previous mode
   while (_mode == RF69_MODE_SLEEP && (RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
+  //delay_ms(50);
 
   _mode = newMode;
 }
@@ -374,12 +394,15 @@ bool RFM69_sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSi
       {
         //Serial.print(" ~ms:"); Serial.print(millis() - sentTime);
 //		  printf("RFM69_ACKReceived and still have %d ms\r\n",rfm69_count);
+		  delay_ms(5);
         return true;
       }
     }
     //Serial.print(" RETRY#"); Serial.println(i + 1);
 //	printf("RETRY, time %d\r\n", i+1);
-	RFM69_setMode(RF69_MODE_RX);
+	delay_ms(3);
+//	RFM69_setMode(RF69_MODE_RX);
+//	delay_ms(20);
   }
   return false;
 }
@@ -418,7 +441,7 @@ static void RFM69_sendFrame(uint8_t toAddress, const void* buffer, uint8_t buffe
 	  // control byte
   uint8_t CTLbyte = 0x00;
 	uint8_t i;
-	uint32_t freq;
+//	uint32_t freq;
 //	printf("go into RFM69_sendFrame\r\n");
   RFM69_setMode(RF69_MODE_STANDBY); // turn off receiver to prevent reception while filling fifo
   while ((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
@@ -444,11 +467,11 @@ static void RFM69_sendFrame(uint8_t toAddress, const void* buffer, uint8_t buffe
     SPI_transfer8(((uint8_t*) buffer)[i]);
   RFM69_unselect();
 
-  freq = RFM69_getFrequency();
+ // freq = RFM69_getFrequency();
 //  printf( "Freq is %ud, in RFM69_sendFrame\r\n", freq);
   // no need to wait for transmit mode to be ready since its handled by the radio
   RFM69_setMode(RF69_MODE_TX);
-  freq = RFM69_getFrequency();
+  //freq = RFM69_getFrequency();
 //  printf( "Freq is %ud, in RFM69_sendFrame after set mode\r\n", freq);
   
   Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
@@ -957,13 +980,13 @@ void SerialPrint(char* string)
 
 void noInterrupts()               // function to disable interrupts
 {
-	
+//	__disable_irq(); 
 }
 
 
 void interrupts()                  // function to enable interrupts
 {
-	
+//	__enable_irq();
 }
 
 

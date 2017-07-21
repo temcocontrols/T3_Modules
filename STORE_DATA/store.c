@@ -187,7 +187,48 @@ void mass_flash_init(void)
 		STMFLASH_ErasePage(IN_PAGE_FLAG);
 		for(loop=0; loop<MAX_INS; loop++ )
 		{
+			inputs[loop].range = 0 ; 
+			inputs[loop].digital_analog = 0 ;
+			#if (defined T36CTA)
+				if(t36ct_ver == T36CTA_REV1 )//#if (defined T36CTA_REV1)#if (defined T36CTA_REV1)
+				{
+					if( loop < 13)
+						sprintf((char*)label_buf, "AI%u", loop);
+					else
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = I0_100Amps;
+						sprintf((char*)label_buf, "CT%u", loop-12);
+					}
+				}//#endif
+				if(t36ct_ver == T36CTA_REV2 )//#if (defined T36CTA_REV2)
+				{
+					if( loop < 8)
+						sprintf((char*)label_buf, "AI%u", loop);
+					else if(loop == 8)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = pressureInWc ; 
+						sprintf((char*)label_buf, "AIR FLOW");
+					}
+					else if(loop == 9)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Reserved3;
+						sprintf((char*)label_buf, "ACCELEROMETER");
+					}
+					else if( loop < 16)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = I0_100Amps;
+						sprintf((char*)label_buf, "CT%u", loop-9);
+					}
+					else
+						sprintf((char*)label_buf, " ");
+				}//#endif
+			#else
 			sprintf((char*)label_buf, "AI%u", loop);
+			#endif
 			memcpy(inputs[loop].description, label_buf, 21);
 			memcpy(inputs[loop].label, label_buf, 9);		
 			inputs[loop].value = 0; 
@@ -197,12 +238,12 @@ void mass_flash_init(void)
 			inputs[loop].sub_product = 0 ;
 			inputs[loop].control = 0 ;
 			inputs[loop].auto_manual = 0 ;
-			inputs[loop].digital_analog = 0 ;
+			
 			inputs[loop].calibration_sign = 0 ;
 			inputs[loop].sub_number = 0 ;
 			inputs[loop].calibration_hi =0 ;
 			inputs[loop].calibration_lo = 0 ;
-			inputs[loop].range = 0 ; 
+			
 		}
 		len = MAX_INS * sizeof(Str_in_point) ;
 		memcpy(tempbuf,(void*)&inputs[0], len);		

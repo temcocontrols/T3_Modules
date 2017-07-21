@@ -161,7 +161,7 @@
 		#define MAX_INS  				MAX_AIS 
 	#elif T36CTA_REV2
 		#define HW_VER				2
-		#define MAX_AI_CHANNEL	 	15    // 8 input 6 ct 1 airflow
+		#define MAX_AI_CHANNEL	 	19    // 8 input 6 ct 1 airflow   //16
 		#define MAX_AIS         MAX_AI_CHANNEL
 		#define MAX_INS  				MAX_AIS 
 		#define   FAC_TABLE                    0

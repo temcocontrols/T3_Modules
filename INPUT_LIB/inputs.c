@@ -4,6 +4,14 @@
 #ifdef T3PT12
 #include "t3-pt12.h"
 #endif
+#if (defined T36CTA)
+#include "air_flow.h"
+#include "math.h"
+#include "accelero_meter.h"
+extern uint16 CT_first_AD;
+extern uint16 CT_multiple;
+#define NOMINUS(n)     (((n) < 0) ? 0 : (n))
+#endif
 
 #ifdef INPUT_CONTROL
 
@@ -17,6 +25,21 @@ uint8_t  input_type[MAX_INS];
 #define FILTER_ADJUST 4
 #define NO_TABLE_RANGES 16
 #define MIDDLE_RANGE     8
+
+#if (defined T36CTA)
+uint32_t calcRms(uint16_t* pData, int nNum)
+{
+	uint8_t i;
+    uint32_t fSum = 0;
+    for( i=0; i<nNum; ++i)
+    {
+        fSum += pData[i] * pData[i];
+    }
+ 
+    return sqrt(fSum/nNum);
+}
+
+#endif
 
 #ifdef T3PT12
 void control_input(void)
@@ -204,14 +227,17 @@ uint32_t get_input_value_by_range( uint8_t range, uint16_t raw )
 }
 
 
-long test_match_custom( uint8_t range, uint16_t raw )
+
+S32_T test_match_custom( S16_T range, S16_T raw )
 {   /* custom tables */
 
 	Tbl_point *table_point;
-	int index = 1;
-	long val, diff;
+	S16_T index = 1;
+	S32_T val, diff;
 	range -= table1;
-	
+
+
+
 	do
 	{
 		 table_point = &custom_tab[range].dat[index];
@@ -258,6 +284,9 @@ void control_input(void)
 	U32_T sample;
 //	U8_T max_input;
   U8_T temp;	
+	#if (defined T36CTA)
+	uint16 tempWord;
+	#endif
 
 	ins = inputs;
 	while( point < MAX_INS )
@@ -361,7 +390,23 @@ void control_input(void)
 
 							break;
 						case I0_100Amps:
+							#if 0//(defined T36CTA)
+						    if(sample<=(510/4))
+							{
+								if(sample>(CT_first_AD/4))
+									tempWord =sample-(CT_first_AD/4);
+								else
+									tempWord = 0;
+								CT_multiple = tempWord;
+							//	printf("tempWord= %d \r\n\r\n", tempWord);
+								//sample = ( 100000L * NOMINUS(sample-(CT_first_AD/4)) ) >> 10;
+								sample = ( 100000L * tempWord ) >> 10;
+							}
+							else
+								sample = ( 100000L * sample ) >> 10;
+						    #else
 							sample = ( 100000L * sample ) >> 10;
+						    #endif
 							break;
 						case I0_20ma:
 							sample = ( 20000L * sample ) >> 10;
@@ -377,18 +422,23 @@ void control_input(void)
 							sample = ( 100000L * sample ) >> 10;
 							break;
 						case P0_100_4_20ma:
-							sample = 100000L * ( sample - 255 ) / 768;
+//							sample = 100000L * ( sample - 255 ) / 768;
+							if(sample < 204) 
+									sample = 0;
+								else
+									sample = 100000L * ( sample - 204 ) / 816;
 							break;
 						case table1:
 						case table2:
 						case table3:
 						case table4:
 						case table5:
-							conver_by_unit_custable(point,sample);
+								sample = conver_by_unit_custable(point,sample) / 100;
+								sample = test_match_custom((int)ins->range, (int)sample);	
+														//Test[5] = sample;
 
-							sample = test_match_custom((int)ins->range, (int)sample);		
-							sample = 1000 * sample;
-							break;
+								sample = 1000l * sample;
+								break;
 						case N0_2_32counts:
 						case HI_spd_count:	
 	//						Test[11] = high_spd_counter[point];
@@ -396,6 +446,21 @@ void control_input(void)
 							sample =  get_high_spd_counter(point)*1000;
 						
 							break;
+						#if (defined T36CTA)
+						case pressureInWc:
+							sample = Pressure.org_val*1000l;
+							break;
+						case Reserved1:
+							sample = Pressure.air_speed*1000l;
+							break;
+						case Reserved2:
+							sample = ((uint32_t)((Pressure.air_flow.C_Type[3]&0x00ff)<<24)+(uint32_t)((Pressure.air_flow.C_Type[2]&0x00ff)<<16)
+									+(uint32_t)((Pressure.air_flow.C_Type[1]&0x00ff)<<8)+(uint32_t)(Pressure.air_flow.C_Type[0]&0x00ff))*1000l;
+							break;
+						case Reserved3:
+							sample = calcRms(axis_value, 3)*1000l;
+							break;
+						#endif
 						default:
 							//	sample = sample * 1000;	
 							break;

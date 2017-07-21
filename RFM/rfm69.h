@@ -12,6 +12,8 @@
 #define RF69_IRQ_PIN          2
 #define RF69_IRQ_NUM          0  
 
+#define RFM69_RETRIES         2
+#define RFM69_RETRIES_TIMEOUT     300
 
 #define CSMA_LIMIT              -90 // upper RX signal sensitivity threshold in dBm for carrier sense access
 #define RF69_MODE_SLEEP         0 // XTAL OFF
@@ -47,7 +49,7 @@
 #define REGISTER_DETAIL 1
 
 #define	RFM_CS	PDout(2) //RFM69Æ¬Ñ¡Òý½Å	
-#define RFM69_DEFAULT_DEADMASTER    50
+#define RFM69_DEFAULT_DEADMASTER    10
 
 extern uint16_t rfm69_deadMaster;
 extern uint16_t rfm69_set_deadMaster;
@@ -59,6 +61,7 @@ extern bool RFM69_enable;
 extern uint8_t rfm69_id;
 extern uint8_t rfm69_size;
 extern uint8_t rfm69_sendBuf[];
+extern uint16_t RFM69_biterate;
 
 // module interface, platform specific
 extern void noInterrupts();                // function to disable interrupts
@@ -77,6 +80,8 @@ extern void RFM69_interruptHandler(void);
 extern void RFM69_encrypt(const char* key) ;
 extern void RFM69_setFrequency(uint32_t freqHz);
 extern int16_t RFM69_readRSSI(bool forceTrigger); 
+extern uint16_t RFM69_getBitRate(void);
+extern void RFM69_setBitRate(uint16_t bitRate);
 
 extern void RFM69_setAddress(uint8_t addr);
 extern void RFM69_GPIO_init(void);
