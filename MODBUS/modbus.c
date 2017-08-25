@@ -24,6 +24,8 @@
 #include "accelero_meter.h"
 #include "air_flow.h"
 #endif
+
+extern int16_t rcv_rssi;
 //#include "ud_str.h"
 void Timer_Silence_Reset(void);
 static u8 randval = 0 ;
@@ -1891,6 +1893,19 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
+		 else if(address == MODBUS_RFM69_RSSI)
+		 {
+			temp1 = (rcv_rssi>>8) & 0xff;
+			temp2 = rcv_rssi&0xff ;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		 
+		 
+		 }
+		 
+		 
 //		 else if( address == MODBUS_RFM69_MODE)
 //		 {
 //			 temp1 = (RFM69_networkID>>8) & 0xff ;

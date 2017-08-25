@@ -302,7 +302,7 @@ void dhcpc_configured(const struct dhcpc_state *s)
 	
 	udp_scan_init();
 	uip_listen(HTONS(modbus.listen_port));       // 10000, modbustcp
-#ifndef T36CTA
+//#ifndef T36CTA
 	modbus.ip_addr[0] = uip_ipaddr1(uip_hostaddr);
 	modbus.ip_addr[1] = uip_ipaddr2(uip_hostaddr);
 	modbus.ip_addr[2] = uip_ipaddr3(uip_hostaddr);
@@ -317,7 +317,7 @@ void dhcpc_configured(const struct dhcpc_state *s)
 	modbus.gate_addr[1] = uip_ipaddr2(uip_draddr);
 	modbus.gate_addr[2] = uip_ipaddr3(uip_draddr);
 	modbus.gate_addr[3] = uip_ipaddr4(uip_draddr);
-#endif
+//#endif
 	uip_ipaddr(uip_hostaddr_submask, modbus.ip_addr[0], modbus.ip_addr[1], modbus.ip_addr[2],255);
 	
 	

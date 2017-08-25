@@ -21,7 +21,8 @@ static volatile uint8_t payloadLen;
 static volatile uint8_t ACK_Requested;
 static volatile uint8_t ACK_RECEIVED;           // should be polled immediately after sending a packet with ACK request
 //static volatile uint8_t _mode;
-static volatile int16_t rssi;                   // most accurate RSSI during reception (closest to the reception)
+int16_t rssi;                   // most accurate RSSI during reception (closest to the reception)
+int16_t rcv_rssi = 0;
 
 static uint8_t _address;
 static uint8_t _powerLevel = 31;
@@ -226,6 +227,7 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   RFM69_setHighPower(ISRFM69HW); // called regardless if it's a RFM69W or RFM69HW
   RFM69_setMode(RF69_MODE_STANDBY);
   Timeout_SetTimeout1(150);
+  //RFM69_promiscuous(true);
   while (((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00) && !Timeout_IsTimeout1()); // wait for ModeReady
   if (Timeout_IsTimeout1())
   {
@@ -368,7 +370,8 @@ void RFM69_send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool 
   RFM69_writeReg(REG_PACKETCONFIG2, (RFM69_readReg(REG_PACKETCONFIG2) & 0xFB) | RF_PACKET2_RXRESTART); // avoid RX deadlocks
 //	printf("after RFM69_writeReg\r\n");
   //uint32_t now = millis();
-  while (!RFM69_canSend() /*&& millis() - now < RF69_CSMA_LIMIT_MS*/) RFM69_receiveDone();
+	Timeout_SetTimeout1(150);
+  while (!RFM69_canSend() && !Timeout_IsTimeout1())/*&& millis() - now < RF69_CSMA_LIMIT_MS*/ RFM69_receiveDone();
 //	printf("after RFM69_canSend\r\n");
   RFM69_sendFrame(toAddress, buffer, bufferSize, requestACK, false);
 }
@@ -401,7 +404,7 @@ bool RFM69_sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSi
     //Serial.print(" RETRY#"); Serial.println(i + 1);
 //	printf("RETRY, time %d\r\n", i+1);
 	delay_ms(3);
-//	RFM69_setMode(RF69_MODE_RX);
+	RFM69_setMode(RF69_MODE_RX);
 //	delay_ms(20);
   }
   return false;
@@ -444,7 +447,8 @@ static void RFM69_sendFrame(uint8_t toAddress, const void* buffer, uint8_t buffe
 //	uint32_t freq;
 //	printf("go into RFM69_sendFrame\r\n");
   RFM69_setMode(RF69_MODE_STANDBY); // turn off receiver to prevent reception while filling fifo
-  while ((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
+	Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
+  while (((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00)&& !Timeout_IsTimeout1()); // wait for ModeReady
 //	printf("after RFM69_readReg(REG_IRQFLAGS1)\r\n");
   RFM69_writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00); // DIO0 is "Packet Sent"
   if (bufferSize > RF69_MAX_DATA_LEN) bufferSize = RF69_MAX_DATA_LEN;
@@ -498,7 +502,8 @@ void interruptHook(uint8_t CTLbyte) {
 
 // internal function - interrupt gets called when a packet is received
 void RFM69_interruptHandler() {
-  
+
+
   if (_mode == RF69_MODE_RX && (RFM69_readReg(REG_IRQFLAGS2) & RF_IRQFLAGS2_PAYLOADREADY))
   {
     uint8_t CTLbyte;
@@ -557,6 +562,7 @@ void RFM69_interruptHandler() {
     RFM69_setMode(RF69_MODE_RX);
   }
   rssi = RFM69_readRSSI(0);
+  rcv_rssi = rssi;
 }
 
 
@@ -626,7 +632,8 @@ int16_t RFM69_readRSSI(bool forceTrigger)
   }
   rssi = -RFM69_readReg(REG_RSSIVALUE);
   rssi >>= 1;
-  return rssi;
+  //if(rssi != 0)
+	return rssi;
 }
 
 // true  = disable filtering to capture all frames on network
@@ -634,7 +641,7 @@ int16_t RFM69_readRSSI(bool forceTrigger)
 void RFM69_promiscuous(bool onOff) 
 {
   _promiscuousMode = onOff;
-  //RFM69_writeReg(REG_PACKETCONFIG1, (RFM69_readReg(REG_PACKETCONFIG1) & 0xF9) | (onOff ? RF_PACKET1_ADRSFILTERING_OFF : RF_PACKET1_ADRSFILTERING_NODEBROADCAST));
+  RFM69_writeReg(REG_PACKETCONFIG1, (RFM69_readReg(REG_PACKETCONFIG1) & 0xF9) | (onOff ? RF_PACKET1_ADRSFILTERING_OFF : RF_PACKET1_ADRSFILTERING_NODEBROADCAST));
 }
 
 // for RFM69HW only: you must call RFM69_setHighPower(true) after initialize() or else transmission won't work

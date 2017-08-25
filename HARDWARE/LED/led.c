@@ -256,7 +256,7 @@ void tabulate_LED_STATE(void)
 				}
 				else
 				{	
-						if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+						if((AD_Value[i]<4048)&&(AD_Value[i]>20)&&(inputs[i].range != UNUSED))  
 						{
 							led_bank2 &= ~(1<<(i+6)) ;
 						}
@@ -266,8 +266,10 @@ void tabulate_LED_STATE(void)
 						}
 				}
 			}
-		for(i=5; i< 13;i++)
+		for(i=5; i< 19;i++)
 		{
+			if(i<13)
+			{
 				if((inputs[i].digital_analog == 0)&&((inputs[i].range == ON_OFF)||(inputs[i].range == OPEN_CLOSED)||(inputs[i].range == START_STOP)
 				||(inputs[i].range == ENABLED_DISABLED)||(inputs[i].range == ALARM_NORMAL)||(inputs[i].range ==HIGH_NORMAL)
 				||(inputs[i].range == LOW_NORMAL)||(inputs[i].range == YES_NO)))	
@@ -284,7 +286,7 @@ void tabulate_LED_STATE(void)
 				}
 				else
 				{
-					if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+					if((AD_Value[i]<4048)&&(AD_Value[i]>20)&&(inputs[i].range != UNUSED))  
 					{
 								led_bank1 &= ~(1<<(i+MAX_DO-5)) ;
 					}
@@ -293,19 +295,31 @@ void tabulate_LED_STATE(void)
 								led_bank1 |= (1<<(i+MAX_DO-5)) ;
 					}
 				}
-		}	
-		for(i=13; i< 19;i++)
-		{
-			if((CT_Vaule[i-13]>50) && (CT_Vaule[i-13]<10000))
-			{
-						led_bank2 &= ~(1<<(i-13)) ;
 			}
 			else
 			{
-						led_bank2 |= (1<<(i-13)) ;
+				if((AD_Value[i]<4048)&&(AD_Value[i]>150))  
+				{
+					led_bank2 &= ~(1<<(i-13)) ;
+				}
+				else
+				{
+					led_bank2 |= (1<<(i-13)) ;
+				}
 			}
-				
 		}	
+//		for(i=13; i< 19;i++)
+//		{
+//			if((CT_Vaule[i-13]>50) && (CT_Vaule[i-13]<10000))
+//			{
+//						led_bank2 &= ~(1<<(i-13)) ;
+//			}
+//			else
+//			{
+//						led_bank2 |= (1<<(i-13)) ;
+//			}
+//				
+//		}	
 	}//#endif
 	if(t36ct_ver == T36CTA_REV2 )//#if T36CTA_REV2
 	{
@@ -326,7 +340,7 @@ void tabulate_LED_STATE(void)
 				}
 				else
 				{	
-						if((AD_Value[i]>2048)&&(inputs[i].range != UNUSED))  
+						if((AD_Value[i]<4048)&&(AD_Value[i]>100)&&(inputs[i].range != UNUSED))  
 						{
 							led_bank1 &= ~(1<<(i+MAX_DO)) ;
 						}
@@ -336,9 +350,9 @@ void tabulate_LED_STATE(void)
 						}
 				}
 		}
-		for(i=0; i< 6;i++)
+		for(i=10; i< 16;i++)
 		{
-			if((CT_Vaule[i]>50) && (CT_Vaule[i]<10000))
+			if((AD_Value[i]>150) && (AD_Value[i]<4048))
 			{
 						led_bank2 &= ~(1<<(i+5)) ;
 			}

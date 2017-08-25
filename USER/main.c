@@ -69,6 +69,7 @@ void vKEYTask( void *pvParameters );
 void vOUTPUTSTask( void *pvParameters );
 void vAcceleroTask( void *pvParameters);
 void vRFMTask(void *pvParameters);
+void vCHECKRFMTask(void *pvParameters);
 void vAirFlowTask( void *pvParameters);
 void vGetACTask( void *pvParameters);
 #endif
@@ -141,12 +142,18 @@ int main(void)
 //	xTaskCreate( vUSBTask, ( signed portCHAR * ) "USB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	//xTaskCreate( vUSBTask, ( signed portCHAR * ) "USB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	/* Start the scheduler. */
- 	#if (defined T38AI8AO6DO) || (defined T36CTA)
+	#if (defined T38AI8AO6DO)
 	xTaskCreate( vOUTPUTSTask, ( signed portCHAR * ) "OUTPUTS", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + 2, NULL );
+	#endif
+	#if (defined T36CTA)
+	xTaskCreate( vOUTPUTSTask, ( signed portCHAR * ) "OUTPUTS", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	#endif
+ 	#if (defined T38AI8AO6DO) || (defined T36CTA)
+	
 	xTaskCreate( vKEYTask, ( signed portCHAR * ) "KEY", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	#endif
 	#if defined T36CTA
-	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 4, NULL );
  	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vGetACTask, ( signed portCHAR * ) "GETAC", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#if T36CTA_REV2
@@ -159,6 +166,9 @@ int main(void)
 	#ifndef T36CTA
 	xTaskCreate( vMSTP_TASK, ( signed portCHAR * ) "MSTP", configMINIMAL_STACK_SIZE + 256  , NULL, tskIDLE_PRIORITY + 4, NULL );
 	#endif
+//	#if defined T36CTA
+//	xTaskCreate( vCHECKRFMTask, ( signed portCHAR * ) "CHECKRFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+//	#endif
 	vTaskStartScheduler();
 }
 #if defined T36CTA
@@ -262,7 +272,7 @@ u8 rfm69_checkData(u8 len)
 
 void vRFMTask( void *pvParameters)
 {
-	u8 temp;
+	u8 temp,i;
 	
 	RFM69_GPIO_init();
 	RFM69_TIMER_init();
@@ -274,27 +284,33 @@ void vRFMTask( void *pvParameters)
 	RFM69_setMode(RF69_MODE_RX);
 	for( ;; )
 	{
-		delay_ms(500);
+		delay_ms(100);
 
-		RFM69_setMode(RF69_MODE_RX);
+		
 		rfm69_deadMaster--;
 		if(rfm69_deadMaster == 0)
 		{
-			GPIO_SetBits(GPIOC,GPIO_Pin_12);
-			delay_us(1000);
-			GPIO_ResetBits(GPIOC,GPIO_Pin_12);
-			delay_ms(60);
-			RFM_CS = 0;
-			RFM69_GPIO_init();
-			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
-			RFM69_encrypt(rfm69_key);
-			if( RFM69_freq!= RFM69_getFrequency())
 			{
-				RFM69_setFrequency(RFM69_freq);
+				RFM69_freq = RFM69_getFrequency();
+				if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
+					//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
+				{
+					RFM69_freq = 915000000;
+				}
+				
+				GPIO_SetBits(GPIOC,GPIO_Pin_12);
+				delay_us(1000);
+				GPIO_ResetBits(GPIOC,GPIO_Pin_12);
+				delay_ms(100);
+				RFM_CS = 0;
+				SPI2_Init();
+				RFM69_GPIO_init();
+				rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+				RFM69_encrypt(rfm69_key);
+				RFM69_setBitRate(RFM69_biterate);
+				RFM69_setMode(RF69_MODE_RX);
+				delay_ms(100);
 			}
-			
-			RFM69_setBitRate(RFM69_biterate);
-			delay_ms(1000);
 			rfm69_deadMaster = rfm69_set_deadMaster;
 		}
 		if(rfm69_send_flag)
@@ -315,6 +331,28 @@ void vRFMTask( void *pvParameters)
 
 	}
 }
+
+void vCHECKRFMTask(void *pvParameters)
+{
+	u8 i;
+	for( ;; )
+	{
+		SPI2_Init();
+		printf("GET INTO vCHECKRFMTask\r\n, %d, %d, %d\r\n", RFM69_freq, RFM69_nodeID,RFM69_networkID);
+		if( (RFM69_getFrequency()!= RFM69_freq)||(rfm_exsit!= true) || (RFM69_nodeID!=RFM69_getAddress()) || (RFM69_networkID!=RFM69_getNetwork()))
+		{
+			RFM69_GPIO_init();
+			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+			RFM69_encrypt(rfm69_key);
+			RFM69_setBitRate(RFM69_biterate);
+			printf("vCHECKRFMTask\r\n");
+		}
+		
+		delay_ms(5000);
+	}
+	
+}
+
 extern u16 led_bank2;
 void vAcceleroTask(void *pvParameters)
 {
@@ -322,9 +360,7 @@ void vAcceleroTask(void *pvParameters)
 	int16 tempAcc;
 	ACCELERO_IO_Init();
 	/* Write CTL REG1 register, set ACTIVE mode */
-	//delay_ms(1000);
  	ACCELERO_I2C_init();
-//    ACCELERO_Write_Data(0x2a, 0x01);
 	for( ;; )
 	{
 		ACCELERO_Write_Data(0x2a, 0x01);

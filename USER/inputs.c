@@ -727,6 +727,9 @@ void inputs_scan(void)
 			AD_Value[channel_count++]= vol_sum[3]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_3);
 			AD_Value[channel_count++]= vol_sum[4]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_4);
 			AD_Value[channel_count++]= vol_sum[5]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_5);
+			AD_Value[channel_count++]= 0;
+			AD_Value[channel_count++]= 0;
+			AD_Value[channel_count++]= 0;
 	//		AD_Value[channel_count]= vol_sum[0]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
 	//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
 	//		channel_count++;
