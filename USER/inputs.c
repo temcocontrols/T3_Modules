@@ -505,16 +505,16 @@ void inputs_init(void)
 
 #if defined T36CTA
 extern uint32_t vol_sum[6];
-uint16_t CT_Vaule[6];
+//uint16_t CT_Vaule[6];
 //uint16_t CT_first_AD[6];
 //uint16_t CT_multiple[6];
-uint16_t CT_first_AD;
-uint16_t CT_multiple;
+//uint16_t CT_first_AD;
+//uint16_t CT_multiple;
 
 void inputs_scan(void)
 {
-	static u16 new_ad[19] ;
-	static u16 old_ad[19]= {4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095};
+	static u16 new_ad[MAX_AI_CHANNEL] ;
+	static u16 old_ad[MAX_AI_CHANNEL]= {4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095};
 	static u8 channel_count =0 ;
 	u16 port_temp;
 	u16	swap_adc ;
@@ -594,11 +594,12 @@ void inputs_scan(void)
 					AD_Value[17-channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
 				}
 			}
-
 			
 			
 			channel_count++;
 		}
+	
+		
 		else
 		{
 	//		swap_adc = AD_Value[0];
@@ -645,13 +646,13 @@ void inputs_scan(void)
 			AD_Value[channel_count++]= vol_sum[3]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_3);
 			AD_Value[channel_count++]= vol_sum[4]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_4);
 			AD_Value[channel_count++]= vol_sum[5]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_5);
-
-			CT_Vaule[0] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[1] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[2] = (AD_Value[15]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[3] = (AD_Value[16]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[4] = (AD_Value[17]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[5] = (AD_Value[18]-CT_first_AD)*100/CT_multiple;
+			AD_Value[channel_count++]=0;
+//			CT_Vaule[0] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[1] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[2] = (AD_Value[15]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[3] = (AD_Value[16]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[4] = (AD_Value[17]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[5] = (AD_Value[18]-CT_first_AD)*100/CT_multiple;
 			
 			channel_count %= MAX_AI_CHANNEL;
 		}
@@ -730,6 +731,7 @@ void inputs_scan(void)
 			AD_Value[channel_count++]= 0;
 			AD_Value[channel_count++]= 0;
 			AD_Value[channel_count++]= 0;
+			AD_Value[channel_count++]= 0;
 	//		AD_Value[channel_count]= vol_sum[0]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
 	//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
 	//		channel_count++;
@@ -749,12 +751,12 @@ void inputs_scan(void)
 	//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
 	//		channel_count++;
 
-			CT_Vaule[0] = (AD_Value[9]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[1] = (AD_Value[10]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[2] = (AD_Value[11]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[3] = (AD_Value[12]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[4] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
-			CT_Vaule[5] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[0] = (AD_Value[9]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[1] = (AD_Value[10]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[2] = (AD_Value[11]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[3] = (AD_Value[12]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[4] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
+//			CT_Vaule[5] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
 			
 			
 			channel_count %= MAX_AI_CHANNEL;

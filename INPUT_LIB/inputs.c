@@ -8,9 +8,15 @@
 #include "air_flow.h"
 #include "math.h"
 #include "accelero_meter.h"
-extern uint16 CT_first_AD;
-extern uint16 CT_multiple;
+//extern uint16 CT_first_AD;
+//extern uint16 CT_multiple;
 #define NOMINUS(n)     (((n) < 0) ? 0 : (n))
+extern uint8_t t36ct_ver;
+ extern u16 outdoorTempC;
+ extern u16 outdoorTempH;
+ extern u16 outdoorHum;
+ extern u16 outdoorLux;
+ //bool toWirteOutdoor = false;
 #endif
 
 #ifdef INPUT_CONTROL
@@ -286,6 +292,22 @@ void control_input(void)
   U8_T temp;	
 	#if (defined T36CTA)
 	uint16 tempWord;
+	uint8_t tempBuf[8];
+	u8 i;
+	static u8 lastTempRange;
+	static u16 lastTempCalibration;
+	static u16 lastHumCalibration;
+	static u8 lastTempCalibrationSign;
+	static u8 lastHumCalibrationSign;
+	
+	tempBuf[0] = 0xff;
+	tempBuf[1] = 0x06;
+	tempBuf[2] = 0x00;
+	tempBuf[3] = 0xff;
+	tempBuf[4] = 0xff;
+	tempBuf[5] = 0xff;
+	tempBuf[6] = 0xff;
+	tempBuf[7] = 0xff;
 	#endif
 
 	ins = inputs;
@@ -356,15 +378,236 @@ void control_input(void)
 						switch(ins->range)
 						{
 						case Y3K_40_150DegC:
+							#if (defined T36CTA)
+								
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x00;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+							#endif
 						case Y3K_40_300DegF:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x01;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+							#endif
 						case R3K_40_150DegC:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x00;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+							#endif
 						case R3K_40_300DegF:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x01;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+							#endif
 						case R10K_40_120DegC:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x00;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+							#endif
 						case R10K_40_250DegF:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x01;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+							#endif
 						case KM10K_40_120DegC:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x00;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+							#endif
 						case KM10K_40_250DegF:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x01;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempH*100;
+									}
+									break;
+								}
+							#endif
 						case A10K_50_110DegC:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x00;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempC*100;
+									}
+									break;
+								}
+							#endif
 						case A10K_60_200DegF:
+							#if (defined T36CTA)
+								tempBuf[2] = 0x00;
+								tempBuf[3] = 0x79;
+								tempBuf[4] = 0x00;
+								tempBuf[5] = 0x01;
+								if(t36ct_ver == T36CTA_REV1 )
+								{
+									if(point == 19)
+									{
+										sample = outdoorTempH*100;
+									}
+								}
+								else if(t36ct_ver == T36CTA_REV2)
+								{
+									if(point == 16)
+									{
+										sample = outdoorTempH*100;
+									}
+								}
+								else
+								{
+							#endif
 							if(get_input_raw(point) > 1000)   
 							{
 								temp = ins->decom;
@@ -380,6 +623,9 @@ void control_input(void)
 								ins->decom = temp;
 							}					
 							sample = get_input_value_by_range( ins->range, sample );
+							#if (defined T36CTA)
+								}
+							#endif
 							break;
 						case V0_5:
 							sample = conver_by_unit_5v(sample);		
@@ -447,11 +693,42 @@ void control_input(void)
 						
 							break;
 						#if (defined T36CTA)
+						case Humidty:
+							if(t36ct_ver == T36CTA_REV1 )
+							{
+								if(point == 19)
+								{
+									sample = outdoorHum * 100;
+								}
+							}
+							else if(t36ct_ver == T36CTA_REV2)
+							{
+								if(point == 17)
+								{
+									sample = outdoorHum * 100;
+								}
+							}
+							break;
 						case pressureInWc:
 							sample = Pressure.org_val*1000l;
 							break;
 						case Reserved1:
-							sample = Pressure.air_speed*1000l;
+							if(t36ct_ver == T36CTA_REV1 )
+							{
+								if(point == 19)
+								{
+									sample = outdoorLux*1000;
+								}
+							}
+							else if(t36ct_ver == T36CTA_REV2)
+							{
+								if(point == 18)
+								{
+									sample = outdoorLux*1000;
+								}
+							}
+							else
+								sample = Pressure.air_speed*1000l;
 							break;
 						case Reserved2:
 							sample = ((uint32_t)((Pressure.air_flow.C_Type[3]&0x00ff)<<24)+(uint32_t)((Pressure.air_flow.C_Type[2]&0x00ff)<<16)
@@ -473,6 +750,112 @@ void control_input(void)
 							else
 								sample += -100L * (ins->calibration_hi * 256 + ins->calibration_lo);
 						}
+						
+						if(t36ct_ver == T36CTA_REV1 )
+						{
+							if(point == 19)
+							{
+								init_crc16();
+								for( i=0; i< 6; i++)
+								{
+									crc16_byte(tempBuf[i]);
+								}
+								tempBuf[6] = CRChi;
+								tempBuf[7] = CRClo;
+								memcpy(uart_send, tempBuf, 8);
+								TXEN = SEND;
+								USART_SendDataString(8);
+							}
+						}
+						else if(t36ct_ver == T36CTA_REV2)
+						{
+							if(point == 16)
+							{
+								if(lastTempRange != ins->range)
+								{
+									init_crc16();
+									for( i=0; i< 6; i++)
+									{
+										crc16_byte(tempBuf[i]);
+									}
+									tempBuf[6] = CRChi;
+									tempBuf[7] = CRClo;
+									memcpy(uart_send, tempBuf, 8);
+									TXEN = SEND;
+									USART_SendDataString(8);
+									delay_ms(5);
+								}
+								if((lastTempCalibration != (ins->calibration_hi * 256 + ins->calibration_lo))||( lastTempCalibrationSign!= ins->calibration_sign))
+								{
+									if( (ins->range ==Y3K_40_300DegF)||(ins->range ==R10K_40_250DegF) || (ins->range ==R3K_40_300DegF) 
+										|| (ins->range ==KM10K_40_250DegF) || (ins->range ==A10K_60_200DegF))
+									{
+										tempBuf[2] = 0x00;
+										tempBuf[3] = 0x64;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+									}
+									if( (ins->range ==Y3K_40_150DegC)||(ins->range ==R10K_40_120DegC) || (ins->range ==R3K_40_150DegC) 
+										|| (ins->range ==KM10K_40_120DegC) || (ins->range ==A10K_50_110DegC))
+									{
+										tempBuf[2] = 0x00;
+										tempBuf[3] = 0x65;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+									}
+									delay_ms(5);
+								}
+								lastTempCalibrationSign = ins->calibration_sign;
+								lastTempCalibration = (ins->calibration_hi * 256 + ins->calibration_lo);
+								lastTempRange = ins->range;
+							}
+							if(point == 17)
+							{
+								if((lastHumCalibration != (ins->calibration_hi * 256 + ins->calibration_lo))||(lastHumCalibrationSign != ins->calibration_sign))
+								{
+									if( ins->range == Humidty)
+									{
+										tempBuf[2] = 0x01;
+										tempBuf[3] = 0x30;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+										delay_ms(5);
+									}
+								}
+								lastHumCalibration = (ins->calibration_hi * 256 + ins->calibration_lo);
+								lastHumCalibrationSign = ins->calibration_sign;
+							}
+						
 					}
 					ins->value = swap_double(sample);
 				
@@ -506,12 +889,8 @@ void control_input(void)
 		}
 		point++;
 	  ins++;
-		
+	}
 	}
 }
 #endif
 #endif
-
-
-
-

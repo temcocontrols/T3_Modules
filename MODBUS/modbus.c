@@ -53,7 +53,13 @@ extern FIFO_BUFFER Receive_Buffer0;
 #if defined T36CTA
 extern bool rfm_exsit;
 extern uint16 acc_sensitivity[2];
-
+extern bool comSwitch;
+extern u8 comRecevieFlag;
+ extern u16 outdoorTempC;
+ extern u16 outdoorTempH;
+ extern u16 outdoorHum;
+ extern u16 outdoorLux;
+ extern u16 masterPollCount;
 #endif
  
 void USART1_IRQHandler(void)                   //串口1中断服务程序
@@ -68,59 +74,61 @@ void USART1_IRQHandler(void)                   //串口1中断服务程序
                   USART_RX_BUF[revce_count++] = USART_ReceiveData(USART1);//(USART1->DR);      //读取接收到的数据
                   else
                       serial_restart();
-                  if(revce_count == 1)
-                  {
-                     // This starts a timer that will reset communication.  If you do not
-                     // receive the full packet, it insures that the next receive will be fresh.
-                     // The timeout is roughly 7.5ms.  (3 ticks of the hearbeat)
-                     rece_size = 250;
-                     serial_receive_timeout_count = SERIAL_RECEIVE_TIMEOUT;
-                  }
-                  else if(revce_count == 3 )
-                  {
-                     if(USART_RX_BUF[1] == CHECKONLINE)
-                     rece_size = 6;
-                  }
-                  else if(revce_count == 4)
-                  {
-                     //check if it is a scan command
-                     if((((vu16)(USART_RX_BUF[2] << 8) + USART_RX_BUF[3]) == 0x0a) && (USART_RX_BUF[1] == WRITE_VARIABLES))
-                     {
-                        rece_size = DATABUFLEN_SCAN;
-                        serial_receive_timeout_count = SERIAL_RECEIVE_TIMEOUT;   
-                     }
-                  }
-                  else if(revce_count == 7)
-                  {
-                     if((USART_RX_BUF[1] == READ_VARIABLES) || (USART_RX_BUF[1] == WRITE_VARIABLES))
-                     {
-                        rece_size = 8;
-                        //dealwithTag = 1;
-                     }
-                     else if(USART_RX_BUF[1] == MULTIPLE_WRITE)
-                     {
-                        rece_size = USART_RX_BUF[6] + 9;
-                        serial_receive_timeout_count = USART_RX_BUF[6] + 8;
-                     }
-                     else
-                     {
-                        rece_size = 250;
-                     }
-                  }
-//                  else if(USART_RX_BUF[0] == 0x55 && USART_RX_BUF[1] == 0xff && USART_RX_BUF[2] == 0x01 && USART_RX_BUF[5] == 0x00 && USART_RX_BUF[6] == 0x00)
-//                  {//bacnet protocal detected
-//                        modbus.protocal = BAC_MSTP;
-////                        AT24CXX_WriteOneByte(EEP_MODBUS_COM_CONFIG, BAC_MSTP);
-//                     Recievebuf_Initialize(0);                     
-//                  }
-                  else if(revce_count == rece_size)      
-                  {
-                     // full packet received - turn off serial timeout
-                     serial_receive_timeout_count = 0;
-                     dealwithTag = 5;      // making this number big to increase delay
-                     rx_count = 2 ;
-                  }
-      
+				  //if(!comSwitch)
+				  {
+					  if(revce_count == 1)
+					  {
+						 // This starts a timer that will reset communication.  If you do not
+						 // receive the full packet, it insures that the next receive will be fresh.
+						 // The timeout is roughly 7.5ms.  (3 ticks of the hearbeat)
+						 rece_size = 250;
+						 serial_receive_timeout_count = SERIAL_RECEIVE_TIMEOUT;
+					  }
+					  else if(revce_count == 3 )
+					  {
+						 if(USART_RX_BUF[1] == CHECKONLINE)
+						 rece_size = 6;
+					  }
+					  else if(revce_count == 4)
+					  {
+						 //check if it is a scan command
+						 if((((vu16)(USART_RX_BUF[2] << 8) + USART_RX_BUF[3]) == 0x0a) && (USART_RX_BUF[1] == WRITE_VARIABLES))
+						 {
+							rece_size = DATABUFLEN_SCAN;
+							serial_receive_timeout_count = SERIAL_RECEIVE_TIMEOUT;   
+						 }
+					  }
+					  else if(revce_count == 7)
+					  {
+						 if((USART_RX_BUF[1] == READ_VARIABLES) || (USART_RX_BUF[1] == WRITE_VARIABLES))
+						 {
+							rece_size = 8;
+							//dealwithTag = 1;
+						 }
+						 else if(USART_RX_BUF[1] == MULTIPLE_WRITE)
+						 {
+							rece_size = USART_RX_BUF[6] + 9;
+							serial_receive_timeout_count = USART_RX_BUF[6] + 8;
+						 }
+						 else
+						 {
+							rece_size = 250;
+						 }
+					  }
+	//                  else if(USART_RX_BUF[0] == 0x55 && USART_RX_BUF[1] == 0xff && USART_RX_BUF[2] == 0x01 && USART_RX_BUF[5] == 0x00 && USART_RX_BUF[6] == 0x00)
+	//                  {//bacnet protocal detected
+	//                        modbus.protocal = BAC_MSTP;
+	////                        AT24CXX_WriteOneByte(EEP_MODBUS_COM_CONFIG, BAC_MSTP);
+	//                     Recievebuf_Initialize(0);                     
+	//                  }
+					  else if(revce_count == rece_size)      
+					  {
+						 // full packet received - turn off serial timeout
+						 serial_receive_timeout_count = 0;
+						 dealwithTag = 5;      // making this number big to increase delay
+						 rx_count = 2 ;
+					  }
+				  }
          }
          else if(modbus.protocal == BAC_MSTP )
          {
@@ -708,18 +716,18 @@ void internalDeal(u8 type,  u8 *pData)
 			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_LO, pData[HeadLen+5]);
 		 }
-		 else if( StartAdd == MODBUS_CT_FIRST_AD)
-		 {
-			 CT_first_AD = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_HI, pData[HeadLen+4]);
-			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_LO, pData[HeadLen+5]);
-		 }		
-		 else if( StartAdd == MODBUS_CT_MULTIPLE)
-		 {
-			 CT_multiple = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_HI, pData[HeadLen+4]);
-			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_LO, pData[HeadLen+5]);
-		 }		 
+//		 else if( StartAdd == MODBUS_CT_FIRST_AD)
+//		 {
+//			 CT_first_AD = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_LO, pData[HeadLen+5]);
+//		 }		
+//		 else if( StartAdd == MODBUS_CT_MULTIPLE)
+//		 {
+//			 CT_multiple = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_HI, pData[HeadLen+4]);
+//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_LO, pData[HeadLen+5]);
+//		 }		 
 //		 else if( StartAdd == MODBUS_CT_FIRST_AD_1)
 //		 {
 //			 CT_first_AD[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
@@ -803,6 +811,17 @@ void internalDeal(u8 type,  u8 *pData)
 			 acc_sensitivity[1] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
 			 AT24CXX_WriteOneByte(EEP_ACC_SENSITIVITY_HI_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_ACC_SENSITIVITY_HI_LO, pData[HeadLen+5]);
+		 }
+		 else if( StartAdd == MODBUS_COM_SWITCH)
+		 {
+			 comSwitch = pData[HeadLen+5];
+			 AT24CXX_WriteOneByte(EEP_COM_SWITCH, pData[HeadLen+5]);
+		 }
+		 else if( StartAdd == MODBUS_COM_MASTER_POLL_TIME)
+		 {
+			 masterPollCount = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
+			 AT24CXX_WriteOneByte(EEP_COM_MASTER_POLL_TIME_HI, pData[HeadLen+4]);
+			 AT24CXX_WriteOneByte(EEP_COM_MASTER_POLL_TIME_LO, pData[HeadLen+5]);
 		 }
 	  #endif
 	  
@@ -1947,8 +1966,8 @@ void responseCmd(u8 type, u8* pData)
 		 else if( (address>=MODBUS_CT_AMPERE_1)&&(address<=MODBUS_CT_AMPERE_6))
 		 {
 			 address_temp = address - MODBUS_CT_AMPERE_1 ;
-			 temp1 = (CT_Vaule[address_temp]>>8)&0xff;
-			 temp2 = CT_Vaule[address_temp]&0xff ;
+			 temp1 = 0;//(outdoorTempC>>8)&0xff;//(CT_Vaule[address_temp]>>8)&0xff;
+			 temp2 = 0;//outdoorTempC&0xff;//CT_Vaule[address_temp]&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
@@ -1956,8 +1975,8 @@ void responseCmd(u8 type, u8* pData)
 		 }
 		 else if( address == MODBUS_CT_FIRST_AD)
 		 {
-			 temp1 = (CT_first_AD>>8) & 0xff ;
-               temp2 = CT_first_AD&0xff ;
+			 temp1 = 0;//(outdoorHum>>8)&0xff;//(CT_first_AD>>8) & 0xff ;
+               temp2 = 0;//outdoorHum&0xff;//CT_first_AD&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
@@ -1965,8 +1984,8 @@ void responseCmd(u8 type, u8* pData)
 		 }	
 		 else if( address == MODBUS_CT_MULTIPLE)
 		 {
-			 temp1 = (CT_multiple>>8) & 0xff ;
-               temp2 = CT_multiple&0xff ;
+			 temp1 = 0;//(outdoorLux>>8)&0xff;//(CT_multiple>>8) & 0xff ;
+               temp2 = 0;//outdoorLux&0xff;//CT_multiple&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
@@ -2020,8 +2039,25 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
-		 
-         else if((address >= MODBUS_AI_CHANNLE0_HI)&&(address<= (MODBUS_AI_CHANNLE0_HI+25)))
+		 else if( address == MODBUS_COM_SWITCH)
+		 {
+			 temp1 = 0;
+               temp2 = comSwitch ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_COM_MASTER_POLL_TIME)
+		 {
+			 temp1 = (masterPollCount>>8) & 0xff;
+               temp2 = masterPollCount&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+         else if((address >= MODBUS_AI_CHANNLE0_HI)&&(address<= MODBUS_AI_CHANNLE18_LO))
          {
             address_temp = address - MODBUS_AI_CHANNLE0_HI ;
               if(inputs[address_temp/2].digital_analog == 1) 
@@ -2118,24 +2154,24 @@ void responseCmd(u8 type, u8* pData)
 							
          }
 		 
-		 else if((address >= (MODBUS_AI_CHANNLE0_HI+26))&&(address<= MODBUS_AI_CHANNLE18_LO))
-		 {
-			 address_temp = address - (MODBUS_AI_CHANNLE0_HI+26) ;
-			 if(address_temp%2 == 0)
-			 {
-				 temp1 = 0;
-				 temp2 = 0;
-			 }
-			 else
-			 {
-				 temp1 = (AD_Value[address_temp/2+13]>>8) & 0xff ;
-                 temp2 = AD_Value[address_temp/2+13]&0xff ;
-			 }
-			 sendbuf[send_cout++] = temp1 ;
-			sendbuf[send_cout++] = temp2 ;
-			crc16_byte(temp1);
-			crc16_byte(temp2);
-		 }
+//		 else if((address >= (MODBUS_AI_CHANNLE0_HI+26))&&(address<= MODBUS_AI_CHANNLE18_LO))
+//		 {
+//			 address_temp = address - (MODBUS_AI_CHANNLE0_HI+26) ;
+//			 if(address_temp%2 == 0)
+//			 {
+//				 temp1 = 0;
+//				 temp2 = 0;
+//			 }
+//			 else
+//			 {
+//				 temp1 = (AD_Value[address_temp/2+13]>>8) & 0xff ;
+//                 temp2 = AD_Value[address_temp/2+13]&0xff ;
+//			 }
+//			 sendbuf[send_cout++] = temp1 ;
+//			sendbuf[send_cout++] = temp2 ;
+//			crc16_byte(temp1);
+//			crc16_byte(temp2);
+//		 }
 				else if((address >= MODBUS_AUTO_MANUAL0)&&(address<= MODBUS_AUTO_MANUAL18))
 				 {
 					  address_temp = address - MODBUS_AUTO_MANUAL0 ; 
@@ -3416,30 +3452,53 @@ u8 checkData(u16 address)
 
  }
 
- 
- 
+
  void dealwithData(void)
 {   
    u16 address;
-   // given this is used in multiple places, decided to put it as an argument
-   address = (u16)(USART_RX_BUF[2]<<8) + USART_RX_BUF[3];
-   if (checkData(address))
-   {      
-//      // Initialize tranmission
-      initSend_COM();   
-      // Initialize CRC
-      init_crc16();      
+	#if T36CTA
+	if( comSwitch)
+	{
+		if(USART_RX_BUF[1] == 3)
+		{
+			if(comRecevieFlag==0)
+			{
+				outdoorTempH = (u16)(USART_RX_BUF[3]<<8) + USART_RX_BUF[4];
+				outdoorTempC = (u16)(USART_RX_BUF[5]<<8) + USART_RX_BUF[6];
+			}
+			else if( comRecevieFlag==1)
+			{
+				outdoorHum = (u16)(USART_RX_BUF[3]<<8) + USART_RX_BUF[4];
+			}
+			else if( comRecevieFlag==2)
+			{
+				outdoorLux = (u16)(USART_RX_BUF[3]<<8) + USART_RX_BUF[4];
+			}
+		}
+	}
+	else
+	#endif
+	{
+	   // given this is used in multiple places, decided to put it as an argument
+	   address = (u16)(USART_RX_BUF[2]<<8) + USART_RX_BUF[3];
+	   if (checkData(address))
+	   {      
+	//      // Initialize tranmission
+		  initSend_COM();   
+		  // Initialize CRC
+		  init_crc16();      
 
-//      // Respond with any data requested
-      responseCmd(0,USART_RX_BUF);
-////      // Store any data being written
-      internalDeal(0, USART_RX_BUF);
+	//      // Respond with any data requested
+		  responseCmd(0,USART_RX_BUF);
+	////      // Store any data being written
+		  internalDeal(0, USART_RX_BUF);
 
-   }
-   else
-   {
-      serial_restart();
-   }
+	   }
+	   else
+	   {
+		  serial_restart();
+	   }
+	}
 }
 
 

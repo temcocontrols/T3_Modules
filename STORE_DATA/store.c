@@ -194,11 +194,17 @@ void mass_flash_init(void)
 				{
 					if( loop < 13)
 						sprintf((char*)label_buf, "AI%u", loop);
-					else
+					else if( loop <19)
 					{
 						inputs[loop].digital_analog = 1 ;
 						inputs[loop].range = I0_100Amps;
 						sprintf((char*)label_buf, "CT%u", loop-12);
+					}
+					else
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Humidty;
+						sprintf((char*)label_buf, "OUTDOOR");
 					}
 				}//#endif
 				if(t36ct_ver == T36CTA_REV2 )//#if (defined T36CTA_REV2)
@@ -222,6 +228,24 @@ void mass_flash_init(void)
 						inputs[loop].digital_analog = 1 ;
 						inputs[loop].range = I0_100Amps;
 						sprintf((char*)label_buf, "CT%u", loop-9);
+					}
+					else if(loop == 16)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = R10K_40_250DegF;
+						sprintf((char*)label_buf, "OUTDOOR TEMP");
+					}
+					else if(loop == 17)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Humidty;
+						sprintf((char*)label_buf, "OUTDOOR HUM");
+					}
+					else if(loop == 18)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Reserved1;
+						sprintf((char*)label_buf, "OUTDOOR LUX");
 					}
 					else
 						sprintf((char*)label_buf, " ");
