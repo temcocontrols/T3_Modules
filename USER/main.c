@@ -72,6 +72,7 @@ void vRFMTask(void *pvParameters);
 void vCHECKRFMTask(void *pvParameters);
 void vAirFlowTask( void *pvParameters);
 void vGetACTask( void *pvParameters);
+void vOutdoorTask(void *pvParameters);
 #endif
 #ifdef T3PT12
 void vI2C_READ(void *pvParameters) ;
@@ -102,7 +103,7 @@ u16 outdoorTempC;
 u16 outdoorTempH;
 u16 outdoorHum;
 u16 outdoorLux;
-u16 masterPollCount;
+u16 outdoorEnthalpy;
 #endif
 
 int main(void)
@@ -113,12 +114,12 @@ int main(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD , ENABLE);
  	delay_init(72);	
-//	uart1_init(38400);
+//	uart1_init(115200);
 //	modbus.baudrate = 38400 ;
 	//KEY_Init();
-	beeper_gpio_init();
-	beeper_on();
-	beeper_off();	
+//	beeper_gpio_init();
+//	beeper_on();
+//	beeper_off();	
 	#if defined T36CTA
 	ACCELERO_IO_Init();
 	ACCELERO_I2C_init();
@@ -140,7 +141,7 @@ int main(void)
 //	TIM3_Int_Init(50, 7199);//5ms
 	printf("T3_series\n\r");
 	#if (defined T38AI8AO6DO)||(defined T322AI) ||(defined T36CTA)
-		xTaskCreate( vINPUTSTask, ( signed portCHAR * ) "INPUTS", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL );
+		xTaskCreate( vINPUTSTask, ( signed portCHAR * ) "INPUTS", configMINIMAL_STACK_SIZE+128, NULL, tskIDLE_PRIORITY + 3, NULL );
 		xTaskCreate( vSTORE_EEPTask, ( signed portCHAR * ) "STOREEEP", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
 	#endif
 	xTaskCreate( vLED0Task, ( signed portCHAR * ) "LED0", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
@@ -163,6 +164,7 @@ int main(void)
 	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 4, NULL );
  	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vGetACTask, ( signed portCHAR * ) "GETAC", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vOutdoorTask, ( signed portCHAR * ) "COMM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
 		#if T36CTA_REV2
 			xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "AIRFLOW", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#endif
@@ -339,7 +341,26 @@ void vRFMTask( void *pvParameters)
 	}
 }
 
-
+//void vCHECKRFMTask(void *pvParameters)
+//{
+//	u8 i;
+//	for( ;; )
+//	{
+//		SPI2_Init();
+//		printf("GET INTO vCHECKRFMTask\r\n, %d, %d, %d\r\n", RFM69_freq, RFM69_nodeID,RFM69_networkID);
+//		if( (RFM69_getFrequency()!= RFM69_freq)||(rfm_exsit!= true) || (RFM69_nodeID!=RFM69_getAddress()) || (RFM69_networkID!=RFM69_getNetwork()))
+//		{
+//			RFM69_GPIO_init();
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			RFM69_encrypt(rfm69_key);
+//			RFM69_setBitRate(RFM69_biterate);
+//			printf("vCHECKRFMTask\r\n");
+//		}
+//		
+//		delay_ms(5000);
+//	}
+//	
+//}
 
 extern u16 led_bank2;
 void vAcceleroTask(void *pvParameters)
@@ -394,14 +415,12 @@ void vLED0Task( void *pvParameters )
 		delay_ms(10);
 	}
 }
-void vCOMMTask(void *pvParameters )
+
+void vOutdoorTask(void *pvParameters)
 {
-//	uint16_t ram_left = 0 ; 
 	u8  sendbuf[8];
 	u16 sendCount = 0;
-	modbus_init();
-	
-	for( ;; )
+	for(;;)
 	{
 		#if T36CTA
 		if( comSwitch)
@@ -414,14 +433,14 @@ void vCOMMTask(void *pvParameters )
 			sendbuf[5] = 0x02;
 			sendbuf[6] = 0x90;
 			sendbuf[7] = 0x0a;
-			if( sendCount == masterPollCount)
+			if( sendCount == 20)
 			{
 				memcpy(uart_send, sendbuf, 8);
 				TXEN = SEND;
 				USART_SendDataString(8);
 				comRecevieFlag = 0;
 			}
-			else if( sendCount == masterPollCount*2)
+			else if( sendCount == 40)
 			{
 				sendbuf[2] = 0x01;
 				sendbuf[3] = 0x30;
@@ -433,7 +452,7 @@ void vCOMMTask(void *pvParameters )
 				USART_SendDataString(8);
 				comRecevieFlag = 1;
 			}
-			else if( sendCount == masterPollCount*3)
+			else if( sendCount == 60)
 			{
 				sendbuf[2] = 0x02;
 				sendbuf[3] = 0x1a;
@@ -444,13 +463,40 @@ void vCOMMTask(void *pvParameters )
 				TXEN = SEND;
 				USART_SendDataString(8);
 				comRecevieFlag = 2;
-				sendCount = 0;
+				//sendCount = 0;
 			}
-			else if( sendCount > 2000)
+			else if( sendCount == 80)
+			{
+				sendbuf[2] = 0x01;
+				sendbuf[3] = 0xea;
+				sendbuf[5] = 0x02;
+				sendbuf[6] = 0xf1;
+				sendbuf[7] = 0xdd;
+				memcpy(uart_send, sendbuf, 8);
+				TXEN = SEND;
+				USART_SendDataString(8);
+				comRecevieFlag = 3;
+				//sendCount = 0;
+			}
+			else if( sendCount > 120)
+			{
 				sendCount = 0;
+				comSwitch = 0;
+			}
 			sendCount++;
 		}
+		delay_ms(10);
 		#endif
+	}
+}
+
+void vCOMMTask(void *pvParameters )
+{
+//	uint16_t ram_left = 0 ; 
+	
+	modbus_init();
+	for( ;; )
+	{
 		if (dealwithTag)
 		{  
 		  dealwithTag--;
@@ -888,7 +934,8 @@ void EEP_Dat_Init(void)
 					default:
 					break ;				
 				}
-				uart1_init(modbus.baudrate);
+				uart1_init(115200);//(modbus.baudrate);
+				
 
 				
 				#if T36CTA
@@ -930,17 +977,7 @@ void EEP_Dat_Init(void)
 					//RFM69_setBitRate(0x0d05);
 					RFM69_biterate = 0x0d05;
 				}
-//				CT_first_AD = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_LO);
-//				if((CT_first_AD == 0xffff)||(CT_first_AD == 0))
-//				{
-//					
-//					CT_first_AD = 2260;
-//				}
-//				CT_multiple = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_LO);
-//				if((CT_multiple== 0xffff)||(CT_multiple== 0))
-//				{
-//					CT_multiple = 174;
-//				}
+
 				acc_sensitivity[0] = (AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_LO_HI)<<8)|AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_LO_LO);
 				if( (acc_sensitivity[0]== 0xffff)||(acc_sensitivity[0]== 0))
 				{
@@ -951,13 +988,7 @@ void EEP_Dat_Init(void)
 				{
 					acc_sensitivity[1] = 970;
 				}
-				comSwitch = AT24CXX_ReadOneByte(EEP_COM_SWITCH);
-				
-				masterPollCount  =(AT24CXX_ReadOneByte(EEP_COM_MASTER_POLL_TIME_HI)<<8 | AT24CXX_ReadOneByte(EEP_COM_MASTER_POLL_TIME_LO));
-				if( (masterPollCount== 0xffff)||(masterPollCount == 0))
-				{
-					masterPollCount = 200;
-				}
+
 				
 				#endif
 				

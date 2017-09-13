@@ -1007,19 +1007,40 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
   /* Get HCLK prescaler */
   tmp = RCC->CFGR & CFGR_HPRE_Set_Mask;
   tmp = tmp >> 4;
-  presc = APBAHBPrescTable[tmp];
+//  presc = APBAHBPrescTable[tmp];
+  if( tmp == 0)
+  {
+	  if( APBAHBPrescTable[tmp] != 0)
+		  presc = 0;
+	  else
+		presc = APBAHBPrescTable[tmp];
+  }
   /* HCLK clock frequency */
   RCC_Clocks->HCLK_Frequency = RCC_Clocks->SYSCLK_Frequency >> presc;
   /* Get PCLK1 prescaler */
   tmp = RCC->CFGR & CFGR_PPRE1_Set_Mask;
   tmp = tmp >> 8;
-  presc = APBAHBPrescTable[tmp];
+  if( tmp == 0)
+  {
+	  if( APBAHBPrescTable[tmp] != 0)
+		  presc = 0;
+	  else
+		presc = APBAHBPrescTable[tmp];
+  }
+//presc = APBAHBPrescTable[tmp];
   /* PCLK1 clock frequency */
   RCC_Clocks->PCLK1_Frequency = RCC_Clocks->HCLK_Frequency >> presc;
   /* Get PCLK2 prescaler */
   tmp = RCC->CFGR & CFGR_PPRE2_Set_Mask;
   tmp = tmp >> 11;
-  presc = APBAHBPrescTable[tmp];
+  if( tmp == 0)
+  {
+	  if( APBAHBPrescTable[tmp] != 0)
+		  presc = 0;
+	  else
+		presc = APBAHBPrescTable[tmp];
+  }
+//presc = APBAHBPrescTable[tmp];
   /* PCLK2 clock frequency */
   RCC_Clocks->PCLK2_Frequency = RCC_Clocks->HCLK_Frequency >> presc;
   /* Get ADCCLK prescaler */
