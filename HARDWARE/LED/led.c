@@ -256,7 +256,7 @@ void tabulate_LED_STATE(void)
 				}
 				else
 				{	
-						if((AD_Value[i]<4048)&&(AD_Value[i]>20)&&(inputs[i].range != UNUSED))  
+						if((AD_Value[i]<4048)&&(AD_Value[i]>150)&&(inputs[i].range != UNUSED))  
 						{
 							led_bank2 &= ~(1<<(i+6)) ;
 						}
@@ -286,7 +286,7 @@ void tabulate_LED_STATE(void)
 				}
 				else
 				{
-					if((AD_Value[i]<4048)&&(AD_Value[i]>20)&&(inputs[i].range != UNUSED))  
+					if((AD_Value[i]<4048)&&(AD_Value[i]>150)&&(inputs[i].range != UNUSED))  
 					{
 								led_bank1 &= ~(1<<(i+MAX_DO-5)) ;
 					}
