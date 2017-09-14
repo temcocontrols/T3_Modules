@@ -7,9 +7,11 @@
 *.cpp
 *.m51
 *.cpp
-/objects/*.obj
-/objects/*.htm
-/objects/*.lnp
+/OBJ/*.obj
+/OBJ/*.htm
+/OBJ/*.lnp
+/OBJ/*.axf
+/OBJ/*.xlsx
 /uIP-1.0/doc/*.pdf
 /uIP-1.0/doc/html/*.png
 /uIP-1.0/doc/html/*.gif
