@@ -2,11 +2,15 @@
 *.LST
 *.lst
 *.bak
-*.hex
+#*.hex
 *.m51
 *.cpp
 *.m51
 *.cpp
+*.crf
+*.o
+*.d
+*.lst
 /OBJ/*.obj
 /OBJ/*.htm
 /OBJ/*.lnp
