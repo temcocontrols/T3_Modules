@@ -12,7 +12,7 @@
 #endif
 
 #define READ_WRITE_PROPERTY 1
-#define SOFTREV    14
+#define SOFTREV    19
 
 //#define MODBUS 0 
 //#define BAC_MSTP 1

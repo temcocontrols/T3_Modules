@@ -99,6 +99,7 @@ static void debug_config(void)
 uint8_t t36ct_ver = T36CTA_REV1;
 bool comSwitch = false;
 u8 comRecevieFlag = 0;
+u8 comSlaveId;
 u16 outdoorTempC;
 u16 outdoorTempH;
 u16 outdoorHum;
@@ -420,21 +421,29 @@ void vOutdoorTask(void *pvParameters)
 {
 	u8  sendbuf[8];
 	u16 sendCount = 0;
+	u8 i;
 	for(;;)
 	{
 		#if T36CTA
 		if( comSwitch)
 		{
-			sendbuf[0] = 0xff;
+			sendbuf[0] = comSlaveId;
 			sendbuf[1] = 0x03;
 			sendbuf[2] = 0x00;
 			sendbuf[3] = 0x64;
 			sendbuf[4] = 0x00;
 			sendbuf[5] = 0x02;
-			sendbuf[6] = 0x90;
-			sendbuf[7] = 0x0a;
+//			sendbuf[6] = 0x90;
+//			sendbuf[7] = 0x0a;
 			if( sendCount == 20)
 			{
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;
 				memcpy(uart_send, sendbuf, 8);
 				TXEN = SEND;
 				USART_SendDataString(8);
@@ -445,8 +454,15 @@ void vOutdoorTask(void *pvParameters)
 				sendbuf[2] = 0x01;
 				sendbuf[3] = 0x30;
 				sendbuf[5] = 0x02;
-				sendbuf[6] = 0xd0;
-				sendbuf[7] = 0x26;
+//				sendbuf[6] = 0xd0;
+//				sendbuf[7] = 0x26;
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;
 				memcpy(uart_send, sendbuf, 8);
 				TXEN = SEND;
 				USART_SendDataString(8);
@@ -457,8 +473,15 @@ void vOutdoorTask(void *pvParameters)
 				sendbuf[2] = 0x02;
 				sendbuf[3] = 0x1a;
 				sendbuf[5] = 0x02;
-				sendbuf[6] = 0xf1;
-				sendbuf[7] = 0xaa;
+//				sendbuf[6] = 0xf1;
+//				sendbuf[7] = 0xaa;
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;
 				memcpy(uart_send, sendbuf, 8);
 				TXEN = SEND;
 				USART_SendDataString(8);
@@ -470,8 +493,15 @@ void vOutdoorTask(void *pvParameters)
 				sendbuf[2] = 0x01;
 				sendbuf[3] = 0xea;
 				sendbuf[5] = 0x02;
-				sendbuf[6] = 0xf1;
-				sendbuf[7] = 0xdd;
+//				sendbuf[6] = 0xf1;
+//				sendbuf[7] = 0xdd;
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;				
 				memcpy(uart_send, sendbuf, 8);
 				TXEN = SEND;
 				USART_SendDataString(8);
@@ -988,7 +1018,7 @@ void EEP_Dat_Init(void)
 				{
 					acc_sensitivity[1] = 970;
 				}
-
+				comSlaveId = AT24CXX_ReadOneByte(EEP_ACC_COM_SLAVE_ID);
 				
 				#endif
 				

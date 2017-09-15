@@ -54,6 +54,7 @@ extern FIFO_BUFFER Receive_Buffer0;
 extern bool rfm_exsit;
 extern uint16 acc_sensitivity[2];
 extern bool comSwitch;
+extern u8 comSlaveId;
 extern u8 comRecevieFlag;
  extern u16 outdoorTempC;
  extern u16 outdoorTempH;
@@ -730,6 +731,11 @@ void internalDeal(u8 type,  u8 *pData)
 		 else if( StartAdd == MODBUS_COM_SWITCH)
 		 {
 			 comSwitch = pData[HeadLen+5];
+		 }
+		 else if( StartAdd == MODBUS_COM_SLAVE_ID)
+		 {
+			 comSlaveId = pData[HeadLen+5];
+			 AT24CXX_WriteOneByte(EEP_ACC_COM_SLAVE_ID, pData[HeadLen+5]);
 		 }
 		 else if(( StartAdd >= MODBUS_IO_OUTPUT_1 )&&( StartAdd <= MODBUS_IO_OUTPUT_2))
          {
@@ -1972,7 +1978,15 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
-		 
+		 else if( address == MODBUS_COM_SLAVE_ID)
+		 {
+			 temp1 = 0;
+			 temp2 = comSlaveId;
+			 sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
         else if((address >= MODBUS_AI_CHANNLE0_HI)&&(address<= MODBUS_AI_CHANNLE18_LO))
          {
             address_temp = address - MODBUS_AI_CHANNLE0_HI ;
