@@ -1,5 +1,13 @@
 #include "spi.h"
 #include "delay.h"
+#include "bitmap.h"
+
+#define	SIMULATE_SPI_CS	PDout(2) //RFM69片选引脚	
+#define SIMULATE_SPI_CLK    PBout(13)
+#define SIMULATE_DELAY_US	delay_us(10)
+#define SIMULATE_SPI_MOSI	PBout(15)
+#define SIMULATE_MISO    PBin(14)
+   
 
 //**** SPI1 ****************
 void SPI1_Init(void)
@@ -105,6 +113,8 @@ void SPI2_Init(void)
 	
 	SPI2_SetSpeed(SPI_BaudRatePrescaler_256);
 // 	SPI2_SetSpeed(SPI_BaudRatePrescaler_4);	//SCK频率=36M/4=9M
+
+
 }
 
 //SPI1速度设置函数
@@ -139,4 +149,89 @@ u8 SPI2_ReadWriteByte(u8 TxData)
 		if(retry > 0xffff) return 0;
 	};
 	return SPI_I2S_ReceiveData(SPI2);
+}
+
+void simulate_spi_init(void)
+{
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);//使能GPIOC时钟 
+    //spi_clk
+     GPIO_InitStructure.GPIO_Pin=GPIO_Pin_13; 
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;  
+    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;     
+    GPIO_Init(GPIOB,&GPIO_InitStructure);     
+
+    //spi_miso 
+    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_14; 
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IPU;  
+    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;     
+    GPIO_Init(GPIOB,&GPIO_InitStructure);     
+
+    //spi_mosi
+    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15; 
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;  
+    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;    
+    GPIO_Init(GPIOB,&GPIO_InitStructure);     
+	
+	GPIO_SetBits(GPIOB, GPIO_Pin_13 | GPIO_Pin_15);
+}
+
+void simulate_spi_write_byte(u8 data)
+{
+    u8 kk;
+
+    //SIMULATE_SPI_CS = 0;
+
+   // SIMULATE_SPI_CLK = 0;
+	GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+    SIMULATE_DELAY_US;     
+
+
+    for(kk=0;kk<8;kk++)
+    {
+     
+		if((data&0x80)==0x80) 
+			GPIO_SetBits(GPIOB, GPIO_Pin_15);//SIMULATE_SPI_MOSI = 1;
+		else         
+			GPIO_ResetBits(GPIOB, GPIO_Pin_15);//SIMULATE_SPI_MOSI = 0;
+		//SIMULATE_DELAY_US;      
+		delay_us(50);
+		GPIO_SetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 1;
+		//SIMULATE_DELAY_US;
+		delay_us(50);
+		GPIO_ResetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 0; 
+		data = data<<1;
+    }
+
+    //SIMULATE_SPI_CS = 1;
+}
+
+u8 simulate_spi_read_byte(void)
+{
+    u8 kk=0, ret=0;
+
+    //SIMULATE_SPI_CS = 0;
+
+    //SIMULATE_SPI_CLK = 0;
+	GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+    SIMULATE_DELAY_US;
+
+    
+    for(kk=0;kk<8;kk++)
+    {
+    ret = ret<<1; 
+    GPIO_SetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 1; 
+    if(SIMULATE_MISO) ret |= 0x01;
+    //SIMULATE_DELAY_US;
+	delay_us(50);
+    GPIO_ResetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 0;
+    //SIMULATE_DELAY_US; 
+	delay_us(50);
+    }
+
+    //SIMULATE_SPI_CS = 1;
+
+    return ret;
 }

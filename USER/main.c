@@ -134,7 +134,8 @@ int main(void)
 	mass_flash_init() ;
 	//Lcd_Initial();
 	SPI1_Init();
-	SPI2_Init();
+//	SPI2_Init();
+	simulate_spi_init();
 	watchdog_init();
 //	mem_init(SRAMIN);
 //	TIM3_Int_Init(5000, 7199);
@@ -297,32 +298,32 @@ void vRFMTask( void *pvParameters)
 		delay_ms(100);
 
 		
-		rfm69_deadMaster--;
-		if(rfm69_deadMaster == 0)
-		{
-			{
-				RFM69_freq = RFM69_getFrequency();
-				if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
-					//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
-				{
-					RFM69_freq = 915000000;
-				}
-				
-				GPIO_SetBits(GPIOC,GPIO_Pin_12);
-				delay_us(1000);
-				GPIO_ResetBits(GPIOC,GPIO_Pin_12);
-				delay_ms(100);
-				RFM_CS = 0;
-				SPI2_Init();
-				RFM69_GPIO_init();
-				rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
-				RFM69_encrypt(rfm69_key);
-				RFM69_setBitRate(RFM69_biterate);
-				RFM69_setMode(RF69_MODE_RX);
-				delay_ms(100);
-			}
-			rfm69_deadMaster = rfm69_set_deadMaster;
-		}
+//		rfm69_deadMaster--;
+//		if(rfm69_deadMaster == 0)
+//		{
+//			{
+//				RFM69_freq = RFM69_getFrequency();
+//				if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
+//					//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
+//				{
+//					RFM69_freq = 915000000;
+//				}
+//				
+//				GPIO_SetBits(GPIOC,GPIO_Pin_12);
+//				delay_us(1000);
+//				GPIO_ResetBits(GPIOC,GPIO_Pin_12);
+//				delay_ms(100);
+//				RFM_CS = 0;
+//				SPI2_Init();
+//				RFM69_GPIO_init();
+//				rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//				RFM69_encrypt(rfm69_key);
+//				RFM69_setBitRate(RFM69_biterate);
+//				RFM69_setMode(RF69_MODE_RX);
+//				delay_ms(100);
+//			}
+//			rfm69_deadMaster = rfm69_set_deadMaster;
+//		}
 		if(rfm69_send_flag)
 		{
 			rfm69_deadMaster = rfm69_set_deadMaster;

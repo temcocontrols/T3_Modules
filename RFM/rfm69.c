@@ -201,7 +201,11 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   do
   {
     RFM69_writeReg(REG_SYNCVALUE1, 0xAA); 
-//	  printf( "RFM69_writeReg(REG_SYNCVALUE1, 0xAA);\r\n\r\n\r\n");
+	  GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+	  delay_ms(3000);
+	  GPIO_SetBits(GPIOB, GPIO_Pin_13);
+	  delay_ms(3000);
+	  printf( "RFM69_writeReg(REG_SYNCVALUE1, 0xAA);\r\n\r\n\r\n");
   }while (RFM69_readReg(REG_SYNCVALUE1) != 0xaa);
   //while (RFM69_readReg(REG_SYNCVALUE1) != 0xaa && !Timeout_IsTimeout1());
   
@@ -514,9 +518,9 @@ void RFM69_interruptHandler() {
     RFM69_setMode(RF69_MODE_STANDBY);
     RFM69_select();
     SPI_transfer8(REG_FIFO & 0x7F);
-    payloadLen = SPI_transfer8(0);
+    payloadLen = simulate_spi_read_byte();//SPI_transfer8(0);
     payloadLen = payloadLen > 66 ? 66 : payloadLen; // precaution
-    targetID = SPI_transfer8(0);
+    targetID = simulate_spi_read_byte();//SPI_transfer8(0);
 //	printf("payloadLen= %d\r\n, targetID= %d", payloadLen, targetID);  
     if(!(_promiscuousMode || targetID == _address || targetID == RF69_BROADCAST_ADDR) // match this node's address, or broadcast address or anything in promiscuous mode
        || payloadLen < 3) // address situation could receive packets that are malformed and don't fit this libraries extra fields
@@ -528,8 +532,8 @@ void RFM69_interruptHandler() {
     }
 
     datalen = payloadLen - 3;
-    senderID = SPI_transfer8(0);
-    CTLbyte = SPI_transfer8(0);
+    senderID = simulate_spi_read_byte();//SPI_transfer8(0);
+    CTLbyte = simulate_spi_read_byte();//SPI_transfer8(0);
 
     ACK_RECEIVED = CTLbyte & RFM69_CTL_SENDACK; // extract ACK-received flag
     ACK_Requested = CTLbyte & RFM69_CTL_REQACK; // extract ACK-requested flag
@@ -537,7 +541,7 @@ void RFM69_interruptHandler() {
 
     for (i = 0; i < datalen; i++)
     {
-      data[i] = SPI_transfer8(0);
+      data[i] = simulate_spi_read_byte();//SPI_transfer8(0);
 	  //rfm69_sendBuf[i] = data[i];	
     }
 	rfm69_size = datalen;
@@ -952,7 +956,7 @@ uint8_t RFM69_readReg(uint8_t addr)
   uint8_t regval;
   RFM69_select();
   SPI_transfer8(addr & 0x7F);
-  regval = SPI_transfer8(0);
+  regval = simulate_spi_read_byte();//SPI_transfer8(0);
   RFM69_unselect();
   return regval;
 }
@@ -1013,8 +1017,12 @@ bool RFM69_ReadDIO0Pin(void)       // function to read GPIO connected to RFM69 D
 
 uint8_t SPI_transfer8(uint8_t onByte)    // function to transfer 1byte on SPI with readback
 {
-	return SPI2_ReadWriteByte(onByte);
+//	return SPI2_ReadWriteByte(onByte);
+	simulate_spi_write_byte(onByte);
+	return 0;
 }
+
+
 
 
 bool Timeout_IsTimeout1(void)      // function for timeout handling, checks if previously set timeout expired
