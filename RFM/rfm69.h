@@ -13,7 +13,7 @@
 #define RF69_IRQ_NUM          0  
 
 #define RFM69_RETRIES         2
-#define RFM69_RETRIES_TIMEOUT     300
+#define RFM69_RETRIES_TIMEOUT     25
 
 #define CSMA_LIMIT              -90 // upper RX signal sensitivity threshold in dBm for carrier sense access
 #define RF69_MODE_SLEEP         0 // XTAL OFF
@@ -52,6 +52,7 @@
 #define RFM69_DEFAULT_DEADMASTER    80
 
 extern uint16_t rfm69_deadMaster;
+extern bool rfm69_deadmaster_enable;
 extern uint16_t rfm69_set_deadMaster;
 extern char rfm69_key[];
 extern uint16_t RFM69_networkID;

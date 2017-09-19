@@ -715,7 +715,11 @@ void internalDeal(u8 type,  u8 *pData)
 			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_LO, pData[HeadLen+5]);
 		 }
-		 
+		 else if( StartAdd == MODBUS_RFM69_DEADMASTER_ENABLE)
+		 {
+			 rfm69_deadmaster_enable = pData[HeadLen+5];
+			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_ENABLE, pData[HeadLen+5]);
+		 }
 		 else if( StartAdd == MODBUS_ACC_SENSITIVITY_LO)
 		 {
 			 acc_sensitivity[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
@@ -1844,6 +1848,15 @@ void responseCmd(u8 type, u8* pData)
 			crc16_byte(temp2);
 		 
 		 
+		 }
+		 else if( address == MODBUS_RFM69_DEADMASTER_ENABLE)
+		 {
+			 temp1 = 0;
+			 temp2 = rfm69_deadmaster_enable;
+			 sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
 		 }
 		 
          else if( (address >= MODBUS_TEST_ADC_VALUE )&&(address<= MODBUS_TEST_ADC_VALUE_LAST))

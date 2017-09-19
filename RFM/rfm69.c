@@ -7,7 +7,14 @@
 #include "modbus.h"
 
 #if 1//T36CTA
+#define	SIMULATE_SPI_CS	PDout(2) //RFM69片选引脚	
+#define SIMULATE_SPI_CLK    PBout(13)
+#define SIMULATE_DELAY_US	delay_us(1)
+#define SIMULATE_SPI_MOSI	PBout(15)
+#define SIMULATE_MISO    PBin(14)
+
 uint16_t rfm69_deadMaster = RFM69_DEFAULT_DEADMASTER;
+bool rfm69_deadmaster_enable = false;
 uint16_t rfm69_set_deadMaster = RFM69_DEFAULT_DEADMASTER;
 uint8_t rfm69_size;
 uint8_t rfm69_id;
@@ -75,6 +82,97 @@ uint8_t SPI_transfer8(uint8_t);     // function to transfer 1byte on SPI with re
 bool Timeout_IsTimeout1(void);      // function for timeout handling, checks if previously set timeout expired
 void Timeout_SetTimeout1(uint16_t); // function for timeout handling, sets a timeout, parameter is in milliseconds (ms)
 
+void simulate_spi_init(void)
+{
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);//使能GPIOC时钟 
+    //spi_clk
+    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_13 | GPIO_Pin_15; 
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_Out_PP;  
+    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;     
+    GPIO_Init(GPIOB,&GPIO_InitStructure);   
+	GPIO_SetBits(GPIOB, GPIO_Pin_13 | GPIO_Pin_15);  
+
+    //spi_miso 
+    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_14; 
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IPU;  
+    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;     
+    GPIO_Init(GPIOB,&GPIO_InitStructure);     
+
+//    //spi_mosi
+//    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15; 
+//    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;  
+//    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;    
+//    GPIO_Init(GPIOB,&GPIO_InitStructure);     
+//	
+//	printf("simulate_spi_init..\r\n\r\n");
+}
+
+
+void simulate_spi_write_byte(u8 data)
+{
+    u8 kk;
+
+    //SIMULATE_SPI_CS = 0;
+
+   // SIMULATE_SPI_CLK = 0;
+	GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+	SIMULATE_DELAY_US;
+    //delay_us(10);     
+
+
+    for(kk=0;kk<8;kk++)
+    {
+     
+		if((data&0x80)==0x80) 
+			GPIO_SetBits(GPIOB, GPIO_Pin_15);//SIMULATE_SPI_MOSI = 1;
+		else         
+			GPIO_ResetBits(GPIOB, GPIO_Pin_15);//SIMULATE_SPI_MOSI = 0;
+		SIMULATE_DELAY_US;      
+		//delay_us(10);
+		GPIO_SetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 1;
+		SIMULATE_DELAY_US;
+		//delay_us(10);
+		GPIO_ResetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 0; 
+		data = data<<1;
+    }
+
+    //SIMULATE_SPI_CS = 1;
+}
+
+u8 simulate_spi_read_byte(void)
+{
+    u8 kk=0, ret=0;
+
+    //SIMULATE_SPI_CS = 0;
+
+    //SIMULATE_SPI_CLK = 0;
+	GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+    SIMULATE_DELAY_US;
+	//delay_us(10);  
+
+    
+    for(kk=0;kk<8;kk++)
+    {
+		ret = ret<<1; 
+		GPIO_SetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 1; 
+		//if(SIMULATE_MISO) 
+		if(GPIO_ReadInputDataBit( GPIOB, GPIO_Pin_14))
+			ret |= 0x01;
+		SIMULATE_DELAY_US;
+		//delay_us(10);
+		GPIO_ResetBits(GPIOB, GPIO_Pin_13);//SIMULATE_SPI_CLK = 0;
+		SIMULATE_DELAY_US; 
+		//delay_us(10);
+    }
+
+    //SIMULATE_SPI_CS = 1;
+
+    return ret;
+}
+
 // internal
 static void RFM69_sendFrame(uint8_t toAddress, const void* buffer, uint8_t size, bool requestACK, bool sendACK);
 
@@ -93,7 +191,22 @@ void RFM69_GPIO_init(void)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	EXTI_InitTypeDef EXTI_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
-	
+	//	GPIO_InitTypeDef GPIO_InitStructure;
+	//SPI_Cmd(SPI2, DISABLE); 	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);//使能GPIOC时钟 
+    //spi_clk
+    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_13 | GPIO_Pin_15; 
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_Out_PP;  
+    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;     
+    GPIO_Init(GPIOB,&GPIO_InitStructure);   
+	GPIO_SetBits(GPIOB, GPIO_Pin_13 | GPIO_Pin_15);  
+
+    //spi_miso 
+    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_14; 
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IPU;  
+    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;     
+    GPIO_Init(GPIOB,&GPIO_InitStructure);     
+
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);	 //使能PB端口时钟
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;				 //PD2推挽 
@@ -138,7 +251,7 @@ void EXTI15_10_IRQHandler(void)
 	if(EXTI->PR & (1 << 11))	//是11线的中断
 	{      
 		EXTI->PR  = (1 << 11);	//清除LINE11上的中断标志位
-		//printf( "EXTI15_10_IRQHandler..\r\n");
+//		printf( "EXTI15_10_IRQHandler..\r\n");
 		RFM69_interruptHandler();
 	}
 
@@ -197,15 +310,26 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   
 	RFM69_SetCSPin(HIGH);
 	//delay_ms(1000);
+  
+  while(0)
+  {
+	  RFM69_writeReg(REG_SYNCVALUE1, 0xAA); 
+	  //RFM69_readReg(REG_SYNCVALUE1);
+	  delay_ms(100);
+	  if( 0xaa == RFM69_readReg(REG_SYNCVALUE1))
+		  printf("0xaa == RFM69_readReg(REG_SYNCVALUE1)\r\n");
+	  else
+		  printf( "!= != != \r\n\r\n");
+  }
   Timeout_SetTimeout1(50);
   do
   {
     RFM69_writeReg(REG_SYNCVALUE1, 0xAA); 
-	  GPIO_ResetBits(GPIOB, GPIO_Pin_13);
-	  delay_ms(3000);
-	  GPIO_SetBits(GPIOB, GPIO_Pin_13);
-	  delay_ms(3000);
-	  printf( "RFM69_writeReg(REG_SYNCVALUE1, 0xAA);\r\n\r\n\r\n");
+//	  GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+//	  delay_ms(20);
+//	  GPIO_SetBits(GPIOB, GPIO_Pin_13);
+//	  delay_ms(20);
+//	  printf( "RFM69_writeReg(REG_SYNCVALUE1, 0xAA);\r\n\r\n\r\n");
   }while (RFM69_readReg(REG_SYNCVALUE1) != 0xaa);
   //while (RFM69_readReg(REG_SYNCVALUE1) != 0xaa && !Timeout_IsTimeout1());
   
@@ -230,7 +354,7 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
 
   RFM69_setHighPower(ISRFM69HW); // called regardless if it's a RFM69W or RFM69HW
   RFM69_setMode(RF69_MODE_STANDBY);
-  Timeout_SetTimeout1(150);
+  Timeout_SetTimeout1(50);//150);
   //RFM69_promiscuous(true);
   while (((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00) && !Timeout_IsTimeout1()); // wait for ModeReady
   if (Timeout_IsTimeout1())
@@ -270,8 +394,8 @@ uint16_t RFM69_getBitRate(void)
 
 void RFM69_setBitRate(uint16_t bitRate)
 {
-//	RFM69_writeReg(REG_BITRATEMSB, bitRate >> 8);
-//  RFM69_writeReg(REG_BITRATELSB, bitRate);
+  RFM69_writeReg(REG_BITRATEMSB, bitRate >> 8);
+  RFM69_writeReg(REG_BITRATELSB, bitRate);
 }
 
 void RFM69_setMode(uint8_t newMode)
@@ -374,7 +498,7 @@ void RFM69_send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool 
   RFM69_writeReg(REG_PACKETCONFIG2, (RFM69_readReg(REG_PACKETCONFIG2) & 0xFB) | RF_PACKET2_RXRESTART); // avoid RX deadlocks
 //	printf("after RFM69_writeReg\r\n");
   //uint32_t now = millis();
-	Timeout_SetTimeout1(150);
+	Timeout_SetTimeout1(50);//150);
   while (!RFM69_canSend() && !Timeout_IsTimeout1())/*&& millis() - now < RF69_CSMA_LIMIT_MS*/ RFM69_receiveDone();
 //	printf("after RFM69_canSend\r\n");
   RFM69_sendFrame(toAddress, buffer, bufferSize, requestACK, false);
