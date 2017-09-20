@@ -162,7 +162,7 @@ int main(void)
 	xTaskCreate( vKEYTask, ( signed portCHAR * ) "KEY", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	#endif
 	#if defined T36CTA
-	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL );
+	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE+128, NULL, tskIDLE_PRIORITY + 4, NULL );
  	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vGetACTask, ( signed portCHAR * ) "GETAC", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vOutdoorTask, ( signed portCHAR * ) "COMM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
@@ -290,47 +290,55 @@ void vRFMTask( void *pvParameters)
 	rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
 	RFM69_encrypt(rfm69_key);
 	RFM69_setBitRate(RFM69_biterate);
-
 	RFM69_setMode(RF69_MODE_RX);
+	
 	for( ;; )
 	{
-		delay_ms(500);
-
+		delay_ms(300);
+//		RFM69_setMode(RF69_MODE_RX);
 //		GPIO_ResetBits(GPIOB, GPIO_Pin_13);
 //		GPIO_ResetBits(GPIOB, GPIO_Pin_15);
 //		  delay_ms(20);
 //		  GPIO_SetBits(GPIOB, GPIO_Pin_13);
 //		GPIO_SetBits(GPIOB, GPIO_Pin_15);
 //		  delay_ms(20);
-		GPIO_SetBits(GPIOC,GPIO_Pin_11);
-		if(rfm69_deadmaster_enable)
+//		GPIO_ResetBits(GPIOC,GPIO_Pin_11);
+//		RFM69_GPIO_init();
+		
+//		if(rfm69_deadmaster_enable)
+//		{
+//			rfm69_deadMaster--;
+//			if(rfm69_deadMaster == 0)
+//			{
+//				{
+//					RFM69_freq = RFM69_getFrequency();
+//					if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
+//						//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
+//					{
+//						RFM69_freq = 915000000;
+//					}
+//					
+//					GPIO_SetBits(GPIOC,GPIO_Pin_12);
+//					delay_us(1000);
+//					GPIO_ResetBits(GPIOC,GPIO_Pin_12);
+//					delay_ms(100);
+//					RFM_CS = 0;
+//					SPI2_Init();
+//					RFM69_GPIO_init();
+//					rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//					RFM69_encrypt(rfm69_key);
+//					RFM69_setBitRate(RFM69_biterate);
+//					RFM69_setMode(RF69_MODE_RX);
+//					delay_ms(100);
+//				}
+//				rfm69_deadMaster = rfm69_set_deadMaster;
+//			}
+//		}
+		if( (RFM69_readReg(40) & 0x46)!=0)
 		{
-			rfm69_deadMaster--;
-			if(rfm69_deadMaster == 0)
-			{
-				{
-					RFM69_freq = RFM69_getFrequency();
-					if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
-						//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
-					{
-						RFM69_freq = 915000000;
-					}
-					
-					GPIO_SetBits(GPIOC,GPIO_Pin_12);
-					delay_us(1000);
-					GPIO_ResetBits(GPIOC,GPIO_Pin_12);
-					delay_ms(100);
-					RFM_CS = 0;
-					SPI2_Init();
-					RFM69_GPIO_init();
-					rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
-					RFM69_encrypt(rfm69_key);
-					RFM69_setBitRate(RFM69_biterate);
-					RFM69_setMode(RF69_MODE_RX);
-					delay_ms(100);
-				}
-				rfm69_deadMaster = rfm69_set_deadMaster;
-			}
+			printf("RFM69_readReg(40) & 0x46)!=0");
+			RFM69_interruptHandler();
+			RFM69_setMode(RF69_MODE_RX);
 		}
 		if(rfm69_send_flag)
 		{
@@ -340,6 +348,7 @@ void vRFMTask( void *pvParameters)
 			if(rfm69_checkData(rfm69_size))//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
 			{
 				//test_print = true;
+				printf("rfm69_send_flag==1\r\n");
 				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
 				internalDeal(10, rfm69_sendBuf);

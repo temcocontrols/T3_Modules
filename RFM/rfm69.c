@@ -48,11 +48,10 @@ extern u8 rfm69_rx_count;
 extern u8 rfm69_tx_count;
 
 // used function prototypes
-void RFM69_writeReg(uint8_t addr, uint8_t val);
+
 uint8_t RFM69_readReg(uint8_t addr);
 
-void RFM69_select(void);
-void RFM69_unselect(void);
+
 void RFM69_setHighPowerRegs(bool onOff);
 void RFM69_sleep(void);
 void RFM69_setPowerLevel(uint8_t level); // reduce/increase transmit power level
@@ -149,6 +148,8 @@ u8 simulate_spi_read_byte(void)
     //SIMULATE_SPI_CS = 0;
 
     //SIMULATE_SPI_CLK = 0;
+//	simulate_spi_write_byte(0);
+//	SIMULATE_DELAY_US;
 	GPIO_ResetBits(GPIOB, GPIO_Pin_13);
     SIMULATE_DELAY_US;
 	//delay_us(10);  
@@ -220,7 +221,7 @@ void RFM69_GPIO_init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //SET PC11 AS INPUT PULL UP
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
-	GPIO_SetBits(GPIOC,GPIO_Pin_11);						 //PC11上拉
+	//GPIO_SetBits(GPIOC,GPIO_Pin_11);						 //PC11上拉
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);//使能GPIOC时钟 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 ;
@@ -354,7 +355,7 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
 
   RFM69_setHighPower(ISRFM69HW); // called regardless if it's a RFM69W or RFM69HW
   RFM69_setMode(RF69_MODE_STANDBY);
-  Timeout_SetTimeout1(50);//150);
+  Timeout_SetTimeout1(50);
   //RFM69_promiscuous(true);
   while (((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00) && !Timeout_IsTimeout1()); // wait for ModeReady
   if (Timeout_IsTimeout1())
@@ -427,7 +428,8 @@ void RFM69_setMode(uint8_t newMode)
 
   // we are using packet mode, so this check is not really needed
   // but waiting for mode ready is necessary when going from sleep because the FIFO may not be immediately available from previous mode
-  while (_mode == RF69_MODE_SLEEP && (RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
+  while (_mode == RF69_MODE_SLEEP && (RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00)
+	  printf("RFM69_setMode\r\n"); // wait for ModeReady
   //delay_ms(50);
 
   _mode = newMode;
@@ -498,7 +500,7 @@ void RFM69_send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool 
   RFM69_writeReg(REG_PACKETCONFIG2, (RFM69_readReg(REG_PACKETCONFIG2) & 0xFB) | RF_PACKET2_RXRESTART); // avoid RX deadlocks
 //	printf("after RFM69_writeReg\r\n");
   //uint32_t now = millis();
-	Timeout_SetTimeout1(50);//150);
+	Timeout_SetTimeout1(50);
   while (!RFM69_canSend() && !Timeout_IsTimeout1())/*&& millis() - now < RF69_CSMA_LIMIT_MS*/ RFM69_receiveDone();
 //	printf("after RFM69_canSend\r\n");
   RFM69_sendFrame(toAddress, buffer, bufferSize, requestACK, false);
@@ -642,6 +644,7 @@ void RFM69_interruptHandler() {
     RFM69_setMode(RF69_MODE_STANDBY);
     RFM69_select();
     SPI_transfer8(REG_FIFO & 0x7F);
+	  
     payloadLen = simulate_spi_read_byte();//SPI_transfer8(0);
     payloadLen = payloadLen > 66 ? 66 : payloadLen; // precaution
     targetID = simulate_spi_read_byte();//SPI_transfer8(0);
@@ -755,7 +758,8 @@ int16_t RFM69_readRSSI(bool forceTrigger)
   {
     // RSSI trigger not needed if DAGC is in continuous mode
     RFM69_writeReg(REG_RSSICONFIG, RF_RSSI_START);
-    while ((RFM69_readReg(REG_RSSICONFIG) & RF_RSSI_DONE) == 0x00);
+    while ((RFM69_readReg(REG_RSSICONFIG) & RF_RSSI_DONE) == 0x00)
+		printf("RFM69_readRSSI\r\n");
 		//printf("while ((RFM69_readReg(REG_RSSICONFIG) & RF_RSSI_DONE) == 0x00)\r\n"); // wait for RSSI_Ready
   }
   rssi = -RFM69_readReg(REG_RSSIVALUE);

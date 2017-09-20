@@ -748,6 +748,11 @@ void internalDeal(u8 type,  u8 *pData)
                outputs[address_temp].control= pData[HeadLen+5] ; 
                write_page_en[EN_OUT] =1 ;
          }
+		 else if( (StartAdd >= MODBUS_RFM69_REGISTER_OP_MODE)&& ( StartAdd <= MODBUS_RFM69_REG_TEMP2))
+		 {
+			 address_temp   = StartAdd - MODBUS_RFM69_REGISTER_OP_MODE +1;
+			 RFM69_writeReg(address_temp, pData[HeadLen+5]);
+		 }
 	  #endif
 	  
 	  
@@ -1742,11 +1747,13 @@ void responseCmd(u8 type, u8* pData)
 		 else if( (address>=MODBUS_TEST_AC_START)&&(address<= MODBUS_TEST_AC_END))
 		 {
 			 address_temp = address - MODBUS_TEST_AC_START;
-			 temp1 = (vol_buf[0][address_temp]>>8)&0xff;
-			 temp2 = vol_buf[0][address_temp]&0xff;
+//			 temp1 = (vol_buf[0][address_temp]>>8)&0xff;
+//			 temp2 = vol_buf[0][address_temp]&0xff;
 			 
 //			 temp1 = (DMA_Buffer[address_temp]>>8)&0xff;
 //			 temp2 = DMA_Buffer[address_temp]&0xff;
+			 temp1 = 0;
+			 temp2 = 0;
 			 sendbuf[send_cout++] = temp1 ;
 			   sendbuf[send_cout++] = temp2 ;
 			   crc16_byte(temp1);
@@ -1758,11 +1765,11 @@ void responseCmd(u8 type, u8* pData)
 		 {
 			 temp1 = 0;
 			 address_temp = address - MODBUS_RFM69_REGISTER_OP_MODE+1;
-//			 RFM69_select();
-//				SPI_transfer8(address_temp & 0x7F); // send address + r/w bit
-//				temp2 = SPI_transfer8(0);
-//				RFM69_unselect();
-			 temp2 = 0;
+			 RFM69_select();
+				SPI_transfer8(address_temp & 0x7F); // send address + r/w bit
+				temp2 = simulate_spi_read_byte();
+				RFM69_unselect();
+			 //temp2 = 0;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
@@ -1926,15 +1933,15 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
-//		 else if( address == MODBUS_CT_AMPERE_1+2)
-//		 {
-//			 temp1 = (modbus.baudrate>>24) & 0xff ;
-//               temp2 = (modbus.baudrate>>16)&0xff ;
-//               sendbuf[send_cout++] = temp1 ;
-//               sendbuf[send_cout++] = temp2 ;
-//               crc16_byte(temp1);
-//               crc16_byte(temp2);
-//		 }
+		 else if( address == MODBUS_CT_AMPERE_1+2)
+		 {
+			 temp1 = 0 & 0xff ;
+               temp2 = RFM69_ReadDIO0Pin();//(modbus.baudrate>>16)&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
 //		 else if( address == MODBUS_CT_AMPERE_1+3)
 //		 {
 //			 temp1 = (modbus.baudrate>>8) & 0xff ;
