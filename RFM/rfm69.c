@@ -13,6 +13,8 @@
 #define SIMULATE_SPI_MOSI	PBout(15)
 #define SIMULATE_MISO    PBin(14)
 
+
+
 uint16_t rfm69_deadMaster = RFM69_DEFAULT_DEADMASTER;
 bool rfm69_deadmaster_enable = false;
 uint16_t rfm69_set_deadMaster = RFM69_DEFAULT_DEADMASTER;
@@ -194,6 +196,7 @@ void RFM69_GPIO_init(void)
 	NVIC_InitTypeDef NVIC_InitStructure;
 	//	GPIO_InitTypeDef GPIO_InitStructure;
 	//SPI_Cmd(SPI2, DISABLE); 	
+	#if RFM69_SIMULATE_SPI_ENABLE
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);//使能GPIOC时钟 
     //spi_clk
     GPIO_InitStructure.GPIO_Pin=GPIO_Pin_13 | GPIO_Pin_15; 
@@ -207,7 +210,7 @@ void RFM69_GPIO_init(void)
     GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IPU;  
     GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;     
     GPIO_Init(GPIOB,&GPIO_InitStructure);     
-
+    #endif
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);	 //使能PB端口时钟
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;				 //PD2推挽 
@@ -252,7 +255,7 @@ void EXTI15_10_IRQHandler(void)
 	if(EXTI->PR & (1 << 11))	//是11线的中断
 	{      
 		EXTI->PR  = (1 << 11);	//清除LINE11上的中断标志位
-//		printf( "EXTI15_10_IRQHandler..\r\n");
+		printf( "EXTI15_10_IRQHandler..\r\n");
 		RFM69_interruptHandler();
 	}
 
@@ -303,7 +306,7 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
     /* 0x38 */ { REG_PAYLOADLENGTH, 66 }, // in variable length mode: the max frame size, not used in TX
     ///* 0x39 */ { REG_NODEADRS, nodeID }, // turned off because we're not using address filtering
     /* 0x3C */ { REG_FIFOTHRESH, RF_FIFOTHRESH_TXSTART_FIFONOTEMPTY | RF_FIFOTHRESH_VALUE }, // TX on FIFO not empty
-    /* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_2BITS | RF_PACKET2_AUTORXRESTART_ON | RF_PACKET2_AES_OFF }, // RXRESTARTDELAY must match transmitter PA ramp-down time (bitrate dependent)
+    /* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_8BITS | RF_PACKET2_AUTORXRESTART_ON | RF_PACKET2_AES_OFF }, // RXRESTARTDELAY must match transmitter PA ramp-down time (bitrate dependent)
     //for BR-19200: /* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_NONE | RF_PACKET2_AUTORXRESTART_ON | RF_PACKET2_AES_OFF }, // RXRESTARTDELAY must match transmitter PA ramp-down time (bitrate dependent)
     /* 0x6F */ { REG_TESTDAGC, RF_DAGC_IMPROVED_LOWBETA0 }, // run DAGC continuously in RX mode for Fading Margin Improvement, recommended default for AfcLowBetaOn=0
     {255, 0}
@@ -527,7 +530,7 @@ bool RFM69_sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSi
       {
         //Serial.print(" ~ms:"); Serial.print(millis() - sentTime);
 //		  printf("RFM69_ACKReceived and still have %d ms\r\n",rfm69_count);
-		  delay_ms(5);
+//		  delay_ms(5);
         return true;
       }
     }
@@ -535,7 +538,6 @@ bool RFM69_sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSi
 //	printf("RETRY, time %d\r\n", i+1);
 	delay_ms(3);
 	RFM69_setMode(RF69_MODE_RX);
-//	delay_ms(20);
   }
   return false;
 }
@@ -633,22 +635,31 @@ void interruptHook(uint8_t CTLbyte) {
 // internal function - interrupt gets called when a packet is received
 void RFM69_interruptHandler() {
 
-
+  printf("_mode= %d, RFM69_readReg(REG_IRQFLAGS2)=%d\r\n", _mode, RFM69_readReg(REG_IRQFLAGS2));
   if (_mode == RF69_MODE_RX && (RFM69_readReg(REG_IRQFLAGS2) & RF_IRQFLAGS2_PAYLOADREADY))
   {
     uint8_t CTLbyte;
 	  uint8_t i;
     //rssi = RFM69_readRSSI();
 	  rfm69_rx_count = 7;
-	 // printf("RFM69_interruptHandler\n\r");
+	  printf("RFM69_interruptHandler\n\r");
     RFM69_setMode(RF69_MODE_STANDBY);
     RFM69_select();
     SPI_transfer8(REG_FIFO & 0x7F);
-	  
+	  #if RFM69_SIMULATE_SPI_ENABLE
     payloadLen = simulate_spi_read_byte();//SPI_transfer8(0);
+	  #else
+	  payloadLen = SPI_transfer8(0);
+	  #endif
+	  
     payloadLen = payloadLen > 66 ? 66 : payloadLen; // precaution
+	  
+	  #if RFM69_SIMULATE_SPI_ENABLE
     targetID = simulate_spi_read_byte();//SPI_transfer8(0);
-//	printf("payloadLen= %d\r\n, targetID= %d", payloadLen, targetID);  
+	  #else
+	   targetID = SPI_transfer8(0);
+	  #endif
+	printf("payloadLen= %d\r\n, targetID= %d\r\n", payloadLen, targetID);  
     if(!(_promiscuousMode || targetID == _address || targetID == RF69_BROADCAST_ADDR) // match this node's address, or broadcast address or anything in promiscuous mode
        || payloadLen < 3) // address situation could receive packets that are malformed and don't fit this libraries extra fields
     {
@@ -657,18 +668,29 @@ void RFM69_interruptHandler() {
       RFM69_receiveBegin();
       return;
     }
+	printf("pass the ID check...\r\n");
 
     datalen = payloadLen - 3;
+	#if RFM69_SIMULATE_SPI_ENABLE
     senderID = simulate_spi_read_byte();//SPI_transfer8(0);
     CTLbyte = simulate_spi_read_byte();//SPI_transfer8(0);
-
+    #else
+	senderID = SPI_transfer8(0);
+	CTLbyte = SPI_transfer8(0);
+	#endif
+	
+	printf("senderID= %d\r\n, CTLbyte= %d\r\n", senderID, CTLbyte);  
     ACK_RECEIVED = CTLbyte & RFM69_CTL_SENDACK; // extract ACK-received flag
     ACK_Requested = CTLbyte & RFM69_CTL_REQACK; // extract ACK-requested flag
     
 
     for (i = 0; i < datalen; i++)
     {
+		#if RFM69_SIMULATE_SPI_ENABLE
       data[i] = simulate_spi_read_byte();//SPI_transfer8(0);
+		#else
+		data[i] = SPI_transfer8(0);
+		#endif
 	  //rfm69_sendBuf[i] = data[i];	
     }
 	rfm69_size = datalen;
@@ -1084,7 +1106,11 @@ uint8_t RFM69_readReg(uint8_t addr)
   uint8_t regval;
   RFM69_select();
   SPI_transfer8(addr & 0x7F);
+	#if RFM69_SIMULATE_SPI_ENABLE
   regval = simulate_spi_read_byte();//SPI_transfer8(0);
+	#else
+	regval = SPI_transfer8(0);
+	#endif
   RFM69_unselect();
   return regval;
 }
@@ -1146,8 +1172,12 @@ bool RFM69_ReadDIO0Pin(void)       // function to read GPIO connected to RFM69 D
 uint8_t SPI_transfer8(uint8_t onByte)    // function to transfer 1byte on SPI with readback
 {
 //	return SPI2_ReadWriteByte(onByte);
+	#if RFM69_SIMULATE_SPI_ENABLE
 	simulate_spi_write_byte(onByte);
 	return 0;
+	#else
+	return SPI2_ReadWriteByte(onByte);
+	#endif
 }
 
 

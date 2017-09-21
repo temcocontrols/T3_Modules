@@ -134,7 +134,9 @@ int main(void)
 	mass_flash_init() ;
 	//Lcd_Initial();
 	SPI1_Init();
-//	SPI2_Init();
+	#if !RFM69_SIMULATE_SPI_ENABLE    
+	SPI2_Init();
+	#endif
 	watchdog_init();
 //	mem_init(SRAMIN);
 //	TIM3_Int_Init(5000, 7199);
@@ -294,7 +296,7 @@ void vRFMTask( void *pvParameters)
 	
 	for( ;; )
 	{
-		delay_ms(300);
+		delay_ms(100);
 //		RFM69_setMode(RF69_MODE_RX);
 //		GPIO_ResetBits(GPIOB, GPIO_Pin_13);
 //		GPIO_ResetBits(GPIOB, GPIO_Pin_15);
@@ -305,50 +307,51 @@ void vRFMTask( void *pvParameters)
 //		GPIO_ResetBits(GPIOC,GPIO_Pin_11);
 //		RFM69_GPIO_init();
 		
-//		if(rfm69_deadmaster_enable)
-//		{
-//			rfm69_deadMaster--;
-//			if(rfm69_deadMaster == 0)
-//			{
-//				{
-//					RFM69_freq = RFM69_getFrequency();
-//					if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
-//						//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
-//					{
-//						RFM69_freq = 915000000;
-//					}
-//					
-//					GPIO_SetBits(GPIOC,GPIO_Pin_12);
-//					delay_us(1000);
-//					GPIO_ResetBits(GPIOC,GPIO_Pin_12);
-//					delay_ms(100);
-//					RFM_CS = 0;
-//					SPI2_Init();
-//					RFM69_GPIO_init();
-//					rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
-//					RFM69_encrypt(rfm69_key);
-//					RFM69_setBitRate(RFM69_biterate);
-//					RFM69_setMode(RF69_MODE_RX);
-//					delay_ms(100);
-//				}
-//				rfm69_deadMaster = rfm69_set_deadMaster;
-//			}
-//		}
-		if( (RFM69_readReg(40) & 0x46)!=0)
+		if(rfm69_deadmaster_enable)
 		{
-			printf("RFM69_readReg(40) & 0x46)!=0");
-			RFM69_interruptHandler();
-			RFM69_setMode(RF69_MODE_RX);
+			rfm69_deadMaster--;
+			if(rfm69_deadMaster == 0)
+			{
+				{
+					RFM69_freq = RFM69_getFrequency();
+					if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
+						//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
+					{
+						RFM69_freq = 915000000;
+					}
+					
+					GPIO_SetBits(GPIOC,GPIO_Pin_12);
+					delay_us(1000);
+					GPIO_ResetBits(GPIOC,GPIO_Pin_12);
+					delay_ms(100);
+					RFM_CS = 0;
+					SPI2_Init();
+					RFM69_GPIO_init();
+					rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+					RFM69_encrypt(rfm69_key);
+					RFM69_setBitRate(RFM69_biterate);
+					RFM69_setMode(RF69_MODE_RX);
+					delay_ms(100);
+				}
+				rfm69_deadMaster = rfm69_set_deadMaster;
+			}
 		}
+//		if( (RFM69_readReg(40) & 0x40)!=0)
+//		{
+//			printf("RFM69_readReg(40) & 0x46)!=0");
+//			RFM69_interruptHandler();
+//			RFM69_setMode(RF69_MODE_RX);
+//		}
 		if(rfm69_send_flag)
 		{
 			rfm69_deadMaster = rfm69_set_deadMaster;
+			printf("rfm69_send_flag==1\r\n");
 			//RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 1);
 			//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
 			if(rfm69_checkData(rfm69_size))//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
 			{
 				//test_print = true;
-				printf("rfm69_send_flag==1\r\n");
+				printf("Send response\r\n");
 				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
 				internalDeal(10, rfm69_sendBuf);

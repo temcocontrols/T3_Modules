@@ -1767,7 +1767,11 @@ void responseCmd(u8 type, u8* pData)
 			 address_temp = address - MODBUS_RFM69_REGISTER_OP_MODE+1;
 			 RFM69_select();
 				SPI_transfer8(address_temp & 0x7F); // send address + r/w bit
+			 #if RFM69_SIMULATE_SPI_ENABLE
 				temp2 = simulate_spi_read_byte();
+			 #else
+			    temp2 = SPI_transfer8(0);
+			 #endif
 				RFM69_unselect();
 			 //temp2 = 0;
                sendbuf[send_cout++] = temp1 ;
