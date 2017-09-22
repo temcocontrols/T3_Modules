@@ -16,7 +16,7 @@
 
 
 uint16_t rfm69_deadMaster = RFM69_DEFAULT_DEADMASTER;
-bool rfm69_deadmaster_enable = false;
+bool rfm69_deadmaster_enable;
 uint16_t rfm69_set_deadMaster = RFM69_DEFAULT_DEADMASTER;
 uint8_t rfm69_size;
 uint8_t rfm69_id;
@@ -255,7 +255,7 @@ void EXTI15_10_IRQHandler(void)
 	if(EXTI->PR & (1 << 11))	//是11线的中断
 	{      
 		EXTI->PR  = (1 << 11);	//清除LINE11上的中断标志位
-		printf( "EXTI15_10_IRQHandler..\r\n");
+//		printf( "EXTI15_10_IRQHandler..\r\n");
 		RFM69_interruptHandler();
 	}
 
@@ -325,7 +325,7 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
 	  else
 		  printf( "!= != != \r\n\r\n");
   }
-  Timeout_SetTimeout1(50);
+  Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
   do
   {
     RFM69_writeReg(REG_SYNCVALUE1, 0xAA); 
@@ -337,7 +337,7 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
   }while (RFM69_readReg(REG_SYNCVALUE1) != 0xaa);
   //while (RFM69_readReg(REG_SYNCVALUE1) != 0xaa && !Timeout_IsTimeout1());
   
-  Timeout_SetTimeout1(50);
+  Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
   do
   {
     RFM69_writeReg(REG_SYNCVALUE1, 0x55); 
@@ -358,8 +358,8 @@ bool RFM69_initialize(uint8_t freqBand, uint8_t nodeID, uint16_t networkID)
 
   RFM69_setHighPower(ISRFM69HW); // called regardless if it's a RFM69W or RFM69HW
   RFM69_setMode(RF69_MODE_STANDBY);
-  Timeout_SetTimeout1(50);
-  //RFM69_promiscuous(true);
+  Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
+  RFM69_promiscuous(true);
   while (((RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00) && !Timeout_IsTimeout1()); // wait for ModeReady
   if (Timeout_IsTimeout1())
   {
@@ -431,8 +431,9 @@ void RFM69_setMode(uint8_t newMode)
 
   // we are using packet mode, so this check is not really needed
   // but waiting for mode ready is necessary when going from sleep because the FIFO may not be immediately available from previous mode
-  while (_mode == RF69_MODE_SLEEP && (RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00)
-	  printf("RFM69_setMode\r\n"); // wait for ModeReady
+  Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
+  while (_mode == RF69_MODE_SLEEP && (RFM69_readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00 && !Timeout_IsTimeout1());
+	  //printf("RFM69_setMode\r\n"); // wait for ModeReady
   //delay_ms(50);
 
   _mode = newMode;
@@ -503,7 +504,7 @@ void RFM69_send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool 
   RFM69_writeReg(REG_PACKETCONFIG2, (RFM69_readReg(REG_PACKETCONFIG2) & 0xFB) | RF_PACKET2_RXRESTART); // avoid RX deadlocks
 //	printf("after RFM69_writeReg\r\n");
   //uint32_t now = millis();
-	Timeout_SetTimeout1(50);
+	Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
   while (!RFM69_canSend() && !Timeout_IsTimeout1())/*&& millis() - now < RF69_CSMA_LIMIT_MS*/ RFM69_receiveDone();
 //	printf("after RFM69_canSend\r\n");
   RFM69_sendFrame(toAddress, buffer, bufferSize, requestACK, false);
@@ -536,7 +537,7 @@ bool RFM69_sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSi
     }
     //Serial.print(" RETRY#"); Serial.println(i + 1);
 //	printf("RETRY, time %d\r\n", i+1);
-	delay_ms(3);
+//	delay_ms(3);
 	RFM69_setMode(RF69_MODE_RX);
   }
   return false;
@@ -635,14 +636,14 @@ void interruptHook(uint8_t CTLbyte) {
 // internal function - interrupt gets called when a packet is received
 void RFM69_interruptHandler() {
 
-  printf("_mode= %d, RFM69_readReg(REG_IRQFLAGS2)=%d\r\n", _mode, RFM69_readReg(REG_IRQFLAGS2));
+//  printf("_mode= %d, RFM69_readReg(REG_IRQFLAGS2)=%d\r\n", _mode, RFM69_readReg(REG_IRQFLAGS2));
   if (_mode == RF69_MODE_RX && (RFM69_readReg(REG_IRQFLAGS2) & RF_IRQFLAGS2_PAYLOADREADY))
   {
     uint8_t CTLbyte;
 	  uint8_t i;
     //rssi = RFM69_readRSSI();
 	  rfm69_rx_count = 7;
-	  printf("RFM69_interruptHandler\n\r");
+//	  printf("RFM69_interruptHandler\n\r");
     RFM69_setMode(RF69_MODE_STANDBY);
     RFM69_select();
     SPI_transfer8(REG_FIFO & 0x7F);
@@ -659,7 +660,7 @@ void RFM69_interruptHandler() {
 	  #else
 	   targetID = SPI_transfer8(0);
 	  #endif
-	printf("payloadLen= %d\r\n, targetID= %d\r\n", payloadLen, targetID);  
+//	printf("payloadLen= %d\r\n, targetID= %d\r\n", payloadLen, targetID);  
     if(!(_promiscuousMode || targetID == _address || targetID == RF69_BROADCAST_ADDR) // match this node's address, or broadcast address or anything in promiscuous mode
        || payloadLen < 3) // address situation could receive packets that are malformed and don't fit this libraries extra fields
     {
@@ -668,7 +669,7 @@ void RFM69_interruptHandler() {
       RFM69_receiveBegin();
       return;
     }
-	printf("pass the ID check...\r\n");
+//	printf("pass the ID check...\r\n");
 
     datalen = payloadLen - 3;
 	#if RFM69_SIMULATE_SPI_ENABLE
@@ -679,7 +680,7 @@ void RFM69_interruptHandler() {
 	CTLbyte = SPI_transfer8(0);
 	#endif
 	
-	printf("senderID= %d\r\n, CTLbyte= %d\r\n", senderID, CTLbyte);  
+//	printf("senderID= %d\r\n, CTLbyte= %d\r\n", senderID, CTLbyte);  
     ACK_RECEIVED = CTLbyte & RFM69_CTL_SENDACK; // extract ACK-received flag
     ACK_Requested = CTLbyte & RFM69_CTL_REQACK; // extract ACK-requested flag
     
@@ -732,6 +733,9 @@ void RFM69_receiveBegin()
   if (RFM69_readReg(REG_IRQFLAGS2) & RF_IRQFLAGS2_PAYLOADREADY)
     RFM69_writeReg(REG_PACKETCONFIG2, (RFM69_readReg(REG_PACKETCONFIG2) & 0xFB) | RF_PACKET2_RXRESTART); // avoid RX deadlocks
   RFM69_writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01); // set DIO0 to "PAYLOADREADY" in receive mode
+  RFM69_writeReg(REG_PACKETCONFIG2, 0x13);
+  RFM69_writeReg(REG_DATAMODUL, 0);
+  RFM69_writeReg(REG_OPMODE, 0x10);
   RFM69_setMode(RF69_MODE_RX);
 }
 
@@ -780,10 +784,12 @@ int16_t RFM69_readRSSI(bool forceTrigger)
   {
     // RSSI trigger not needed if DAGC is in continuous mode
     RFM69_writeReg(REG_RSSICONFIG, RF_RSSI_START);
-    while ((RFM69_readReg(REG_RSSICONFIG) & RF_RSSI_DONE) == 0x00)
-		printf("RFM69_readRSSI\r\n");
+	  Timeout_SetTimeout1(RF69_TX_LIMIT_MS);
+    while (((RFM69_readReg(REG_RSSICONFIG) & RF_RSSI_DONE) == 0x00) && !Timeout_IsTimeout1());
+	//{
+		//printf("RFM69_readRSSI\r\n");
 		//printf("while ((RFM69_readReg(REG_RSSICONFIG) & RF_RSSI_DONE) == 0x00)\r\n"); // wait for RSSI_Ready
-  }
+	}
   rssi = -RFM69_readReg(REG_RSSIVALUE);
   rssi >>= 1;
   //if(rssi != 0)

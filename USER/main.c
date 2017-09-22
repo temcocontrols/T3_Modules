@@ -313,12 +313,12 @@ void vRFMTask( void *pvParameters)
 			if(rfm69_deadMaster == 0)
 			{
 				{
-					RFM69_freq = RFM69_getFrequency();
-					if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
-						//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
-					{
-						RFM69_freq = 915000000;
-					}
+//					RFM69_freq = RFM69_getFrequency();
+//					if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
+//						//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
+//					{
+//						RFM69_freq = 915000000;
+//					}
 					
 					GPIO_SetBits(GPIOC,GPIO_Pin_12);
 					delay_us(1000);
@@ -345,13 +345,13 @@ void vRFMTask( void *pvParameters)
 		if(rfm69_send_flag)
 		{
 			rfm69_deadMaster = rfm69_set_deadMaster;
-			printf("rfm69_send_flag==1\r\n");
+			//printf("rfm69_send_flag==1\r\n");
 			//RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 0, 1);
 			//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
 			if(rfm69_checkData(rfm69_size))//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
 			{
 				//test_print = true;
-				printf("Send response\r\n");
+				//printf("Send response\r\n");
 				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
 				internalDeal(10, rfm69_sendBuf);
@@ -1041,10 +1041,10 @@ void EEP_Dat_Init(void)
 				}
 				comSlaveId = AT24CXX_ReadOneByte(EEP_ACC_COM_SLAVE_ID);
 				rfm69_deadmaster_enable = AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_ENABLE);
-				if( (rfm69_deadmaster_enable != false) || (rfm69_deadmaster_enable != true))
-				{
-					rfm69_deadmaster_enable = 0;
-				}
+//				if( (rfm69_deadmaster_enable != false) && (rfm69_deadmaster_enable != true))
+//				{
+//					rfm69_deadmaster_enable = 0;
+//				}
 				#endif
 				
 				modbus.protocal = AT24CXX_ReadOneByte(EEP_MODBUS_COM_CONFIG); 
