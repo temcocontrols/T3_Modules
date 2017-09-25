@@ -5,7 +5,7 @@
 #include "bitmap.h"
 
 //#if T36CTA
-#define RFM69_SIMULATE_SPI_ENABLE    1
+#define RFM69_SIMULATE_SPI_ENABLE  1
 
 #define RF69_MAX_DATA_LEN       61 // to take advantage of the built in AES/CRC we want to limit the frame size to the internal FIFO size (66 bytes - 3 bytes overhead - 2 bytes crc)
 #define RF69_SPI_CS             SS // SS is the SPI slave select pin, for instance D10 on ATmega328
@@ -14,8 +14,8 @@
 #define RF69_IRQ_PIN          2
 #define RF69_IRQ_NUM          0  
 
-#define RFM69_RETRIES         1
-#define RFM69_RETRIES_TIMEOUT     25
+#define RFM69_RETRIES         2
+#define RFM69_RETRIES_TIMEOUT     300
 
 #define CSMA_LIMIT              -90 // upper RX signal sensitivity threshold in dBm for carrier sense access
 #define RF69_MODE_SLEEP         0 // XTAL OFF
@@ -34,7 +34,7 @@
 #define COURSE_TEMP_COEF    -90 // puts the temperature reading in the ballpark, user can fine tune the returned value
 #define RF69_BROADCAST_ADDR 255
 #define RF69_CSMA_LIMIT_MS 1000
-#define RF69_TX_LIMIT_MS   5 //300
+#define RF69_TX_LIMIT_MS   1000
 #define RF69_FSTEP  61.03515625 // == FXOSC / 2^19 = 32MHz / 2^19 (p13 in datasheet)
 
 // TWS: define CTLbyte bits
@@ -54,7 +54,6 @@
 #define RFM69_DEFAULT_DEADMASTER    80
 
 extern uint16_t rfm69_deadMaster;
-extern bool rfm69_deadmaster_enable;
 extern uint16_t rfm69_set_deadMaster;
 extern char rfm69_key[];
 extern uint16_t RFM69_networkID;
@@ -65,8 +64,6 @@ extern uint8_t rfm69_id;
 extern uint8_t rfm69_size;
 extern uint8_t rfm69_sendBuf[];
 extern uint16_t RFM69_biterate;
-extern void RFM69_select(void);
-extern void RFM69_unselect(void);
 
 // module interface, platform specific
 extern void noInterrupts();                // function to disable interrupts
@@ -97,8 +94,5 @@ extern uint8_t RFM69_getAddress();
 extern uint16_t RFM69_getNetwork();
 extern void RFM69_setNetwork(uint16_t networkID);
 extern void RFM69_send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool requestACK);
-extern u8 simulate_spi_read_byte(void);
-extern void RFM69_writeReg(uint8_t addr, uint8_t val);
-extern uint8_t RFM69_readReg(uint8_t addr);
 #endif
 //#endif

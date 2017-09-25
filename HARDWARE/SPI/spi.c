@@ -1,9 +1,5 @@
 #include "spi.h"
 #include "delay.h"
-#include "bitmap.h"
-
-
-   
 
 //**** SPI1 ****************
 void SPI1_Init(void)
@@ -108,9 +104,7 @@ void SPI2_Init(void)
 	SPI2_ReadWriteByte(0xff);//启动传输
 	
 	SPI2_SetSpeed(SPI_BaudRatePrescaler_256);
- 	SPI2_SetSpeed(SPI_BaudRatePrescaler_4);	//SCK频率=36M/4=9M
-
-
+// 	SPI2_SetSpeed(SPI_BaudRatePrescaler_4);	//SCK频率=36M/4=9M
 }
 
 //SPI1速度设置函数
@@ -146,5 +140,3 @@ u8 SPI2_ReadWriteByte(u8 TxData)
 	};
 	return SPI_I2S_ReceiveData(SPI2);
 }
-
-
