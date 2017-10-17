@@ -13,6 +13,9 @@
 
 #define ACCELERO_ADDR_READ   0x3B
 #define ACCELERO_ADDR_WRITE  0x3A
+
+//#define ACCELERO_ADDR_READ   0xd5
+//#define ACCELERO_ADDR_WRITE  0xd4
 //IO·½ÏòÉèÖÃ
 //#define ACCELERO_SDA_IN()	 {GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)8 << 12);}
 //#define ACCELERO_SDA_OUT()	 {GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)3 << 12);}

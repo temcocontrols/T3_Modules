@@ -1926,6 +1926,16 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
+		 else if( address == MODBUS_CT_AMPERE_1+2)
+		 {
+			 temp1 = 0;
+               //temp2 = ACCELERO_Read_Data(0x0f) ;
+			 temp2 = 0;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
 //		 else if( address == MODBUS_CT_AMPERE_1+2)
 //		 {
 //			 temp1 = (modbus.baudrate>>24) & 0xff ;

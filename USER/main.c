@@ -127,6 +127,7 @@ int main(void)
 	ACCELERO_I2C_init();
 	ACCELERO_Write_Data(0x2a, 0x01);
 	if( 0x5a == ACCELERO_Read_Data(0x0d))
+//		if( 0x69 == ACCELERO_Read_Data(0x0f))
 	{
 		t36ct_ver = T36CTA_REV2;
 	}
@@ -168,7 +169,7 @@ int main(void)
 	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 4, NULL );
  	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vGetACTask, ( signed portCHAR * ) "GETAC", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
-	xTaskCreate( vOutdoorTask, ( signed portCHAR * ) "COMM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
+	xTaskCreate( vOutdoorTask, ( signed portCHAR * ) "OUTDOOR", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#if T36CTA_REV2
 			xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "AIRFLOW", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#endif
@@ -335,6 +336,7 @@ void vRFMTask( void *pvParameters)
 			//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
 			if(rfm69_checkData(rfm69_size))//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
 			{
+				//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
 				//test_print = true;
 				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
@@ -379,6 +381,7 @@ void vAcceleroTask(void *pvParameters)
 	for( ;; )
 	{
 		ACCELERO_Write_Data(0x2a, 0x01);
+//		if( 0x69 == ACCELERO_Read_Data(0x0f))
 		if( 0x5a == ACCELERO_Read_Data(0x0d))
 		{
 			t36ct_ver = T36CTA_REV2;
@@ -520,7 +523,7 @@ void vOutdoorTask(void *pvParameters)
 			}
 			sendCount++;
 		}
-		delay_ms(10);
+		delay_ms(3);
 		#endif
 	}
 }

@@ -701,7 +701,7 @@ void RFM69_interruptHandler() {
 	memcpy(rfm69_sendBuf, data, datalen);
 //	printf("payloadLen= %d\r\n, senderID= %d\r\n, datalen = %d\r\n\r\n", payloadLen, senderID, datalen);  
 //	printf("%d,%d,%d,%d,%d,%d,%d,%d,\r\n\r\n", data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
-//    interruptHook(CTLbyte);     // TWS: hook to derived class interrupt function
+    interruptHook(CTLbyte);     // TWS: hook to derived class interrupt function
 	rfm69_send_flag = true;
 	//RFM69_sendWithRetry(senderID, data, 8, 0, 25);
 //	if(data[0] == 255 || data[0] == modbus.address || data[0] == 0)
