@@ -595,7 +595,8 @@ u16 ADC_getChannal(ADC_TypeDef* ADCx, u8 channal)
 				inputs[channel].decom = inputs[channel].decom &0x0f ;
 				inputs[channel].decom |= (T3_V010<<4) ;
 	 }
-	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
+	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20Amps ||
+		inputs[channel].range == I0_50Amps ||inputs[channel].range == I0_75Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
 	 {
 				RANGE_SET0 = 0 ;
 				RANGE_SET1 = 0 ;
@@ -668,7 +669,8 @@ u16 ADC_getChannal(ADC_TypeDef* ADCx, u8 channal)
 				inputs[channel].decom |= (T3_V010<<4) ;
 		 input_type[channel] = T3_V010;
 	 }
-	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
+	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20Amps ||
+		inputs[channel].range == I0_50Amps ||inputs[channel].range == I0_75Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
 	 //if(input_type[channel] == INPUT_I0_20ma)
 	 {
 				RANGE_SET0 = 0 ;

@@ -126,7 +126,8 @@ int main(void)
 	ACCELERO_IO_Init();
 	ACCELERO_I2C_init();
 	ACCELERO_Write_Data(0x2a, 0x01);
-	if( 0x5a == ACCELERO_Read_Data(0x0d))
+//	if( (0x5a == ACCELERO_Read_Data(0x0d))||(0x69 == ACCELERO_Read_Data(0x0f)))
+	if(0x5a == ACCELERO_Read_Data(0x0d))
 //		if( 0x69 == ACCELERO_Read_Data(0x0f))
 	{
 		t36ct_ver = T36CTA_REV2;
@@ -391,6 +392,14 @@ void vAcceleroTask(void *pvParameters)
 			axis_value[asix_sequence++] = acc_temp;
 			asix_sequence %= 3;
 		}
+//		else if(0x69 == ACCELERO_Read_Data(0x0f))
+//		{
+//			t36ct_ver = T36CTA_REV2;
+//			acc_temp = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x29),ACCELERO_Read_Data(asix_sequence*2 + 0x28));
+//			tempAcc = axis_value[asix_sequence] - acc_temp;
+//			axis_value[asix_sequence++] = acc_temp;
+//			asix_sequence %= 3;
+//		}
 		if((ABS(tempAcc) > acc_sensitivity[0])&&(ABS(tempAcc) < acc_sensitivity[1]))
 		{
 			acc_led_count = 100;
@@ -674,6 +683,7 @@ void vKEYTask( void *pvParameters )
 	KEY_IO_Init();
 	for( ;; )
 	{
+		KEY_IO_Init();
 		KEY_Status_Scan();
 		delay_ms(100);
 	}	
@@ -972,7 +982,7 @@ void EEP_Dat_Init(void)
 					default:
 					break ;				
 				}
-				uart1_init(115200);//(modbus.baudrate);
+				uart1_init(modbus.baudrate);//(modbus.baudrate);
 				
 
 				

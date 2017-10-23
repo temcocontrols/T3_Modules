@@ -468,9 +468,21 @@ void control_input(void)
 							sample = ( 100000L * sample ) >> 10;
 						    #endif
 							break;
+						case I0_20Amps:
+							sample = (( 100000L * sample )/5) >> 10;
+							break;
+						case I0_50Amps:
+							sample = ( (100000L * sample )/2) >> 10;
+							break;
+						case I0_75Amps:
+							sample = (( 100000L * sample )*3/4) >> 10;
+							break;
 						case I0_20ma:
+							#if 0//(defined T36CTA)
+							sample = ((20000L * sample)*16/20+4000L)>>10;
+							#else
 							sample = ( 20000L * sample ) >> 10;
-			
+							#endif
 							break;
 						case I0_20psi:
 							sample = ( 20000L * sample ) >> 10;
