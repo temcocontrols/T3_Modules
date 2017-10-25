@@ -354,11 +354,11 @@ void tabulate_LED_STATE(void)
 		{
 			if((AD_Value[i]>150) && (AD_Value[i]<4048))
 			{
-						led_bank2 &= ~(1<<(i+5)) ;
+						led_bank2 &= ~(1<<(i+5-10)) ;
 			}
 			else
 			{
-						led_bank2 |= (1<<(i+5)) ;
+						led_bank2 |= (1<<(i+5-10)) ;
 			}
 				
 		}	
