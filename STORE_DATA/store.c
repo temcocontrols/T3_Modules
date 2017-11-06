@@ -197,7 +197,7 @@ void mass_flash_init(void)
 					else if( loop <19)
 					{
 						inputs[loop].digital_analog = 1 ;
-						inputs[loop].range = I0_100Amps;
+						inputs[loop].range = I0_75Amps;
 						sprintf((char*)label_buf, "CT%u", loop-12);
 					}
 					else if(loop == 19)
