@@ -11,6 +11,12 @@
 extern uint16 CT_first_AD;
 extern uint16 CT_multiple;
 #define NOMINUS(n)     (((n) < 0) ? 0 : (n))
+extern uint8_t t36ct_ver;
+ extern u16 outdoorTempC;
+ extern u16 outdoorTempH;
+ extern u16 outdoorHum;
+ extern u16 outdoorLux;
+  extern u16 outdoorEnthalpy;
 #endif
 
 #ifdef INPUT_CONTROL
@@ -189,6 +195,7 @@ uint32_t get_input_value_by_range( uint8_t range, uint16_t raw )
 		return limit[ran_in][0];
 	index = MIDDLE_RANGE;
 
+
 	while( !end )
 	{
 		if( ( raw >= def_tbl[index] ) && ( raw <= def_tbl[index-1] ) )
@@ -285,7 +292,23 @@ void control_input(void)
 //	U8_T max_input;
   U8_T temp;	
 	#if (defined T36CTA)
-	uint16 tempWord;
+//	uint16 tempWord;
+	uint8_t tempBuf[8];
+	u8 i;
+	static u8 lastTempRange= R10K_40_250DegF;
+	static u16 lastTempCalibration = 0;
+	static u16 lastHumCalibration= 0;
+	static u8 lastTempCalibrationSign= 0;
+	static u8 lastHumCalibrationSign= 0;
+	
+	tempBuf[0] = 0xff;
+	tempBuf[1] = 0x06;
+	tempBuf[2] = 0x00;
+	tempBuf[3] = 0xff;
+	tempBuf[4] = 0xff;
+	tempBuf[5] = 0xff;
+	tempBuf[6] = 0xff;
+	tempBuf[7] = 0xff;
 	#endif
 
 	ins = inputs;
@@ -378,9 +401,46 @@ void control_input(void)
 								temp &= 0xf0;
 								temp |= IN_SHORT;
 								ins->decom = temp;
-							}					
+							}
+							#if 0//(defined T36CTA)
+//							if(t36ct_ver == T36CTA_REV1 )
+//								{
+//									if(point == 19)
+//									{
+//										if((ins->range%2)==1)
+//										{
+//											sample = outdoorTempC*100;
+//										}
+//										else if((ins->range%2)==0)
+//										{
+//											sample = outdoorTempH*100;
+//										}
+//									}
+//									else
+//										sample = get_input_value_by_range( ins->range, sample );
+//									break;
+//								}
+//								else if(t36ct_ver == T36CTA_REV2)
+//								{
+//									if(point == 16)
+//									{
+//										if((ins->range%2)==1)
+//										{
+//											sample = outdoorTempC*100;
+//										}
+//										else if((ins->range%2)==0)
+//										{
+//											sample = outdoorTempH*100;
+//										}
+//									}
+//									else
+//										sample = get_input_value_by_range( ins->range, sample );
+//									break;
+//								}
+							#else	
 							sample = get_input_value_by_range( ins->range, sample );
 							break;
+							#endif
 						case V0_5:
 							sample = conver_by_unit_5v(sample);		
 							break;
@@ -390,7 +450,7 @@ void control_input(void)
 
 							break;
 						case I0_100Amps:
-							#if (defined T36CTA)
+							#if 0//(defined T36CTA)
 						    if(sample<=(510/4))
 							{
 								if(sample>(CT_first_AD/4))
@@ -408,9 +468,21 @@ void control_input(void)
 							sample = ( 100000L * sample ) >> 10;
 						    #endif
 							break;
+						case I0_20Amps:
+							sample = (( 100000L * sample )/5) >> 10;
+							break;
+						case I0_50Amps:
+							sample = ( (100000L * sample )/2) >> 10;
+							break;
+						case I0_75Amps:
+							sample = (( 100000L * sample )*3/4) >> 10;
+							break;
 						case I0_20ma:
+							#if 0//(defined T36CTA)
+							sample = ((20000L * sample)*16/20+4000L)>>10;
+							#else
 							sample = ( 20000L * sample ) >> 10;
-			
+							#endif
 							break;
 						case I0_20psi:
 							sample = ( 20000L * sample ) >> 10;
@@ -447,18 +519,63 @@ void control_input(void)
 						
 							break;
 						#if (defined T36CTA)
+						case Humidty:
+							if(t36ct_ver == T36CTA_REV1 )
+							{
+								if(point == 20)
+								{
+									sample = outdoorHum * 100;
+								}
+							}
+							else if(t36ct_ver == T36CTA_REV2)
+							{
+								if(point == 17)
+								{
+									sample = outdoorHum * 100;
+								}
+							}
+							break;
 						case pressureInWc:
-							sample = Pressure.org_val*1000l;
+							if(t36ct_ver == T36CTA_REV2)
+								sample = Pressure.org_val*1000l;
 							break;
 						case Reserved1:
-							sample = Pressure.air_speed*1000l;
+							if(t36ct_ver == T36CTA_REV1 )
+							{
+								if(point == 21)
+								{
+									sample = outdoorLux*1000;
+								}
+								if(point == 22)
+								{
+									sample = outdoorEnthalpy*100;
+								}
+								else
+									sample = Pressure.air_speed*1000l;
+							}
+							else if(t36ct_ver == T36CTA_REV2)
+							{
+								if(point == 18)
+								{
+									sample = outdoorLux*1000;
+								}
+								else if(point == 19)
+								{
+									sample = outdoorEnthalpy*100;
+								}
+								else
+									sample = Pressure.air_speed*1000l;
+									
+							}
 							break;
 						case Reserved2:
-							sample = ((uint32_t)((Pressure.air_flow.C_Type[3]&0x00ff)<<24)+(uint32_t)((Pressure.air_flow.C_Type[2]&0x00ff)<<16)
-									+(uint32_t)((Pressure.air_flow.C_Type[1]&0x00ff)<<8)+(uint32_t)(Pressure.air_flow.C_Type[0]&0x00ff))*1000l;
+							if(t36ct_ver == T36CTA_REV2)
+								sample = ((uint32_t)((Pressure.air_flow.C_Type[3]&0x00ff)<<24)+(uint32_t)((Pressure.air_flow.C_Type[2]&0x00ff)<<16)
+										+(uint32_t)((Pressure.air_flow.C_Type[1]&0x00ff)<<8)+(uint32_t)(Pressure.air_flow.C_Type[0]&0x00ff))*1000l;
 							break;
 						case Reserved3:
-							sample = calcRms(axis_value, 3)*1000l;
+							if(t36ct_ver == T36CTA_REV2)
+								sample = calcRms(axis_value, 3)*1000l;
 							break;
 						#endif
 						default:
@@ -472,6 +589,207 @@ void control_input(void)
 								sample += 100L * (ins->calibration_hi * 256 + ins->calibration_lo);
 							else
 								sample += -100L * (ins->calibration_hi * 256 + ins->calibration_lo);
+						}
+						
+						if(t36ct_ver == T36CTA_REV1 )
+						{
+							if((point == 19) && (ins->range <= A10K_60_200DegF) && (ins->range>not_used_input))
+							{
+								if((ins->range%2)==1)
+								{
+									tempBuf[2] = 0x00;
+									tempBuf[3] = 0x79;
+									tempBuf[4] = 0x00;
+									tempBuf[5] = 0x00;
+									sample = outdoorTempC*100;
+								}
+								else if((ins->range%2)==0)
+								{
+									tempBuf[2] = 0x00;
+									tempBuf[3] = 0x79;
+									tempBuf[4] = 0x00;
+									tempBuf[5] = 0x01;
+									sample = outdoorTempH*100;
+								}
+							}
+						}
+						else if(t36ct_ver == T36CTA_REV2)
+						{
+							if(point == 16)
+							{
+								if((ins->range%2)==1)
+								{
+									tempBuf[2] = 0x00;
+									tempBuf[3] = 0x79;
+									tempBuf[4] = 0x00;
+									tempBuf[5] = 0x00;
+									sample = outdoorTempC*100;
+								}
+								else if((ins->range%2)==0)
+								{
+									tempBuf[2] = 0x00;
+									tempBuf[3] = 0x79;
+									tempBuf[4] = 0x00;
+									tempBuf[5] = 0x01;
+									sample = outdoorTempH*100;
+								}
+							}
+						}
+						if(t36ct_ver == T36CTA_REV1 )
+						{
+							if(point == 19)
+							{
+								if((lastTempRange != ins->range)&& (ins->range <= A10K_60_200DegF) && (ins->range>not_used_input))
+								{
+									init_crc16();
+									for( i=0; i< 6; i++)
+									{
+										crc16_byte(tempBuf[i]);
+									}
+									tempBuf[6] = CRChi;
+									tempBuf[7] = CRClo;
+									memcpy(uart_send, tempBuf, 8);
+									TXEN = SEND;
+									USART_SendDataString(8);
+									lastTempRange = ins->range;
+									delay_ms(5);
+								}
+								if((lastTempCalibration != (ins->calibration_hi * 256 + ins->calibration_lo))||( lastTempCalibrationSign!= ins->calibration_sign))
+								{
+									if( (ins->range ==Y3K_40_300DegF)||(ins->range ==R10K_40_250DegF) || (ins->range ==R3K_40_300DegF) 
+										|| (ins->range ==KM10K_40_250DegF) || (ins->range ==A10K_60_200DegF))
+									{
+										tempBuf[2] = 0x00;
+										tempBuf[3] = 0x64;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+									}
+									if( (ins->range ==Y3K_40_150DegC)||(ins->range ==R10K_40_120DegC) || (ins->range ==R3K_40_150DegC) 
+										|| (ins->range ==KM10K_40_120DegC) || (ins->range ==A10K_50_110DegC))
+									{
+										tempBuf[2] = 0x00;
+										tempBuf[3] = 0x65;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+									}
+									delay_ms(5);
+								}
+								lastTempCalibrationSign = ins->calibration_sign;
+								lastTempCalibration = (ins->calibration_hi * 256 + ins->calibration_lo);
+							}
+							
+						}
+						else if(t36ct_ver == T36CTA_REV2)
+						{
+							if(point == 16)
+							{
+								if((lastTempRange != ins->range)&& (ins->range <= A10K_60_200DegF) && (ins->range>not_used_input))
+								{
+									init_crc16();
+									for( i=0; i< 6; i++)
+									{
+										crc16_byte(tempBuf[i]);
+									}
+									tempBuf[6] = CRChi;
+									tempBuf[7] = CRClo;
+									memcpy(uart_send, tempBuf, 8);
+									TXEN = SEND;
+									USART_SendDataString(8);
+									lastTempRange = ins->range;
+									delay_ms(5);
+								}
+								if((lastTempCalibration != (ins->calibration_hi * 256 + ins->calibration_lo))||( lastTempCalibrationSign!= ins->calibration_sign))
+								{
+									if( (ins->range ==Y3K_40_300DegF)||(ins->range ==R10K_40_250DegF) || (ins->range ==R3K_40_300DegF) 
+										|| (ins->range ==KM10K_40_250DegF) || (ins->range ==A10K_60_200DegF))
+									{
+										tempBuf[2] = 0x00;
+										tempBuf[3] = 0x64;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+									}
+									if( (ins->range ==Y3K_40_150DegC)||(ins->range ==R10K_40_120DegC) || (ins->range ==R3K_40_150DegC) 
+										|| (ins->range ==KM10K_40_120DegC) || (ins->range ==A10K_50_110DegC))
+									{
+										tempBuf[2] = 0x00;
+										tempBuf[3] = 0x65;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+									}
+									
+									lastTempCalibrationSign = ins->calibration_sign;
+									lastTempCalibration = (ins->calibration_hi * 256 + ins->calibration_lo);
+									delay_ms(5);
+								}
+								
+							}
+							if((point == 17)&& (ins->range == Humidty))
+							{
+								if((lastHumCalibration != (ins->calibration_hi * 256 + ins->calibration_lo))||(lastHumCalibrationSign != ins->calibration_sign))
+								{
+									//if( ins->range == Humidty)
+									{
+										tempBuf[2] = 0x01;
+										tempBuf[3] = 0x30;
+										tempBuf[4] = (u8)(((sample/100)>>8)&0xff);
+										tempBuf[5] = (u8)((sample/100)&0xff);
+										init_crc16();
+										for( i=0; i< 6; i++)
+										{
+											crc16_byte(tempBuf[i]);
+										}
+										tempBuf[6] = CRChi;
+										tempBuf[7] = CRClo;
+										memcpy(uart_send, tempBuf, 8);
+										TXEN = SEND;
+										USART_SendDataString(8);
+										delay_ms(5);
+									}
+									
+									lastHumCalibration = (ins->calibration_hi * 256 + ins->calibration_lo);
+									lastHumCalibrationSign = ins->calibration_sign;
+								}
+							}
 						}
 					}
 					ins->value = swap_double(sample);

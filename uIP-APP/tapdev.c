@@ -41,7 +41,7 @@
 #include "modbus.h"
 #include "tcpip.h"
 
-//#define DHCP_ENABLE
+#define DHCP_ENABLE
 
 //用于固定IP地址开关打开后的IP设置，本例程没有用这个
 #define UIP_DRIPADDR0   192
@@ -57,9 +57,9 @@ const u8 mymac[6]={0x04, 0x02, 0x35, 0xaF, 0x00, 0x01};	//MAC地址
 u8 tapdev_init(void)
 {   	 
 	u8 i, res = 0;
-#ifndef	DHCP_ENABLE
+//#ifndef	DHCP_ENABLE
 	uip_ipaddr_t ipaddr;
-#endif
+//#endif
 	
 	res = ENC28J60_Init((u8*)modbus.mac_addr);	//初始化ENC28J60					  
 	//把IP地址和MAC地址写入缓存区
@@ -72,7 +72,8 @@ u8 tapdev_init(void)
     //指示灯状态:0x476 is PHLCON LEDA(绿)=links status, LEDB(红)=receive/transmit
  	//PHLCON：PHY 模块LED 控制寄存器	    
 	ENC28J60_PHY_Write(PHLCON, 0x0476);
-	uip_init();							//uIP初始化	
+	uip_init();
+//#ifndef	DHCP_ENABLE	//uIP初始化	
 	if(modbus.ghost_ip_mode == 0)	
 	{
 		uip_ipaddr(ipaddr, modbus.ip_addr[0], modbus.ip_addr[1], modbus.ip_addr[2], modbus.ip_addr[3]);	//设置本地设置IP地址

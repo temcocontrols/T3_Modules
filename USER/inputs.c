@@ -117,8 +117,6 @@ void inputs_adc_init(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	/* configuration ------------------------------------------------------*/  
 	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;//
-//	ADC_InitStructure.ADC_ScanConvMode = ENABLE;//DMA CONTINUS MODE
-//	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;//
 	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
 	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
@@ -126,26 +124,6 @@ void inputs_adc_init(void)
 //	#ifdef T322AI
 	ADC_InitStructure.ADC_NbrOfChannel = 1;//
 	ADC_Init(ADC1, &ADC_InitStructure);
-//	ADC_Init(ADC2, &ADC_InitStructure);
-	 /* ADC1 regular channels configuration */ 
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_4 , 1, ADC_SampleTime_239Cycles5);  
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_5 , 2, ADC_SampleTime_239Cycles5); 
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_6 , 3, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_7 , 4, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_8 , 5, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_9 , 6, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_10 , 7, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_11 , 8, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_12 , 9, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_13 , 10, ADC_SampleTime_239Cycles5);
-////	ADC_RegularChannelConfig(ADC1, ADC_Channel_14 , 11, ADC_SampleTime_239Cycles5);
-//	ADC_DMACmd(ADC1, ENABLE); //enable dma
-//	ADC_Cmd(ADC2, ENABLE); 
-//	ADC_ResetCalibration(ADC2);
-//	while(ADC_GetResetCalibrationStatus(ADC2) == SET);
-//	ADC_StartCalibration(ADC2);
-//	while(ADC_GetCalibrationStatus(ADC2) == SET);
-//	#endif
 	ADC_Cmd(ADC1, ENABLE); 
 	/* Enable ADC1 reset calibaration register */   
 	ADC_ResetCalibration(ADC1);
@@ -197,296 +175,12 @@ void inputs_adc_init(void)
 
 
  int16_t vol_buf[ADC2_CHANNEL][VOL_BUF_NUM]; 
-//__IO uint16_t DMA_Buffer[192];
 
-//uint8 ch_cout = 0;
-// void TIM4_IRQHandler(void)
-//{ 		    		  			    
-////	if(TIM3->SR & 0X0001)		//溢出中断
-//	
-//	if(TIM_GetFlagStatus(TIM4, TIM_IT_Update) == SET)
-//	{
-////		for(j = 0; j<VOL_BUF_NUM; j++)
-////			vol_buf[0][j] = ADC_getChannal(ADC2,ADC_Channel_0);
-////		for(i=0; i<ADC2_CHANNEL; i++)
-////		{
-////			for (j= 0; j<VOL_BUF_NUM; j++)
-////			{
-////				vol_buf[i][j] = ADC_getChannal(ADC2,ADC_Channel_0);
-////			}
-////		}
-//		vol_buf[0][ch_cout] = ADC_getChannal(ADC2,ADC_Channel_0);
-//		ch_cout++;
-//		ch_cout %= 192;
-//	}
-//	TIM_ClearFlag(TIM4, TIM_IT_Update);	
-//}
 
-//void TIM4_Int_Init(u16 arr, u16 psc)
-//{
-//	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-//	NVIC_InitTypeDef NVIC_InitStructure;
-//	
-//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-//	
-//	TIM_TimeBaseStructure.TIM_Period = arr;
-//	TIM_TimeBaseStructure.TIM_Prescaler = psc; 
-//	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
-//	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-//	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
-//	
-//	//Timer3 NVIC 配置
-//    NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级3
-//	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;			//子优先级3
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//IRQ通道使能
-//	NVIC_Init(&NVIC_InitStructure);								//根据指定的参数初始化NVIC寄存器
-//	
-//	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
-//	TIM_Cmd(TIM4, ENABLE);
-//}
 
-//void  DMA1_Channel1_IRQHandler(void)
-//{
-//   if(DMA_GetITStatus(DMA1_IT_TC1)!=RESET){
-//   
-//         DMA_ClearITPendingBit(DMA1_IT_TC1);
-// }
-// }
 
-//void dma_adc_init(void)
-//{
-//	DMA_InitTypeDef DMA_InitStructure;
-//	
-//	 NVIC_InitTypeDef NVIC_InitStructure;  
-//    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-//    NVIC_InitStructure.NVIC_IRQChannel =DMA1_Channel1_IRQn;  
-//    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-//    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; 
-//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//    NVIC_Init(&NVIC_InitStructure); 
-//	
-//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);  
-//	DMA_DeInit(DMA1_Channel1);
-//	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC2->DR; ;
-//	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&DMA_Buffer[0];//vol_buf[0][0];
-//	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-//	DMA_InitStructure.DMA_BufferSize = 192;//ADC2_CHANNEL*VOL_BUF_NUM; 
-//	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable; 
-//	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;  
-//	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-//	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-
-//	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-//	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-//	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable; 
-//	DMA_Init(DMA1_Channel1, &DMA_InitStructure); 
-//	DMA_Cmd(DMA1_Channel1, ENABLE); 
-//	
-//}
-unsigned int ctFilter(uint8_t channel,uint16_t input)
-{
-	// -------------FILTERING------------------
-	s16  siDelta = 0;
-	u16  uiResult = 0;
-	u8  i = 0;
-  	u16  uiTemp = 0;
-	i = channel;
-	uiTemp = input;  
-	siDelta = uiTemp - AD_Value[i];    //compare new reading and old reading
-
-			
-	AD_Value[i] = (u32)AD_Value[i]*inputs[i].filter;
-	AD_Value[i] += (u32)uiTemp;
-	AD_Value[i] = (u16)(AD_Value[i]/(inputs[i].filter));			 	 
-	
-	uiResult = AD_Value[i]; 
- 
-
-	return uiResult;	
-}
-
-/* 
- * Function Name  : ADC_SampleRate 
- * Description    : ??ADC????? 
- * Input          : - freq: ???? ??Hz 
- * Output         : None 
- * Return         : None 
- * Attention          : None 
- */  
-void ADC_SampleRate(uint32_t freq)  
-{  
-  /* ?????1?3??CC3??ADC1???? */     
-  uint16_t Period;    
-  TIM_OCInitTypeDef  TIM_OCInitStructure;  
-  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;  
-  
-  TIM_Cmd(TIM1, DISABLE);  
-  
-    /* ???????? : period = 72000000 / freq ; 1200 == 60KHz ???? */  
-  Period = 72000000 / freq;       
-  
-  /* Enable TIM1 clock */  
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);  
-  
-  TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);   
-  TIM_TimeBaseStructure.TIM_Period = Period-1;            
-  TIM_TimeBaseStructure.TIM_Prescaler = 0;        /* ???? = 72000 000 / 18 = 4000 000    */  
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;      
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;    
-  TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);  
-  
-  /* TIM1 channel1 configuration in PWM mode */  
-  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;   
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;                  
-  TIM_OCInitStructure.TIM_Pulse = TIM_TimeBaseStructure.TIM_Period / 2;   
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;           
-  TIM_OC3Init(TIM1, &TIM_OCInitStructure);  
-  
-  /* TIM1 counter enable */  
-  TIM_Cmd(TIM1, ENABLE);  
-  
-//  TIM_InternalClockConfig(TIM1); 
-//	TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable); 
-//	TIM_UpdateDisableConfig(TIM1, DISABLE);
-  /* TIM1 main Output Enable */  
-  TIM_CtrlPWMOutputs(TIM1, ENABLE);    
-} 
-
-//#define WAVE_TIME 48
-
-//int16_t ac_test[3];
-
-//int16_t ims_count(int16_t* ims_buf )
-//{
-//   int32_t itemp;
-//   int8_t i;
-//   int16_t temp;
-//   int8_t start_loc,end_loc,min1_loc,min2_loc,loc_temp;
-//   int32_t vol_sum;
-//	
-//      start_loc = 0;                            //first more 1/2 cycle   0~19
-//      end_loc = WAVE_TIME;
-//      loc_temp = start_loc;
-//      temp = ims_buf[loc_temp];
-//      for(i=start_loc;i<end_loc;i++) // 1/4 cycle
-//      {
-//         if(temp >ims_buf[i])
-//         {
-//            loc_temp = i;
-//            temp = ims_buf[i];
-//         }
-//      }
-//      min1_loc = loc_temp; 
-//   
-//      
-//      start_loc = WAVE_TIME;                       //sencod more 1/2 cycle  20~39
-//      end_loc = start_loc + WAVE_TIME;
-//      
-//      loc_temp = start_loc;
-//      temp = ims_buf[loc_temp];
-//      for(i=start_loc;i<end_loc;i++) // 1/4 cycle
-//      {
-//         if(temp >ims_buf[i])
-//         {
-//            loc_temp = i;
-//            temp = ims_buf[i];
-//         }
-//      }
-//      min2_loc = loc_temp; 
-//   
-//      
-//      if(ims_buf[min1_loc] > ims_buf[min2_loc])                              //select the first zero point 
-//      {
-//         min1_loc = min2_loc;
-//      }
-//      
-//      start_loc = min1_loc+WAVE_TIME;                        //more 1/2 cycle
-//      end_loc = WAVE_TIME + start_loc;                       //more one cycle
-//      
-//      loc_temp = start_loc;
-//      temp = ims_buf[loc_temp];
-//      for(i=start_loc;i<end_loc;i++) // 1/4 cycle
-//      {
-//         if(temp >ims_buf[i])
-//         {
-//            loc_temp = i;
-//            temp = ims_buf[i];
-//         }
-//      }
-//      min2_loc = loc_temp;         
-//      temp = min2_loc - min1_loc;                   //to decide if it is right;60hz 30cycle,50hz  35cycle
-//   
-//   
-//      ac_test[0] = min1_loc;
-//      ac_test[1] = min2_loc;
-//      ac_test[2] = temp;
-//      
-//      if((temp>100)&&(temp<140))                       //count the value of ac
-//      {
-//         vol_sum = 0;
-//         for(i=min1_loc;i<min2_loc;i++)
-//         {
-//           
-//            itemp = ims_buf[i];
-//            itemp = itemp*ims_buf[i];
-//            vol_sum += itemp;
-//         }  
-//         itemp = vol_sum/temp;
-//         temp = sqrt(itemp);
-//      }
-//      else  
-//         temp = 0;
-//   
-//   
-//      return temp;
-//}
-
-//uint8_t read_current(uint8_t ch)
-//{
-//   uint16_t itemp;
-//   static int8_t current_error = 0;
-//   itemp = ims_count(vol_buf[ch]);
-//   
-//	
-//   {
-//   /*****************************************************/
-//   // get current:  ad_value*4.094*100/1024(0.01ma)//VREF = 4.094V   
-//   // multiple:     result*current_multiple[_0_10A]/100;                                                                           
-//   // get current:  result/R      
-//   /*****************************************************/
-////       itemp = (int32)itemp *4*current_multiple[current_mode]/1000;
-//        //  itemp = (int32_t)itemp *current_multiple[sensor_type][current_mode]/1000;  
-//       //itemp = itemp/1000;                  
-//   }
-//                                         
-//   //if(abs(itemp) <20)  itemp = 0; 
-//   //current_value = output_filter(itemp,current_value,CHANNEL_I);
-//   return itemp;   
-//      
-//}
 
 #endif
-//void dma_adc_init(void)
-//{
-///************DMA configure*******************************/
-//DMA_InitTypeDef DMA_InitStructure;
-//DMA_DeInit(DMA1_Channel1);
-//DMA_InitStructure.DMA_PeripheralBaseAddr = ADC_DR_ADDRESS;
-//DMA_InitStructure.DMA_MemoryBaseAddr = (u32)&AD_Value  ;
-//DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-//DMA_InitStructure.DMA_BufferSize = 11; 
-//DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable; 
-//DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;  
-//DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-//DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-
-//DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-//DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-//DMA_InitStructure.DMA_M2M = DMA_M2M_Disable; 
-//DMA_Init(DMA1_Channel1, &DMA_InitStructure); 
-//DMA_Cmd(DMA1_Channel1, ENABLE); 
-//}
 void inputs_init(void) 
 {
 	#ifndef T3PT12
@@ -505,255 +199,190 @@ void inputs_init(void)
 
 #if defined T36CTA
 extern uint32_t vol_sum[6];
-uint16_t CT_Vaule[6];
-//uint16_t CT_first_AD[6];
-//uint16_t CT_multiple[6];
-uint16_t CT_first_AD;
-uint16_t CT_multiple;
+
 
 void inputs_scan(void)
 {
-	static u16 new_ad[19] ;
-	static u16 old_ad[19]= {4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095};
+	static u16 new_ad[MAX_AI_CHANNEL] ;
+	static u16 old_ad[MAX_AI_CHANNEL]=  {4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095};
 	static u8 channel_count =0 ;
 	u16 port_temp;
 	u16	swap_adc ;
 	u8 i;
 	uint16_t ad_buf = 0 ;
-#if T36CTA_REV1
-	if( channel_count <13)
+    if(t36ct_ver == T36CTA_REV1 )//#if T36CTA_REV1#if T36CTA_REV1
 	{
-		GPIO_ResetBits(GPIOD,  GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_12 );
-		if(channel_count>7)
-			GPIO_SetBits(GPIOC, GPIO_Pin_6);
-		else
-			GPIO_ResetBits(GPIOC, GPIO_Pin_6);
-//		port_temp = GPIO_ReadOutputData(GPIOD);
-//		port_temp = 0x8fff&port_temp ;
-//		
-//		GPIO_Write(GPIOD, (port_temp|(channel_count<<12)));
-		for( i=0; i<8; i++)
+		if( channel_count <13)
 		{
-			if(channel_count & (1<<0))
+			GPIO_ResetBits(GPIOD,  GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_12 );
+			if(channel_count>7)
+				GPIO_SetBits(GPIOC, GPIO_Pin_6);
+			else
+				GPIO_ResetBits(GPIOC, GPIO_Pin_6);
+	//		port_temp = GPIO_ReadOutputData(GPIOD);
+	//		port_temp = 0x8fff&port_temp ;
+	//		
+	//		GPIO_Write(GPIOD, (port_temp|(channel_count<<12)));
+			for( i=0; i<8; i++)
 			{
-				PDout(12) = 1;
-			}
-			if(channel_count & (1<<1))
-			{
-				PDout(13) = 1;
-			}
-			if(channel_count & (1<<2))
-			{
-				PDout(14) = 1;
-			}
-		}
-		
-		CHA_SEL4 = 1  ;
-		
-		
-		if( channel_count<5)
-		{
-			range_set_func(channel_count);
-			delay_ms(10);
-			if((inputs[channel_count].range == N0_2_32counts)||(inputs[channel_count].range ==HI_spd_count))
-			{
-				AD_Value[channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
-				new_ad[channel_count] = AD_Value[channel_count] ;
-				if((old_ad[channel_count]> new_ad[channel_count])&&((old_ad[channel_count] - new_ad[channel_count])>1000))
+				if(channel_count & (1<<0))
 				{
-					modbus.pulse[channel_count].word++ ;
-					data_change[channel_count] = 1 ;
+					PDout(12) = 1;
 				}
-				old_ad[channel_count] = new_ad[channel_count];
+				if(channel_count & (1<<1))
+				{
+					PDout(13) = 1;
+				}
+				if(channel_count & (1<<2))
+				{
+					PDout(14) = 1;
+				}
+			}
+			
+			CHA_SEL4 = 1  ;
+			
+			
+			if( channel_count<5)
+			{
+				range_set_func(channel_count);
+				delay_ms(10);
+				if((inputs[channel_count].range == N0_2_32counts)||(inputs[channel_count].range ==HI_spd_count))
+				{
+					AD_Value[channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
+					new_ad[channel_count] = AD_Value[channel_count] ;
+					if((old_ad[channel_count]> new_ad[channel_count])&&((old_ad[channel_count] - new_ad[channel_count])>1000))
+					{
+						modbus.pulse[channel_count].word++ ;
+						data_change[channel_count] = 1 ;
+					}
+					old_ad[channel_count] = new_ad[channel_count];
+
+				}
+				else
+				{
+					AD_Value[channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
+				}
+			}
+			else
+			{
+				range_set_func(17-channel_count);
+				delay_ms(10);
+				if((inputs[17-channel_count].range == N0_2_32counts)||(inputs[17-channel_count].range ==HI_spd_count))
+				{
+					AD_Value[17-channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
+					new_ad[17-channel_count] = AD_Value[17-channel_count] ;
+					if((old_ad[17-channel_count]> new_ad[17-channel_count])&&((old_ad[17-channel_count] - new_ad[17-channel_count])>1000))
+					{
+						modbus.pulse[17-channel_count].word++ ;
+						data_change[17-channel_count] = 1 ;
+					}
+					old_ad[17-channel_count] = new_ad[17-channel_count];
+
+				}
+				else
+				{
+					AD_Value[17-channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
+				}
+			}
+
+			
+			
+			channel_count++;
+		}
+		else
+		{
+
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_1);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_2);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_3);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_4);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_5);
+			AD_Value[channel_count++]=0;
+			AD_Value[channel_count++]=0;
+			AD_Value[channel_count++]=0;
+			AD_Value[channel_count++]=0;
+			
+			channel_count %= MAX_AI_CHANNEL;
+		}
+	}
+	if(t36ct_ver == T36CTA_REV2 )//#elif T36CTA_REV2#elif T36CTA_REV2
+	{
+		if( channel_count <8)
+		{
+			
+			GPIO_ResetBits(GPIOD,  GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_12 );
+
+			//port_temp = GPIO_ReadOutputData(GPIOD);
+			//port_temp = 0x8fff&port_temp ;
+			
+			//GPIO_Write(GPIOD, (port_temp|(channel_count<<12)));
+			for( i=0; i<8; i++)
+			{
+				if(channel_count & (1<<0))
+				{
+					PDout(12) = 1;
+				}
+				if(channel_count & (1<<1))
+				{
+					PDout(13) = 1;
+				}
+				if(channel_count & (1<<2))
+				{
+					PDout(14) = 1;
+				}
+			}
+			CHA_SEL4 = 1  ;
+			range_set_func(7-channel_count);
+			delay_ms(10);
+			
+			if((inputs[7-channel_count].range == N0_2_32counts)||(inputs[7-channel_count].range ==HI_spd_count))
+			{
+				AD_Value[7-channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
+				new_ad[7-channel_count] = AD_Value[7-channel_count] ;
+				if((old_ad[7-channel_count]> new_ad[7-channel_count])&&((old_ad[7-channel_count] - new_ad[7-channel_count])>1000))
+				{
+					modbus.pulse[7-channel_count].word++ ;
+					data_change[7-channel_count] = 1 ;
+				}
+				old_ad[7-channel_count] = new_ad[7-channel_count];
 
 			}
 			else
 			{
-				AD_Value[channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
+				AD_Value[7-channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
 			}
+
+			
+			channel_count++;
+		}
+		else if (channel_count== 8)
+		{
+			AD_Value[8] = Pressure.ad;
+			channel_count++;
 		}
 		else
 		{
-			range_set_func(17-channel_count);
-			delay_ms(10);
-			if((inputs[17-channel_count].range == N0_2_32counts)||(inputs[17-channel_count].range ==HI_spd_count))
-			{
-				AD_Value[17-channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
-				new_ad[17-channel_count] = AD_Value[17-channel_count] ;
-				if((old_ad[17-channel_count]> new_ad[17-channel_count])&&((old_ad[17-channel_count] - new_ad[17-channel_count])>1000))
-				{
-					modbus.pulse[17-channel_count].word++ ;
-					data_change[17-channel_count] = 1 ;
-				}
-				old_ad[17-channel_count] = new_ad[17-channel_count];
 
-			}
-			else
-			{
-				AD_Value[17-channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
-			}
+			AD_Value[channel_count++] = 0;
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_1);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_2);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_3);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_4);
+			AD_Value[channel_count++]= ADC_getChannal(ADC2,ADC_Channel_5);
+			AD_Value[channel_count++]= 0;
+			AD_Value[channel_count++]= 0;
+			AD_Value[channel_count++]= 0;
+			AD_Value[channel_count++]= 0;
+			AD_Value[channel_count++]=0;
+			AD_Value[channel_count++]=0;
+			AD_Value[channel_count++]=0;
+			
+			
+			channel_count %= MAX_AI_CHANNEL;
 		}
-
-		
-		
-		channel_count++;
-	}
-	else
-	{
-//		swap_adc = AD_Value[0];
-//		for(i=0; i< 12; i++)
-//		{
-//			AD_Value[i] = AD_Value[i+1];
-//		}
-//		AD_Value[12] = swap_adc;
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_12));
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_0)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_1)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_2)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5)*10/75);//air_flow_ad;//(ADC_getChannal(ADC2,ADC_Channel_5)*10/75);
-		
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_0));
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_1));
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_2));
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3));
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4));
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5));
-
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[1]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[2]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[3]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[4]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[5]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-		AD_Value[channel_count++]= vol_sum[0]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-		AD_Value[channel_count++]= vol_sum[1]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_1);
-		AD_Value[channel_count++]= vol_sum[2]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_2);
-		AD_Value[channel_count++]= vol_sum[3]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_3);
-		AD_Value[channel_count++]= vol_sum[4]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_4);
-		AD_Value[channel_count++]= vol_sum[5]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_5);
-
-		CT_Vaule[0] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[1] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[2] = (AD_Value[15]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[3] = (AD_Value[16]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[4] = (AD_Value[17]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[5] = (AD_Value[18]-CT_first_AD)*100/CT_multiple;
-		
-		channel_count %= MAX_AI_CHANNEL;
-	}
-#elif T36CTA_REV2
-	if( channel_count <8)
-	{
-		
-		GPIO_ResetBits(GPIOD,  GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_12 );
-
-		//port_temp = GPIO_ReadOutputData(GPIOD);
-		//port_temp = 0x8fff&port_temp ;
-		
-		//GPIO_Write(GPIOD, (port_temp|(channel_count<<12)));
-		for( i=0; i<8; i++)
-		{
-			if(channel_count & (1<<0))
-			{
-				PDout(12) = 1;
-			}
-			if(channel_count & (1<<1))
-			{
-				PDout(13) = 1;
-			}
-			if(channel_count & (1<<2))
-			{
-				PDout(14) = 1;
-			}
-		}
-		CHA_SEL4 = 1  ;
-		range_set_func(7-channel_count);
-		delay_ms(10);
-		
-		if((inputs[7-channel_count].range == N0_2_32counts)||(inputs[7-channel_count].range ==HI_spd_count))
-		{
-			AD_Value[7-channel_count]=ADC_getChannal(ADC1,ADC_Channel_14);
-			new_ad[7-channel_count] = AD_Value[7-channel_count] ;
-			if((old_ad[7-channel_count]> new_ad[7-channel_count])&&((old_ad[7-channel_count] - new_ad[7-channel_count])>1000))
-			{
-				modbus.pulse[7-channel_count].word++ ;
-				data_change[7-channel_count] = 1 ;
-			}
-			old_ad[7-channel_count] = new_ad[7-channel_count];
-
-		}
-		else
-		{
-			AD_Value[7-channel_count]= ADC_getChannal(ADC1,ADC_Channel_14);
-		}
-
-		
-		channel_count++;
-	}
-	else if (channel_count== 8)
-	{
-		AD_Value[8] = Pressure.ad;
-		channel_count++;
-	}
-	else
-	{
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_0)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_1)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_2)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_3)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_4)*10/75);
-//		AD_Value[channel_count++]= (ADC_getChannal(ADC2,ADC_Channel_5)*10/75);//air_flow_ad;//(ADC_getChannal(ADC2,ADC_Channel_5)*10/75);
-		
-		AD_Value[channel_count++] = 0;
-		AD_Value[channel_count++]= vol_sum[0]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-		AD_Value[channel_count++]= vol_sum[1]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_1);
-		AD_Value[channel_count++]= vol_sum[2]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_2);
-		AD_Value[channel_count++]= vol_sum[3]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_3);
-		AD_Value[channel_count++]= vol_sum[4]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_4);
-		AD_Value[channel_count++]= vol_sum[5]/(VOL_BUF_NUM-1);//ADC_getChannal(ADC2,ADC_Channel_5);
-//		AD_Value[channel_count]= vol_sum[0]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[1]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[2]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[3]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[4]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-//		AD_Value[channel_count]= vol_sum[5]/100;//ADC_getChannal(ADC2,ADC_Channel_0);//read_current(0);//
-//		AD_Value[channel_count] = ctFilter(channel_count, AD_Value[channel_count]);
-//		channel_count++;
-
-		CT_Vaule[0] = (AD_Value[9]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[1] = (AD_Value[10]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[2] = (AD_Value[11]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[3] = (AD_Value[12]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[4] = (AD_Value[13]-CT_first_AD)*100/CT_multiple;
-		CT_Vaule[5] = (AD_Value[14]-CT_first_AD)*100/CT_multiple;
-		
-		
-		channel_count %= MAX_AI_CHANNEL;
-	}
-#endif	
+	}//#endif	
 }
 
 #endif
@@ -966,7 +595,8 @@ u16 ADC_getChannal(ADC_TypeDef* ADCx, u8 channal)
 				inputs[channel].decom = inputs[channel].decom &0x0f ;
 				inputs[channel].decom |= (T3_V010<<4) ;
 	 }
-	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
+	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20Amps ||
+		inputs[channel].range == I0_50Amps ||inputs[channel].range == I0_75Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
 	 {
 				RANGE_SET0 = 0 ;
 				RANGE_SET1 = 0 ;
@@ -1039,7 +669,8 @@ u16 ADC_getChannal(ADC_TypeDef* ADCx, u8 channal)
 				inputs[channel].decom |= (T3_V010<<4) ;
 		 input_type[channel] = T3_V010;
 	 }
-	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
+	else if ((inputs[channel].digital_analog == 1)&&(inputs[channel].range == I0_100Amps ||inputs[channel].range == I0_20Amps ||
+		inputs[channel].range == I0_50Amps ||inputs[channel].range == I0_75Amps ||inputs[channel].range == I0_20ma||inputs[channel].range ==P0_100_4_20ma))
 	 //if(input_type[channel] == INPUT_I0_20ma)
 	 {
 				RANGE_SET0 = 0 ;

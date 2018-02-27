@@ -69,8 +69,10 @@ void vKEYTask( void *pvParameters );
 void vOUTPUTSTask( void *pvParameters );
 void vAcceleroTask( void *pvParameters);
 void vRFMTask(void *pvParameters);
+void vCHECKRFMTask(void *pvParameters);
 void vAirFlowTask( void *pvParameters);
 void vGetACTask( void *pvParameters);
+void vOutdoorTask(void *pvParameters);
 #endif
 #ifdef T3PT12
 void vI2C_READ(void *pvParameters) ;
@@ -93,6 +95,19 @@ static void debug_config(void)
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 }
 
+#if defined T36CTA
+uint8_t t36ct_ver = T36CTA_REV1;
+bool comSwitch = false;
+u8 comRecevieFlag = 0;
+u8 comSlaveId;
+u16 outdoorTempC;
+u16 outdoorTempH;
+u16 outdoorHum;
+u16 outdoorLux;
+u16 outdoorEnthalpy;
+bool rfm69_deadmaster_enable;
+#endif
+
 int main(void)
 {
 	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x8008000);
@@ -101,17 +116,30 @@ int main(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD , ENABLE);
  	delay_init(72);	
-//	uart1_init(38400);
+//	uart1_init(115200);
 //	modbus.baudrate = 38400 ;
 	//KEY_Init();
-	beeper_gpio_init();
-	beeper_on();
-	beeper_off();	
+//	beeper_gpio_init();
+//	beeper_on();
+//	beeper_off();	
+	#if defined T36CTA
+	ACCELERO_IO_Init();
+	ACCELERO_I2C_init();
+//	ACCELERO_Write_Data(0x2a, 0x01);
+//	if( (0x5a == ACCELERO_Read_Data(0x0d))||(0x69 == ACCELERO_Read_Data(0x0f)))
+//	if(0x5a == ACCELERO_Read_Data(0x0d))
+		if( 0x69 == ACCELERO_Read_Data(0x0f))
+	{
+		t36ct_ver = T36CTA_REV2;
+	}
+	#endif
 	EEP_Dat_Init();
 	mass_flash_init() ;
 	//Lcd_Initial();
 	SPI1_Init();
+	#if !RFM69_SIMULATE_SPI_ENABLE
 	SPI2_Init();
+	#endif
 	watchdog_init();
 //	mem_init(SRAMIN);
 //	TIM3_Int_Init(5000, 7199);
@@ -119,7 +147,7 @@ int main(void)
 //	TIM3_Int_Init(50, 7199);//5ms
 	printf("T3_series\n\r");
 	#if (defined T38AI8AO6DO)||(defined T322AI) ||(defined T36CTA)
-		xTaskCreate( vINPUTSTask, ( signed portCHAR * ) "INPUTS", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL );
+		xTaskCreate( vINPUTSTask, ( signed portCHAR * ) "INPUTS", configMINIMAL_STACK_SIZE+128, NULL, tskIDLE_PRIORITY + 3, NULL );
 		xTaskCreate( vSTORE_EEPTask, ( signed portCHAR * ) "STOREEEP", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
 	#endif
 	xTaskCreate( vLED0Task, ( signed portCHAR * ) "LED0", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
@@ -128,14 +156,21 @@ int main(void)
 //	xTaskCreate( vUSBTask, ( signed portCHAR * ) "USB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	//xTaskCreate( vUSBTask, ( signed portCHAR * ) "USB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	/* Start the scheduler. */
- 	#if (defined T38AI8AO6DO) || (defined T36CTA)
+	#if (defined T38AI8AO6DO)
 	xTaskCreate( vOUTPUTSTask, ( signed portCHAR * ) "OUTPUTS", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + 2, NULL );
+	#endif
+	#if (defined T36CTA)
+	xTaskCreate( vOUTPUTSTask, ( signed portCHAR * ) "OUTPUTS", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	#endif
+ 	#if (defined T38AI8AO6DO) || (defined T36CTA)
+	
 	xTaskCreate( vKEYTask, ( signed portCHAR * ) "KEY", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	#endif
 	#if defined T36CTA
-	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vRFMTask, ( signed portCHAR * ) "RFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 4, NULL );
  	xTaskCreate( vAcceleroTask, ( signed portCHAR * ) "ACCELERO", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 	xTaskCreate( vGetACTask, ( signed portCHAR * ) "GETAC", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+	xTaskCreate( vOutdoorTask, ( signed portCHAR * ) "OUTDOOR", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#if T36CTA_REV2
 			xTaskCreate( vAirFlowTask, ( signed portCHAR * ) "AIRFLOW", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
 		#endif
@@ -143,7 +178,12 @@ int main(void)
 	#ifdef T3PT12
 	xTaskCreate( vI2C_READ, ( signed portCHAR * ) "READ_I2C", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + 2, NULL );
 	#endif
+	#ifndef T36CTA
 	xTaskCreate( vMSTP_TASK, ( signed portCHAR * ) "MSTP", configMINIMAL_STACK_SIZE + 256  , NULL, tskIDLE_PRIORITY + 4, NULL );
+	#endif
+//	#if defined T36CTA
+//	xTaskCreate( vCHECKRFMTask, ( signed portCHAR * ) "CHECKRFM", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL );
+//	#endif
 	vTaskStartScheduler();
 }
 #if defined T36CTA
@@ -247,7 +287,7 @@ u8 rfm69_checkData(u8 len)
 
 void vRFMTask( void *pvParameters)
 {
-	u8 temp;
+	u8 temp,i;
 	
 	RFM69_GPIO_init();
 	RFM69_TIMER_init();
@@ -261,28 +301,34 @@ void vRFMTask( void *pvParameters)
 	{
 		delay_ms(100);
 
-		RFM69_setMode(RF69_MODE_RX);
-		rfm69_deadMaster--;
-		if(rfm69_deadMaster == 0)
-		{
-			RFM_CS = 0;
-			delay_ms(5);
-			//printf("deadmaster...");
-			RFM69_GPIO_init();
-			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
-			RFM69_freq = RFM69_getFrequency();
-			if( (RFM69_freq != 915000000) &&(RFM69_freq != 433000000)&&(RFM69_freq != 315000000)&&(RFM69_freq != 868000000))
+		if(rfm69_deadmaster_enable)
+		{	
+			rfm69_deadMaster--;
+			if(rfm69_deadMaster == 0)
 			{
-				RFM69_freq = 915000000;
-				RFM69_setFrequency(RFM69_freq);
+				{
+					RFM69_freq = RFM69_getFrequency();
+					if( ((RFM69_freq!= 915000000)&&(RFM69_freq!= 315000000)&&(RFM69_freq!= 433000000)&&(RFM69_freq!= 868000000)))
+						//|| (RFM69_nodeID!= RFM69_getAddress()) ||(RFM69_getNetwork() != RFM69_networkID))
+					{
+						RFM69_freq = 915000000;
+					}
+					
+					GPIO_SetBits(GPIOC,GPIO_Pin_12);
+					delay_us(1000);
+					GPIO_ResetBits(GPIOC,GPIO_Pin_12);
+					delay_ms(100);
+					RFM_CS = 0;
+					SPI2_Init();
+					RFM69_GPIO_init();
+					rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+					RFM69_encrypt(rfm69_key);
+					RFM69_setBitRate(RFM69_biterate);
+					RFM69_setMode(RF69_MODE_RX);
+					delay_ms(100);
+				}
+				rfm69_deadMaster = rfm69_set_deadMaster;
 			}
-//			if( RFM69_freq!= RFM69_getFrequency())
-//			{
-//				
-//			}
-			RFM69_encrypt(rfm69_key);
-			RFM69_setBitRate(RFM69_biterate);
-			rfm69_deadMaster = rfm69_set_deadMaster;
 		}
 		if(rfm69_send_flag)
 		{
@@ -291,39 +337,77 @@ void vRFMTask( void *pvParameters)
 			//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
 			if(rfm69_checkData(rfm69_size))//rfm69_sendBuf[0] == 255 || rfm69_sendBuf[0] == modbus.address || rfm69_sendBuf[0] == 0)
 			{
+				//printf("%d,%d,%d,%d,%d,%d,%d,%d\r\n\r\n\r\n", rfm69_sendBuf[0],rfm69_sendBuf[1],rfm69_sendBuf[2],rfm69_sendBuf[3],rfm69_sendBuf[4],rfm69_sendBuf[5],rfm69_sendBuf[6],rfm69_sendBuf[7]);
 				//test_print = true;
 				init_crc16(); 
 				responseCmd(10, rfm69_sendBuf);
 				internalDeal(10, rfm69_sendBuf);
-				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, 10, 200);
+				RFM69_sendWithRetry(rfm69_id, RFM69_SEND, rfm69_length, RFM69_RETRIES, RFM69_RETRIES_TIMEOUT);
 			}
 			rfm69_send_flag = false;
 		}
-		RFM69_setMode(RF69_MODE_RX);
 
 	}
 }
+
+//void vCHECKRFMTask(void *pvParameters)
+//{
+//	u8 i;
+//	for( ;; )
+//	{
+//		SPI2_Init();
+//		printf("GET INTO vCHECKRFMTask\r\n, %d, %d, %d\r\n", RFM69_freq, RFM69_nodeID,RFM69_networkID);
+//		if( (RFM69_getFrequency()!= RFM69_freq)||(rfm_exsit!= true) || (RFM69_nodeID!=RFM69_getAddress()) || (RFM69_networkID!=RFM69_getNetwork()))
+//		{
+//			RFM69_GPIO_init();
+//			rfm_exsit = RFM69_initialize(0, RFM69_nodeID, 0);
+//			RFM69_encrypt(rfm69_key);
+//			RFM69_setBitRate(RFM69_biterate);
+//			printf("vCHECKRFMTask\r\n");
+//		}
+//		
+//		delay_ms(5000);
+//	}
+//	
+//}
+
 extern u16 led_bank2;
 void vAcceleroTask(void *pvParameters)
 {
 	uint16 acc_temp;
+	uint16 gyro_temp;
 	int16 tempAcc;
+//	int16 tempGyro;
 	ACCELERO_IO_Init();
 	/* Write CTL REG1 register, set ACTIVE mode */
-	//delay_ms(1000);
  	ACCELERO_I2C_init();
-//    ACCELERO_Write_Data(0x2a, 0x01);
 	for( ;; )
 	{
-		ACCELERO_Write_Data(0x2a, 0x01);
-		if( 0x5a == ACCELERO_Read_Data(0x0d))
+//		ACCELERO_Write_Data(0x2a, 0x01);
+//		if( 0x69 == ACCELERO_Read_Data(0x0f))
+//		if( 0x5a == ACCELERO_Read_Data(0x0d))
+//		{
+//			t36ct_ver = T36CTA_REV2;
+//			//axis_value[0] = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
+//			acc_temp = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
+//			tempAcc = axis_value[asix_sequence] - acc_temp;
+//			axis_value[asix_sequence++] = acc_temp;
+//			asix_sequence %= 3;
+//		}
+		if(0x69 == ACCELERO_Read_Data(0x0f))
 		{
-	//		t36ct_ver = T36CTA_REV2;
-			//axis_value[0] = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
-			acc_temp = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x01),ACCELERO_Read_Data(asix_sequence*2 + 0x02));
+			ACCELERO_Write_Data(0x10, 0x10);
+			ACCELERO_Write_Data(0x11, 0x10);
+			t36ct_ver = T36CTA_REV2;
+			acc_temp = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x29),ACCELERO_Read_Data(asix_sequence*2 + 0x28));
 			tempAcc = axis_value[asix_sequence] - acc_temp;
 			axis_value[asix_sequence++] = acc_temp;
 			asix_sequence %= 3;
+			
+			gyro_temp= BUILD_UINT10_AXIS (ACCELERO_Read_Data(gyro_sequence*2 + 0x23),ACCELERO_Read_Data(gyro_sequence*2 + 0x22));
+//			tempAcc = axis_value[asix_sequence] - acc_temp;
+			gyro_value[gyro_sequence++] = gyro_temp;
+			gyro_sequence %= 3;
 		}
 		if((ABS(tempAcc) > acc_sensitivity[0])&&(ABS(tempAcc) < acc_sensitivity[1]))
 		{
@@ -358,6 +442,110 @@ void vLED0Task( void *pvParameters )
 		delay_ms(10);
 	}
 }
+
+void vOutdoorTask(void *pvParameters)
+{
+	u8  sendbuf[8];
+	u16 sendCount = 0;
+	u8 i;
+	for(;;)
+	{
+		#if T36CTA
+		if( comSwitch)
+		{
+			sendbuf[0] = comSlaveId;
+			sendbuf[1] = 0x03;
+			sendbuf[2] = 0x00;
+			sendbuf[3] = 0x64;
+			sendbuf[4] = 0x00;
+			sendbuf[5] = 0x02;
+//			sendbuf[6] = 0x90;
+//			sendbuf[7] = 0x0a;
+			if( sendCount == 20)
+			{
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;
+				memcpy(uart_send, sendbuf, 8);
+				TXEN = SEND;
+				USART_SendDataString(8);
+				comRecevieFlag = 0;
+			}
+			else if( sendCount == 40)
+			{
+				sendbuf[2] = 0x01;
+				sendbuf[3] = 0x30;
+				sendbuf[5] = 0x02;
+//				sendbuf[6] = 0xd0;
+//				sendbuf[7] = 0x26;
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;
+				memcpy(uart_send, sendbuf, 8);
+				TXEN = SEND;
+				USART_SendDataString(8);
+				comRecevieFlag = 1;
+			}
+			else if( sendCount == 60)
+			{
+				sendbuf[2] = 0x02;
+				sendbuf[3] = 0x1a;
+				sendbuf[5] = 0x02;
+//				sendbuf[6] = 0xf1;
+//				sendbuf[7] = 0xaa;
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;
+				memcpy(uart_send, sendbuf, 8);
+				TXEN = SEND;
+				USART_SendDataString(8);
+				comRecevieFlag = 2;
+				//sendCount = 0;
+			}
+			else if( sendCount == 80)
+			{
+				sendbuf[2] = 0x01;
+				sendbuf[3] = 0xea;
+				sendbuf[5] = 0x02;
+//				sendbuf[6] = 0xf1;
+//				sendbuf[7] = 0xdd;
+				init_crc16();
+				for( i=0; i< 6; i++)
+				{
+					crc16_byte(sendbuf[i]);
+				}
+				sendbuf[6] = CRChi;
+				sendbuf[7] = CRClo;				
+				memcpy(uart_send, sendbuf, 8);
+				TXEN = SEND;
+				USART_SendDataString(8);
+				comRecevieFlag = 3;
+				//sendCount = 0;
+			}
+			else if( sendCount > 120)
+			{
+				sendCount = 0;
+				comSwitch = 0;
+			}
+			sendCount++;
+		}
+		delay_ms(3);
+		#endif
+	}
+}
+
 void vCOMMTask(void *pvParameters )
 {
 //	uint16_t ram_left = 0 ; 
@@ -504,6 +692,7 @@ void vKEYTask( void *pvParameters )
 	KEY_IO_Init();
 	for( ;; )
 	{
+		KEY_IO_Init();
 		KEY_Status_Scan();
 		delay_ms(100);
 	}	
@@ -517,7 +706,7 @@ void Inital_Bacnet_Server(void)
 //	u32 Instance = 0x0c;
 //	Device_Init();
 //	Device_Set_Object_Instance_Number(Instance);
-		
+#ifndef T36CTA		
  Device_Init();
  Device_Set_Object_Instance_Number(Instance);  
  address_init();
@@ -534,13 +723,12 @@ void Inital_Bacnet_Server(void)
   BOS = MAX_DO;
   AVS = MAX_AVS;
 #endif	
-
-
-
 #endif	
+#endif
 }
 void vMSTP_TASK(void *pvParameters )
 {
+	#ifndef T36CTA
 	uint16_t pdu_len = 0; 
 	BACNET_ADDRESS  src;
 	Inital_Bacnet_Server();
@@ -560,7 +748,7 @@ void vMSTP_TASK(void *pvParameters )
 //			modbus.stack[1] = uxTaskGetStackHighWaterMark(NULL);
 			delay_ms(5);
 	}
-	
+	#endif
 }
 
 void vNETTask( void *pvParameters )
@@ -803,7 +991,8 @@ void EEP_Dat_Init(void)
 					default:
 					break ;				
 				}
-				uart1_init(modbus.baudrate);
+				uart1_init(modbus.baudrate);//();
+				
 
 				
 				#if T36CTA
@@ -845,17 +1034,7 @@ void EEP_Dat_Init(void)
 					//RFM69_setBitRate(0x0d05);
 					RFM69_biterate = 0x0d05;
 				}
-				CT_first_AD = (AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_FIRST_AD_LO);
-				if((CT_first_AD == 0xffff)||(CT_first_AD == 0))
-				{
-					
-					CT_first_AD = 2260;
-				}
-				CT_multiple = (AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_HI)<<8)|AT24CXX_ReadOneByte(EEP_CT_MULTIPLE_LO);
-				if((CT_multiple== 0xffff)||(CT_multiple== 0))
-				{
-					CT_multiple = 174;
-				}
+
 				acc_sensitivity[0] = (AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_LO_HI)<<8)|AT24CXX_ReadOneByte(EEP_ACC_SENSITIVITY_LO_LO);
 				if( (acc_sensitivity[0]== 0xffff)||(acc_sensitivity[0]== 0))
 				{
@@ -866,7 +1045,8 @@ void EEP_Dat_Init(void)
 				{
 					acc_sensitivity[1] = 970;
 				}
-
+				comSlaveId = AT24CXX_ReadOneByte(EEP_ACC_COM_SLAVE_ID);
+				rfm69_deadmaster_enable = AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_ENABLE);
 				
 				#endif
 				

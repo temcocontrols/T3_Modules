@@ -5,6 +5,8 @@
 #include "bitmap.h"
 
 //#if T36CTA
+#define RFM69_SIMULATE_SPI_ENABLE  1
+
 #define RF69_MAX_DATA_LEN       61 // to take advantage of the built in AES/CRC we want to limit the frame size to the internal FIFO size (66 bytes - 3 bytes overhead - 2 bytes crc)
 #define RF69_SPI_CS             SS // SS is the SPI slave select pin, for instance D10 on ATmega328
 
@@ -12,6 +14,8 @@
 #define RF69_IRQ_PIN          2
 #define RF69_IRQ_NUM          0  
 
+#define RFM69_RETRIES         2
+#define RFM69_RETRIES_TIMEOUT     300
 
 #define CSMA_LIMIT              -90 // upper RX signal sensitivity threshold in dBm for carrier sense access
 #define RF69_MODE_SLEEP         0 // XTAL OFF
@@ -47,7 +51,7 @@
 #define REGISTER_DETAIL 1
 
 #define	RFM_CS	PDout(2) //RFM69Æ¬Ñ¡Òý½Å	
-#define RFM69_DEFAULT_DEADMASTER    200
+#define RFM69_DEFAULT_DEADMASTER    10
 
 extern uint16_t rfm69_deadMaster;
 extern uint16_t rfm69_set_deadMaster;

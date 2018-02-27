@@ -12,16 +12,16 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F103VG</Device>
+          <Device>STM32F103VE</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32F1xx_DFP.2.0.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
-          <Cpu>IROM(0x08000000,0x100000) IRAM(0x20000000,0x18000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IROM(0x08000000,0x80000) IRAM(0x20000000,0x10000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F10x_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F103VG$Flash\STM32F10x_1024.FLM))</FlashDriverDll>
-          <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32F103VG$Device\Include\stm32f10x.h</RegisterFile>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F10x_512 -FS08000000 -FL080000 -FP0($$Device:STM32F103VE$Flash/STM32F10x_512.FLM))</FlashDriverDll>
+          <DeviceId>4225</DeviceId>
+          <RegisterFile>$$Device:STM32F103VE$Device/Include/stm32f10x.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -31,7 +31,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32F103VG$SVD\STM32F103xx.svd</SFDFile>
+          <SFDFile>$$Device:STM32F103VE$SVD\STM32F103xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>..\OBJ\</OutputDirectory>
-          <OutputName>T3_6cta_REV2_7</OutputName>
+          <OutputName>T3_6cta_REV3_25</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -106,11 +106,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments> -REMAP -MPU</SimDllArguments>
+          <SimDllArguments>-REMAP</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM3</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM3</TargetDlgDllArguments>
         </DllOption>
@@ -280,12 +280,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x18000</Size>
+                <Size>0x10000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x80000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -347,7 +347,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -363,7 +363,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32F10X_XL, USE_STDPERIPH_DRIVER</Define>
+              <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
               <IncludePath>..\CORE;..\USER;..\STM32F10x_FWLib\inc;..\HARDWARE\LED;..\HARDWARE\LCD;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM3;..\SYSTEM\delay;..\SYSTEM\usart;..\SYSTEM;..\HARDWARE\KEY;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\SPI;..\HARDWARE\TOUCH;..\HARDWARE\FLASH;..\HARDWARE\STMFLASH;..\HARDWARE\DMA;..\HARDWARE\SDCARD;..\FATFS\src;..\FATFS\exfuns;..\VMALLOC;..\HARDWARE\TIMER;..\HARDWARE\ENC28J60;..\uIP-1.0\uip;..\uIP-1.0\apps\dhcpc;..\uIP-1.0\apps\resolv;..\uIP-1.0\apps\webserver;..\uIP-APP;..\HARDWARE\RTC;..\USB\CONFIG\inc;..\USB\LIB\inc;..\USB\APP;..\MODBUS;..\TCPIP;..\KEY;..\bac_lib\h_header;..\FILTER;..\RANGE;..\baclib\include;..\baclib;..\INPUT_LIB;..\STORE_DATA;..\INFO;..\watchdog;..\RFM;..\ACCELERO;..\AIRFLOW</IncludePath>
             </VariousControls>
@@ -534,14 +534,14 @@
               <FilePath>..\CORE\cortexm3_macro_rvds.s</FilePath>
             </File>
             <File>
+              <FileName>startup_stm32f10x_hd.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\CORE\startup_stm32f10x_hd.s</FilePath>
+            </File>
+            <File>
               <FileName>core_cm3.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CORE\core_cm3.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_stm32f10x_xl.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\CORE\startup_stm32f10x_xl.s</FilePath>
             </File>
           </Files>
         </Group>

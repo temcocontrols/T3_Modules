@@ -210,7 +210,8 @@ typedef enum { not_used_input, Y3K_40_150DegC, Y3K_40_300DegF, R10K_40_120DegC,
 #if 1 //(defined T36CTA)
 	#if 1//(defined T36CTA_REV2)
 	,Humidty, co2,pressureInWc, pressureKpa, pressurePsi, pressureMmHg,pressureInHg,
-	pressureKgcm, pressureAtmos,pressureBar, Reserved1,Reserved2,Reserved3
+	pressureKgcm, pressureAtmos,pressureBar, Reserved1,Reserved2,Reserved3,I0_20Amps,
+	I0_50Amps,I0_75Amps
 	#endif
 #endif
 	} Analog_input_range_equate;

@@ -24,6 +24,8 @@
 #include "accelero_meter.h"
 #include "air_flow.h"
 #endif
+
+extern int16_t rcv_rssi;
 //#include "ud_str.h"
 void Timer_Silence_Reset(void);
 static u8 randval = 0 ;
@@ -51,7 +53,15 @@ extern FIFO_BUFFER Receive_Buffer0;
 #if defined T36CTA
 extern bool rfm_exsit;
 extern uint16 acc_sensitivity[2];
-
+extern bool comSwitch;
+extern u8 comSlaveId;
+extern u8 comRecevieFlag;
+ extern u16 outdoorTempC;
+ extern u16 outdoorTempH;
+ extern u16 outdoorHum;
+ extern u16 outdoorLux;
+ extern u16 outdoorEnthalpy;
+extern bool rfm69_deadmaster_enable;
 #endif
  
 void USART1_IRQHandler(void)                   //串口1中断服务程序
@@ -706,90 +716,11 @@ void internalDeal(u8 type,  u8 *pData)
 			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_RFM69_BITRATE_LO, pData[HeadLen+5]);
 		 }
-		 else if( StartAdd == MODBUS_CT_FIRST_AD)
+		 else if( StartAdd == MODBUS_RFM69_DEADMASTER_ENABLE)
 		 {
-			 CT_first_AD = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_HI, pData[HeadLen+4]);
-			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_LO, pData[HeadLen+5]);
-		 }		
-		 else if( StartAdd == MODBUS_CT_MULTIPLE)
-		 {
-			 CT_multiple = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_HI, pData[HeadLen+4]);
-			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_LO, pData[HeadLen+5]);
-		 }		 
-//		 else if( StartAdd == MODBUS_CT_FIRST_AD_1)
-//		 {
-//			 CT_first_AD[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_1_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_1_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_FIRST_AD_2)
-//		 {
-//			 CT_first_AD[1] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_2_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_2_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_FIRST_AD_3)
-//		 {
-//			 CT_first_AD[2] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_3_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_3_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_FIRST_AD_4)
-//		 {
-//			 CT_first_AD[3] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_4_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_4_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_FIRST_AD_5)
-//		 {
-//			 CT_first_AD[4] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_5_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_5_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_FIRST_AD_6)
-//		 {
-//			 CT_first_AD[5] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_6_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_FIRST_AD_6_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_MULTIPLE_1)
-//		 {
-//			 CT_multiple[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_1_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_1_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_MULTIPLE_2)
-//		 {
-//			 CT_multiple[1] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_2_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_2_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_MULTIPLE_3)
-//		 {
-//			 CT_multiple[2] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_3_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_3_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_MULTIPLE_4)
-//		 {
-//			 CT_multiple[3] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_4_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_4_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_MULTIPLE_5)
-//		 {
-//			 CT_multiple[4] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_5_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_5_LO, pData[HeadLen+5]);
-//		 }
-//		 else if( StartAdd == MODBUS_CT_MULTIPLE_6)
-//		 {
-//			 CT_multiple[5] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_6_HI, pData[HeadLen+4]);
-//			 AT24CXX_WriteOneByte(EEP_CT_MULTIPLE_6_LO, pData[HeadLen+5]);
-//		 }
+			 rfm69_deadmaster_enable = pData[HeadLen+5];
+			 AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_ENABLE, pData[HeadLen+5]);
+		 }
 		 else if( StartAdd == MODBUS_ACC_SENSITIVITY_LO)
 		 {
 			 acc_sensitivity[0] = (pData[HeadLen+4]<<8)|pData[HeadLen+5] ;
@@ -802,6 +733,28 @@ void internalDeal(u8 type,  u8 *pData)
 			 AT24CXX_WriteOneByte(EEP_ACC_SENSITIVITY_HI_HI, pData[HeadLen+4]);
 			 AT24CXX_WriteOneByte(EEP_ACC_SENSITIVITY_HI_LO, pData[HeadLen+5]);
 		 }
+		 else if( StartAdd == MODBUS_COM_SWITCH)
+		 {
+			 comSwitch = pData[HeadLen+5];
+		 }
+		 else if( StartAdd == MODBUS_COM_SLAVE_ID)
+		 {
+			 comSlaveId = pData[HeadLen+5];
+			 AT24CXX_WriteOneByte(EEP_ACC_COM_SLAVE_ID, pData[HeadLen+5]);
+		 }
+		 else if( (StartAdd >= MODBUS_CTRL1_XL) && (StartAdd <= MODBUS_CTRL10_C))
+		 {
+			 address_temp   = StartAdd - MODBUS_CTRL1_XL ;
+			 ACCELERO_Write_Data((0x10+address_temp),pData[HeadLen+5]) ;
+			 
+		 }
+		 else if(( StartAdd >= MODBUS_IO_OUTPUT_1 )&&( StartAdd <= MODBUS_IO_OUTPUT_2))
+         {
+               address_temp   = StartAdd - MODBUS_IO_OUTPUT_1 ;
+               if(pData[HeadLen+5]>1) pData[HeadLen+5] = 1 ;
+               outputs[address_temp].control= pData[HeadLen+5] ; 
+               write_page_en[EN_OUT] =1 ;
+         }
 	  #endif
 	  
 	  
@@ -890,6 +843,7 @@ void internalDeal(u8 type,  u8 *pData)
                   AT24CXX_WriteOneByte(EEP_PLUSE0_LO_HI+4*div_temp, modbus.pulse[div_temp].quarter[2]);
                   AT24CXX_WriteOneByte(EEP_PLUSE0_LO_LO+4*div_temp, modbus.pulse[div_temp].quarter[3]);
             }
+	
 //            if(address_temp%2 == 1 )
 //            {
 //               if(inputs[div_temp].range!= T3_PULSE)
@@ -1811,10 +1765,11 @@ void responseCmd(u8 type, u8* pData)
 		 {
 			 temp1 = 0;
 			 address_temp = address - MODBUS_RFM69_REGISTER_OP_MODE+1;
-			 RFM69_select();
-				SPI_transfer8(address_temp & 0x7F); // send address + r/w bit
-				temp2 = SPI_transfer8(0);
-				RFM69_unselect();
+//			 RFM69_select();
+//				SPI_transfer8(address_temp & 0x7F); // send address + r/w bit
+//				temp2 = SPI_transfer8(0);
+//				RFM69_unselect();
+			 temp2 = 0;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
@@ -1836,7 +1791,7 @@ void responseCmd(u8 type, u8* pData)
 		 else if( address == MODBUS_RFM69_NODE_ID)
 		 {
 			 temp1 = 0;
-               //temp2 = RFM69_nodeID&0xff ;
+              // temp2 = RFM69_nodeID&0xff ;
 			 temp2 = RFM69_getAddress();
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
@@ -1890,15 +1845,26 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
-//		 else if( address == MODBUS_RFM69_MODE)
-//		 {
-//			 temp1 = (RFM69_networkID>>8) & 0xff ;
-//               temp2 = RFM69_networkID&0xff ;
-//               sendbuf[send_cout++] = temp1 ;
-//               sendbuf[send_cout++] = temp2 ;
-//               crc16_byte(temp1);
-//               crc16_byte(temp2);
-//		 }
+		 else if(address == MODBUS_RFM69_RSSI)
+		 {
+			temp1 = (rcv_rssi>>8) & 0xff;
+			temp2 = rcv_rssi&0xff ;
+			sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		 
+		 
+		 }
+		 else if( address == MODBUS_RFM69_DEADMASTER_ENABLE)
+		 {
+			 temp1 = 0;
+			 temp2 = rfm69_deadmaster_enable;
+			 sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		 }
          else if( (address >= MODBUS_TEST_ADC_VALUE )&&(address<= MODBUS_TEST_ADC_VALUE_LAST))
 		 {
 			 address_temp = address - MODBUS_TEST_ADC_VALUE ; 
@@ -1921,42 +1887,111 @@ void responseCmd(u8 type, u8* pData)
 		 
 		 else if( address == MODBUS_ACCELERO_ID)
 		 {
-			 temp1 = (ACCELERO_Read_Data(0x0d)>>8) & 0xff ;
-               temp2 = ACCELERO_Read_Data(0x0d)&0xff ;
-               sendbuf[send_cout++] = temp1 ;
-               sendbuf[send_cout++] = temp2 ;
-               crc16_byte(temp1);
-               crc16_byte(temp2);
-		 }
-		 else if( (address>=MODBUS_CT_AMPERE_1)&&(address<=MODBUS_CT_AMPERE_6))
-		 {
-			 address_temp = address - MODBUS_CT_AMPERE_1 ;
-			 temp1 = (CT_Vaule[address_temp]>>8)&0xff;
-			 temp2 = CT_Vaule[address_temp]&0xff ;
-               sendbuf[send_cout++] = temp1 ;
+//			 temp1 = (ACCELERO_Read_Data(0x0d)>>8) & 0xff ;
+			 temp1 = (outdoorTempC>>8)& 0xff;
+			 temp2 = outdoorTempC&0xff;
+//               temp2 = ACCELERO_Read_Data(0x0d)&0xff ;
+			 sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
 		 else if( address == MODBUS_CT_FIRST_AD)
 		 {
-			 temp1 = (CT_first_AD>>8) & 0xff ;
-               temp2 = CT_first_AD&0xff ;
+			 temp1 = (outdoorTempH>>8) & 0xff ;
+               temp2 = outdoorTempH&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
                crc16_byte(temp2);
-		 }	
+		 }
 		 else if( address == MODBUS_CT_MULTIPLE)
 		 {
-			 temp1 = (CT_multiple>>8) & 0xff ;
-               temp2 = CT_multiple&0xff ;
+			 temp1 = (outdoorHum>>8) & 0xff ;
+               temp2 = outdoorHum&0xff ;
                sendbuf[send_cout++] = temp1 ;
                sendbuf[send_cout++] = temp2 ;
                crc16_byte(temp1);
                crc16_byte(temp2);
-		 }		 
-
+		 }
+		 else if( address == MODBUS_CT_AMPERE_1)
+		 {
+			 temp1 = (outdoorLux>>8) & 0xff ;
+               temp2 = outdoorLux&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_CT_AMPERE_1+1)
+		 {
+			 temp1 = (outdoorEnthalpy>>8) & 0xff ;
+               temp2 = outdoorEnthalpy&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+//		 else if( address == MODBUS_CT_AMPERE_1+2)
+//		 {
+//			 temp1 = 0;
+//               temp2 = ACCELERO_Read_Data(0x0f) ;
+//			 //temp2 = 0;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_AMPERE_1+3)
+//		 {
+//			 temp1 = 0;
+//               temp2 = ACCELERO_Read_Data(0x22) ;
+//			 //temp2 = 0;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_AMPERE_1+4)
+//		 {
+//			 temp1 = 0;
+//               temp2 = ACCELERO_Read_Data(0x10) ;
+//			 //temp2 = 0;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_AMPERE_1+5)
+//		 {
+//			 temp1 = 0;
+//               temp2 = ACCELERO_Read_Data(0x11) ; ;
+//			 //temp2 = 0;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+		 
+		 
+//		 else if( address == MODBUS_CT_AMPERE_1+2)
+//		 {
+//			 temp1 = (modbus.baudrate>>24) & 0xff ;
+//               temp2 = (modbus.baudrate>>16)&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
+//		 else if( address == MODBUS_CT_AMPERE_1+3)
+//		 {
+//			 temp1 = (modbus.baudrate>>8) & 0xff ;
+//               temp2 = modbus.baudrate&0xff ;
+//               sendbuf[send_cout++] = temp1 ;
+//               sendbuf[send_cout++] = temp2 ;
+//               crc16_byte(temp1);
+//               crc16_byte(temp2);
+//		 }
 		 else if( address == MODBUS_ACCELERO_X)
 		 {
 			 temp1 = (axis_value[0]>>8) & 0xff ;
@@ -2004,8 +2039,57 @@ void responseCmd(u8 type, u8* pData)
                crc16_byte(temp1);
                crc16_byte(temp2);
 		 }
+		 else if( address == MODBUS_COM_SLAVE_ID)
+		 {
+			 temp1 = 0;
+			 temp2 = comSlaveId;
+			 sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
 		 
-         else if((address >= MODBUS_AI_CHANNLE0_HI)&&(address<= (MODBUS_AI_CHANNLE0_HI+25)))
+		 else if( address == MODBUS_GYROSCOPE_X)
+		 {
+			 temp1 = (gyro_value[0]>>8) & 0xff ;
+               temp2 = gyro_value[0]&0xff ;
+//			 temp1 = (ACCELERO_Read_Data(1)>>8)&0xff;
+//			 temp2 = ACCELERO_Read_Data(1)&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_GYROSCOPE_Y)
+		 {
+			 temp1 = (gyro_value[1]>>8) & 0xff ;
+               temp2 = gyro_value[1]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_GYROSCOPE_Z)
+		 {
+			 temp1 = (gyro_value[2]>>8) & 0xff ;
+               temp2 = gyro_value[2]&0xff ;
+               sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 else if( (address >= MODBUS_CTRL1_XL) && (address <= MODBUS_CTRL10_C))
+		 {
+			 temp1 = 0;
+			 temp2 = ACCELERO_Read_Data(0x10+(address-MODBUS_CTRL1_XL)) ;
+			 sendbuf[send_cout++] = temp1 ;
+               sendbuf[send_cout++] = temp2 ;
+               crc16_byte(temp1);
+               crc16_byte(temp2);
+		 }
+		 
+		 
+        else if((address >= MODBUS_AI_CHANNLE0_HI)&&(address<= MODBUS_AI_CHANNLE18_LO))
          {
             address_temp = address - MODBUS_AI_CHANNLE0_HI ;
               if(inputs[address_temp/2].digital_analog == 1) 
@@ -2100,26 +2184,9 @@ void responseCmd(u8 type, u8* pData)
 					}									
 			}
 							
+         
          }
-		 
-		 else if((address >= (MODBUS_AI_CHANNLE0_HI+26))&&(address<= MODBUS_AI_CHANNLE18_LO))
-		 {
-			 address_temp = address - (MODBUS_AI_CHANNLE0_HI+26) ;
-			 if(address_temp%2 == 0)
-			 {
-				 temp1 = 0;
-				 temp2 = 0;
-			 }
-			 else
-			 {
-				 temp1 = (AD_Value[address_temp/2+13]>>8) & 0xff ;
-                 temp2 = AD_Value[address_temp/2+13]&0xff ;
-			 }
-			 sendbuf[send_cout++] = temp1 ;
-			sendbuf[send_cout++] = temp2 ;
-			crc16_byte(temp1);
-			crc16_byte(temp2);
-		 }
+
 				else if((address >= MODBUS_AUTO_MANUAL0)&&(address<= MODBUS_AUTO_MANUAL18))
 				 {
 					  address_temp = address - MODBUS_AUTO_MANUAL0 ; 
@@ -2238,6 +2305,60 @@ void responseCmd(u8 type, u8* pData)
 					crc16_byte(temp1);
 					crc16_byte(temp2);
 				 }
+		else if((address >= MODBUS_IO_MAPPING_CT_1) && ( address <= MODBUS_IO_MAPPING_CT_6))
+		 {
+			 address_temp = address - MODBUS_IO_MAPPING_CT_1 ;
+			 if( t36ct_ver == T36CTA_REV1 )
+			 {
+				 temp1 = ((inputs[address_temp+13].value/10)>>8)&0xff ;
+				 temp2 =  (inputs[address_temp+13].value/10)&0xff; 
+			 }
+			 else if(t36ct_ver == T36CTA_REV2 )
+			 {
+				 temp1 = ((inputs[address_temp+10].value/10)>>8)&0xff ;
+				 temp2 =  (inputs[address_temp+10].value/10)&0xff; 
+			 }
+			 sendbuf[send_cout++] = temp1 ;
+			   sendbuf[send_cout++] = temp2 ;
+			   crc16_byte(temp1);
+			   crc16_byte(temp2);
+		 }
+		 else if( (address >= MODBUS_IO_INPUT_1) && ( address <= MODBUS_IO_INPUT_13))
+		 {
+			 address_temp = address - MODBUS_IO_INPUT_1 ;
+			 if( t36ct_ver == T36CTA_REV1 )
+			 {
+				 temp1 = ((inputs[address_temp].value/10)>>8)&0xff ;
+				 temp2 =  (inputs[address_temp].value/10)&0xff; 
+			 }
+			 else if( t36ct_ver == T36CTA_REV2)
+			 {
+				 if(address_temp<10)
+				 {
+					 temp1 = ((inputs[address_temp].value/10)>>8)&0xff ;
+					 temp2 =  (inputs[address_temp].value/10)&0xff; 
+				 }
+				 else
+				 {
+					 temp1 = ((inputs[address_temp+6].value/10)>>8)&0xff ;
+					 temp2 =  (inputs[address_temp+6].value/10)&0xff; 
+				 }
+			 }
+			 sendbuf[send_cout++] = temp1 ;
+			   sendbuf[send_cout++] = temp2 ;
+			   crc16_byte(temp1);
+			   crc16_byte(temp2);
+		 }
+		 else if( (address >= MODBUS_IO_OUTPUT_1) && ( address <= MODBUS_IO_OUTPUT_2))
+		 {
+			address_temp = address - MODBUS_IO_OUTPUT_1 ; 
+            temp1 = 0;
+            temp2 =   outputs[address_temp].control; 
+            sendbuf[send_cout++] = temp1 ;
+            sendbuf[send_cout++] = temp2 ;
+            crc16_byte(temp1);
+            crc16_byte(temp2);
+		 }
 		 #endif
 
          #if (defined T38AI8AO6DO)
@@ -3289,6 +3410,39 @@ u8 checkData(u16 address)
    u8 i;
    static u8 srand_count =0 ;
    srand_count ++ ;
+	
+	#if T36CTA
+	if( comSwitch)
+	{
+		if(USART_RX_BUF[1] == 3)
+		{
+			if(comRecevieFlag==0)
+			{
+				outdoorTempH = (u16)(USART_RX_BUF[3]<<8) + USART_RX_BUF[4];
+				outdoorTempC = (u16)(USART_RX_BUF[5]<<8) + USART_RX_BUF[6];
+				//comRecevieFlag = 4;
+			}
+			else if( comRecevieFlag==1)
+			{
+				outdoorHum = (u16)(USART_RX_BUF[3]<<8) + USART_RX_BUF[4];
+				//comRecevieFlag = 4;
+			}
+			else if( comRecevieFlag==2)
+			{
+				outdoorLux = (u16)(USART_RX_BUF[3]<<8) + USART_RX_BUF[4];
+				//comRecevieFlag = 4;
+			}
+			else if( comRecevieFlag == 3)
+			{
+				outdoorEnthalpy = (u16)(USART_RX_BUF[3]<<8) + USART_RX_BUF[4];
+				//comRecevieFlag = 4;
+			}
+		}
+		 return 0;
+	}
+	else
+	{
+	#endif
    // check if packet completely received
    if(revce_count != rece_size)
       return 0;
@@ -3397,6 +3551,9 @@ u8 checkData(u16 address)
       return 0;
    }
    //return TRUE;
+   #if T36CTA
+   }
+   #endif
 
  }
 
@@ -3405,24 +3562,27 @@ u8 checkData(u16 address)
  void dealwithData(void)
 {   
    u16 address;
-   // given this is used in multiple places, decided to put it as an argument
-   address = (u16)(USART_RX_BUF[2]<<8) + USART_RX_BUF[3];
-   if (checkData(address))
-   {      
-//      // Initialize tranmission
-      initSend_COM();   
-      // Initialize CRC
-      init_crc16();      
 
-//      // Respond with any data requested
-      responseCmd(0,USART_RX_BUF);
-////      // Store any data being written
-      internalDeal(0, USART_RX_BUF);
+	{
+	   // given this is used in multiple places, decided to put it as an argument
+	   address = (u16)(USART_RX_BUF[2]<<8) + USART_RX_BUF[3];
+	   if (checkData(address))
+	   {      
+	//      // Initialize tranmission
+		  initSend_COM();   
+		  // Initialize CRC
+		  init_crc16();      
 
-   }
-   else
-   {
-      serial_restart();
+	//      // Respond with any data requested
+		  responseCmd(0,USART_RX_BUF);
+	////      // Store any data being written
+		  internalDeal(0, USART_RX_BUF);
+
+	   }
+	   else
+	   {
+		  serial_restart();
+	   }
    }
 }
 

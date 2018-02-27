@@ -293,7 +293,8 @@ void Pressure_Task(void)
 	if(Run_Timer <= FIRST_TIME) Run_Timer ++;
 		
 	air_flow_ad = ADC_getChannal(ADC2,ADC_Channel_12);
-	AD_Value[8] = air_flow_ad;
+	if(t36ct_ver == T36CTA_REV2 )
+		AD_Value[8] = air_flow_ad;
 	
  	Pressure.ad = get_ad_val(air_flow_ad);
 	
