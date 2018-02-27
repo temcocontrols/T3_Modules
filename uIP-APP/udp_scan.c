@@ -180,7 +180,12 @@ void UDP_SCAN_APP(void)
    #if 1
    else if((scan_temp[0] == 0x66) && (scan_temp[1] == modbus.ip_addr[0]) && (scan_temp[2] == modbus.ip_addr[1]) && (scan_temp[3] == modbus.ip_addr[2]) && (scan_temp[4] == modbus.ip_addr[3]))
    {
-     
+      // cmd(1 byte) + changed ip(4 bytes) + new ip(4 bytes) + new subnet(4 bytes) + new getway(4)  --- old protocal
+		 // + sn(4 bytes)  -- new protocal, used to change conflict ip
+    	 
+		 if(((scan_temp[17] == modbus.serial_Num[0]) && (scan_temp[18] == modbus.serial_Num[1]) && (scan_temp[19] == modbus.serial_Num[2]) && (scan_temp[20] == modbus.serial_Num[3]))
+			 || ((scan_temp[17] == 0) && (scan_temp[18] == 0) && (scan_temp[19] == 0) && (scan_temp[20] == 0)))
+		 {
 //	  printf("%u,%u,%u,%u,%u,%u,%u,%u,", temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8]);
 	  n = 5;
 		udp_scan_reply(1);
@@ -236,7 +241,7 @@ void UDP_SCAN_APP(void)
 			AT24CXX_WriteOneByte(EEP_SUB_MASK_ADDRESS_1+i, modbus.mask_addr[i]);
 			AT24CXX_WriteOneByte(EEP_GATEWAY_ADDRESS_1+i, modbus.gate_addr[i]);						
 		}
-		
+	}
 //		delay_ms(100);
 //		SoftReset();
 //		tapdev_init() ;
