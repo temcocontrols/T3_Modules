@@ -381,6 +381,8 @@ void vAcceleroTask(void *pvParameters)
 	ACCELERO_IO_Init();
 	/* Write CTL REG1 register, set ACTIVE mode */
  	ACCELERO_I2C_init();
+	ACCELERO_Write_Data(0x10, 0x10);
+	ACCELERO_Write_Data(0x11, 0x10);
 	for( ;; )
 	{
 //		ACCELERO_Write_Data(0x2a, 0x01);
@@ -396,8 +398,8 @@ void vAcceleroTask(void *pvParameters)
 //		}
 		if(0x69 == ACCELERO_Read_Data(0x0f))
 		{
-			ACCELERO_Write_Data(0x10, 0x10);
-			ACCELERO_Write_Data(0x11, 0x10);
+//			ACCELERO_Write_Data(0x10, 0x10);
+//			ACCELERO_Write_Data(0x11, 0x10);
 			t36ct_ver = T36CTA_REV2;
 			acc_temp = BUILD_UINT10_AXIS (ACCELERO_Read_Data(asix_sequence*2 + 0x29),ACCELERO_Read_Data(asix_sequence*2 + 0x28));
 			tempAcc = axis_value[asix_sequence] - acc_temp;
