@@ -232,6 +232,7 @@ typedef enum
 	EEP_ACC_COM_SLAVE_ID,
 	
 	EEP_RFM69_DEADMASTER_ENABLE,
+	
 
 	
 		#ifdef AIR_FLOW_SENSOR
@@ -276,6 +277,9 @@ typedef enum
 		EEP_DUCT_AREA,	
 		EEP_PRESSURE_END = EEP_DUCT_AREA + 2,
 		#endif
+		
+	EEP_GYRO_CTRL1_XL,
+	EEP_GYRO_CTRL10_C = EEP_GYRO_CTRL1_XL + 9,
 	#endif
 	
 	#if (defined T38AI8AO6DO )
@@ -920,6 +924,8 @@ typedef enum
 	MODBUS_CTRL8_XL,
 	MODBUS_CTRL9_XL,
 	MODBUS_CTRL10_C,
+	
+	MODBUS_ACC_RESET_FACTORY,
 	#endif
 	
 	#if (defined T38AI8AO6DO)

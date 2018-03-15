@@ -62,6 +62,7 @@ extern u8 comRecevieFlag;
  extern u16 outdoorLux;
  extern u16 outdoorEnthalpy;
 extern bool rfm69_deadmaster_enable;
+extern u8 acc_config[10];
 #endif
  
 void USART1_IRQHandler(void)                   //串口1中断服务程序
@@ -746,6 +747,7 @@ void internalDeal(u8 type,  u8 *pData)
 		 {
 			 address_temp   = StartAdd - MODBUS_CTRL1_XL ;
 			 ACCELERO_Write_Data((0x10+address_temp),pData[HeadLen+5]) ;
+			 AT24CXX_WriteOneByte(EEP_GYRO_CTRL1_XL+address_temp, pData[HeadLen+5]);
 			 
 		 }
 		 else if(( StartAdd >= MODBUS_IO_OUTPUT_1 )&&( StartAdd <= MODBUS_IO_OUTPUT_2))
@@ -755,6 +757,29 @@ void internalDeal(u8 type,  u8 *pData)
                outputs[address_temp].control= pData[HeadLen+5] ; 
                write_page_en[EN_OUT] =1 ;
          }
+		 else if( StartAdd == MODBUS_ACC_RESET_FACTORY)
+		 {
+			 
+			 if( pData[HeadLen+5] == 1)
+			 {
+				 acc_config[0] = 0x10;
+				acc_config[1] = 0x10;
+				acc_config[2] = 0x04;
+				acc_config[3] = 0x00;
+				acc_config[4] = 0x00;
+				acc_config[5] = 0x00;
+				acc_config[6] = 0x00;
+				acc_config[7] = 0x00;
+				acc_config[8] = 0x38;
+				acc_config[9] = 0x38;
+				for(i = 0; i<10; i++)
+				{
+					ACCELERO_Write_Data(0x10+i, acc_config[i]);
+					AT24CXX_WriteOneByte(EEP_GYRO_CTRL1_XL+i, acc_config[i]);
+				}
+			 }
+			 SoftReset();
+		 }
 	  #endif
 	  
 	  

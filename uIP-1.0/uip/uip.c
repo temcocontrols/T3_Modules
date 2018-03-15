@@ -810,7 +810,7 @@ uip_process(u8_t flag)
     goto drop;
   }
 #if UIP_UDP
-  if(flag == UIP_UDP_TIMER) {
+  if(flag == UIP_UDP_TIMER) { 
     if(uip_udp_conn->lport != 0) {
       uip_conn = NULL;
       uip_sappdata = uip_appdata = &uip_buf[UIP_LLH_LEN + UIP_IPUDPH_LEN];
@@ -1147,15 +1147,31 @@ uip_process(u8_t flag)
 //		if((uip_udp_conn->rport == 0) || (UDPBUF->destport == uip_udp_conn->lport))
 //		if(uip_udp_conn->rport == 0)
 		{
+//			uip_udp_conn->rport = UDPBUF->srcport;
+//			
+//			if(uip_ipaddr_cmp(BUF->destipaddr, all_ones_addr))
+//			{
+//				uip_ipaddr_copy(uip_udp_conn->ripaddr, all_ones_addr);
+//			}
+//			else
+//			{
+//				uip_ipaddr_copy(uip_udp_conn->ripaddr, BUF->srcipaddr);
+//			}
+			uint8_t ip[4];
 			uip_udp_conn->rport = UDPBUF->srcport;
-			if(uip_ipaddr_cmp(BUF->destipaddr, all_ones_addr))
-			{
+
+			// added by chelsea, only compare whether same subnet
+			uip_ipaddr_copy(&ip, BUF->srcipaddr);			
+			ip[3] = 255;
+			//if(uip_ipaddr_cmp(BUF->destipaddr, all_ones_addr))
+			if(!uip_ipaddr_cmp(ip, uip_hostaddr_submask))
+			{ // if in differnet subnet, response broadcast.
 				uip_ipaddr_copy(uip_udp_conn->ripaddr, all_ones_addr);
 			}
 			else
-			{
+			{ // if in same subnet, response src ip address
 				uip_ipaddr_copy(uip_udp_conn->ripaddr, BUF->srcipaddr);
-			}
+			}			
 		}
 // Evan modified end.		
 		goto udp_found;

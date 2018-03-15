@@ -106,6 +106,7 @@ u16 outdoorHum;
 u16 outdoorLux;
 u16 outdoorEnthalpy;
 bool rfm69_deadmaster_enable;
+u8 acc_config[10];
 #endif
 
 int main(void)
@@ -377,12 +378,39 @@ void vAcceleroTask(void *pvParameters)
 	uint16 acc_temp;
 	uint16 gyro_temp;
 	int16 tempAcc;
+	
 //	int16 tempGyro;
 	ACCELERO_IO_Init();
 	/* Write CTL REG1 register, set ACTIVE mode */
  	ACCELERO_I2C_init();
-	ACCELERO_Write_Data(0x10, 0x10);
-	ACCELERO_Write_Data(0x11, 0x10);
+//	ACCELERO_Write_Data(0x10, 0x10);
+//	ACCELERO_Write_Data(0x11, 0x10);
+	if((acc_config[0] != 0xff)&&(acc_config[1] != 0xff)&&(acc_config[2] != 0xff)&&(acc_config[3] != 0xff)&&(acc_config[4] != 0xff)
+		&&(acc_config[5] != 0xff)&&(acc_config[6] != 0xff)&&(acc_config[7] != 0xff)&&(acc_config[8] != 0xff)&&(acc_config[9] != 0xff))
+	{
+		for(tempAcc = 0; tempAcc<10; tempAcc++)
+		{
+			ACCELERO_Write_Data(0x10+tempAcc, acc_config[tempAcc]);
+		}
+	}
+	else
+	{
+		acc_config[0] = 0x10;
+		acc_config[1] = 0x10;
+		acc_config[2] = 0x04;
+		acc_config[3] = 0x00;
+		acc_config[4] = 0x00;
+		acc_config[5] = 0x00;
+		acc_config[6] = 0x00;
+		acc_config[7] = 0x00;
+		acc_config[8] = 0x38;
+		acc_config[9] = 0x38;
+		for(tempAcc = 0; tempAcc<10; tempAcc++)
+		{
+			ACCELERO_Write_Data(0x10+tempAcc, acc_config[tempAcc]);
+			AT24CXX_WriteOneByte(EEP_GYRO_CTRL1_XL+tempAcc, acc_config[tempAcc]);
+		}
+	}
 	for( ;; )
 	{
 //		ACCELERO_Write_Data(0x2a, 0x01);
@@ -1050,6 +1078,8 @@ void EEP_Dat_Init(void)
 				comSlaveId = AT24CXX_ReadOneByte(EEP_ACC_COM_SLAVE_ID);
 				rfm69_deadmaster_enable = AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_ENABLE);
 				
+				for(loop = 0; loop<10; loop++)
+					acc_config[loop] = AT24CXX_ReadOneByte(EEP_GYRO_CTRL1_XL+loop);
 				#endif
 				
 				modbus.protocal = AT24CXX_ReadOneByte(EEP_MODBUS_COM_CONFIG); 
