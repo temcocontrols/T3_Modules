@@ -87,7 +87,7 @@ GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 GPIO_Init(GPIOE, &GPIO_InitStructure);
 
 RCC_APB2PeriphClockCmd( RCC_APB2Periph_ADC2|RCC_APB2Periph_GPIOA, ENABLE);
-GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;  
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5| GPIO_Pin_6;  
 GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; 
 GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -144,7 +144,7 @@ void inputs_adc_init(void)
 	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;//ADC_ExternalTrigConv_T1_CC3;//
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-	ADC_InitStructure.ADC_NbrOfChannel = 7;
+	ADC_InitStructure.ADC_NbrOfChannel = 8;
 	ADC_Init(ADC2, &ADC_InitStructure);
 	
 	ADC_RegularChannelConfig(ADC2, ADC_Channel_0 , 1, ADC_SampleTime_239Cycles5);  
@@ -153,7 +153,8 @@ void inputs_adc_init(void)
 	ADC_RegularChannelConfig(ADC2, ADC_Channel_3 , 4, ADC_SampleTime_239Cycles5);
 	ADC_RegularChannelConfig(ADC2, ADC_Channel_4 , 5, ADC_SampleTime_239Cycles5);
 	ADC_RegularChannelConfig(ADC2, ADC_Channel_5 , 6, ADC_SampleTime_239Cycles5);
-	ADC_RegularChannelConfig(ADC2, ADC_Channel_12 , 7, ADC_SampleTime_239Cycles5);
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_6 , 7, ADC_SampleTime_239Cycles5);
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_12 , 8, ADC_SampleTime_239Cycles5);
 	
 	//ADC_ExternalTrigConvCmd(ADC2, ENABLE);  
 	ADC_Cmd(ADC2, ENABLE); 

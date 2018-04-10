@@ -25,9 +25,11 @@
 #define ACCELERO_SDA		PBout(11)	//SDA	 
 #define READ_ACCELERO_SDA		PBin(11)		// ‰»ÎSDA 
 
-#define BUILD_UINT10_AXIS(MSB, LSB)   \
-          ( ((MSB & 0x00ff) << 2) + ((LSB & 0x00ff) >> 6) )
+//#define BUILD_UINT10_AXIS(MSB, LSB)   \
+//          ( ((MSB & 0x00ff) << 2) + ((LSB & 0x00ff) >> 6) )
 
+#define BUILD_UINT10_AXIS(MSB, LSB)   \
+          ( ((MSB & 0x00ff) << 8) + ((LSB & 0x00ff) ) )
 
 extern uint16_t axis_value[];
 extern uint8_t asix_sequence;

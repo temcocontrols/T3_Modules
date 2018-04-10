@@ -63,6 +63,7 @@ extern u8 comRecevieFlag;
  extern u16 outdoorEnthalpy;
 extern bool rfm69_deadmaster_enable;
 extern u8 acc_config[10];
+extern u16_t powerVoltage;
 #endif
  
 void USART1_IRQHandler(void)                   //串口1中断服务程序
@@ -1885,6 +1886,16 @@ void responseCmd(u8 type, u8* pData)
 		 {
 			 temp1 = 0;
 			 temp2 = rfm69_deadmaster_enable;
+			 sendbuf[send_cout++] = temp1 ;
+			sendbuf[send_cout++] = temp2 ;
+			crc16_byte(temp1);
+			crc16_byte(temp2);
+		 }
+		 else if( address == MODBUS_POWER_VOLTAGE)
+		 {
+			 powerVoltage = powerVoltage/10;
+			 temp1 = (powerVoltage>>8)&0XFF;
+			 temp2 = powerVoltage&0XFF;
 			 sendbuf[send_cout++] = temp1 ;
 			sendbuf[send_cout++] = temp2 ;
 			crc16_byte(temp1);

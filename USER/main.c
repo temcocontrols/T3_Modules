@@ -118,6 +118,7 @@ int main(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD , ENABLE);
  	delay_init(72);	
 //	uart1_init(115200);
+	uart4_init(19200);
 //	modbus.baudrate = 38400 ;
 	//KEY_Init();
 //	beeper_gpio_init();
@@ -191,6 +192,7 @@ int main(void)
 
 //uint8_t t36ct_ver = T36CTA_REV1;
 uint32_t vol_sum[6];
+u16_t powerVoltage;
 
 void vGetACTask( void *pvParameters)
 {
@@ -198,6 +200,9 @@ void vGetACTask( void *pvParameters)
 	uint8 i;
 	for(;;)
 	{
+		USART_ClearFlag(UART4, USART_FLAG_TC); 
+		USART_SendData(UART4,  'A');
+		powerVoltage = ADC_getChannal(ADC2,ADC_Channel_6);
 		vol_buf[0][avg_count] = ADC_getChannal(ADC2,ADC_Channel_0);
 		vol_buf[1][avg_count] = ADC_getChannal(ADC2,ADC_Channel_1);
 		vol_buf[2][avg_count] = ADC_getChannal(ADC2,ADC_Channel_2);
@@ -403,8 +408,8 @@ void vAcceleroTask(void *pvParameters)
 		acc_config[5] = 0x00;
 		acc_config[6] = 0x00;
 		acc_config[7] = 0x00;
-		acc_config[8] = 0x38;
-		acc_config[9] = 0x38;
+		acc_config[8] = 56;
+		acc_config[9] = 56;
 		for(tempAcc = 0; tempAcc<10; tempAcc++)
 		{
 			ACCELERO_Write_Data(0x10+tempAcc, acc_config[tempAcc]);
@@ -1077,6 +1082,11 @@ void EEP_Dat_Init(void)
 				}
 				comSlaveId = AT24CXX_ReadOneByte(EEP_ACC_COM_SLAVE_ID);
 				rfm69_deadmaster_enable = AT24CXX_ReadOneByte(EEP_RFM69_DEADMASTER_ENABLE);
+				if( rfm69_deadmaster_enable != 1)
+				{
+					AT24CXX_WriteOneByte(EEP_RFM69_DEADMASTER_ENABLE, 1);
+					rfm69_deadmaster_enable = 1;
+				}
 				
 				for(loop = 0; loop<10; loop++)
 					acc_config[loop] = AT24CXX_ReadOneByte(EEP_GYRO_CTRL1_XL+loop);
