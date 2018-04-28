@@ -118,7 +118,7 @@ int main(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD , ENABLE);
  	delay_init(72);	
 //	uart1_init(115200);
-	uart4_init(19200);
+//	uart4_init(19200);
 //	modbus.baudrate = 38400 ;
 	//KEY_Init();
 //	beeper_gpio_init();
@@ -200,8 +200,6 @@ void vGetACTask( void *pvParameters)
 	uint8 i;
 	for(;;)
 	{
-		USART_ClearFlag(UART4, USART_FLAG_TC); 
-		USART_SendData(UART4,  'A');
 		powerVoltage = ADC_getChannal(ADC2,ADC_Channel_6);
 		vol_buf[0][avg_count] = ADC_getChannal(ADC2,ADC_Channel_0);
 		vol_buf[1][avg_count] = ADC_getChannal(ADC2,ADC_Channel_1);
