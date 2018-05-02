@@ -1,0 +1,65 @@
+004-005 @READ_PROGRAM_MEMORY8.P1
+019.6   C1OUT
+020     @SCRATCH
+021     @SCRATCH
+021     _RETURN_
+022     @SCRATCH
+023     @SCRATCH
+024     @INTERRUPT_AREA
+025     @INTERRUPT_AREA
+026     @INTERRUPT_AREA
+027     @INTERRUPT_AREA
+028     @INTERRUPT_AREA
+029     @INTERRUPT_AREA
+02A     @INTERRUPT_AREA
+02B     @INTERRUPT_AREA
+02C-02D timer_overflow_ctr
+02E.0   new_clk
+02E.1   old_clk
+02F     @delay_ms1.P1
+02F     MAIN.@SCRATCH1
+09B-09C @READ_PROGRAM_MEMORY8.P1
+
+ROM Allocation:
+00003E  TIMER1_isr
+00004E  @delay_ms1
+000062  initial
+0000A9  MAIN
+0000A9  @cinit1
+0000B9  @cinit2
+
+Project Directory:
+    G:\Work\PIC_WATCHDOG\
+
+Project Files:
+    PICCore.c                                               [30-Mar-18 13:11  CRC=582568FD]
+    C:\Program Files\PICC\devices\12F675.h                  [06-Oct-14 16:50  CRC=10BD4F57]
+
+Source signature=79A007AB
+Program memory checksum=0000
+Program memory CRC=0000
+Hex file CRC=F2C4
+
+Units:
+    PICCore (main)
+
+Compiler Settings:
+    Processor:      PIC12F675
+    Pointer Size:   8
+    ADC Range:      0-255
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+    Compile Mode:       CCS5
+
+Output Files:
+    XREF file:   PICCore.xsym
+    Errors:      PICCore.err
+    Ext Symbols: PICCore.esym
+    INHX8:       PICCore.hex
+    Symbols:     PICCore.sym
+    List:        PICCore.lst
+    Debug/COFF:  PICCore.cof
+    Project:     PICCore.ccspjt
+    Call Tree:   PICCore.tre
+    Statistics:  PICCore.STA

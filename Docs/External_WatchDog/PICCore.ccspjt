@@ -1,0 +1,70 @@
+[PROJECT]
+Target=PICCore.hex
+Development_Mode=2
+Processor=0x2675
+Processor_Text=PIC12F675
+ToolSuite=CCS
+CCSVersion=5.030
+Compiler=PCM
+
+[Directories]
+Include=
+Library=
+LinkerScript=
+
+[Target Data]
+FileList=PICCore.c
+BuildTool=C-COMPILER
+OptionString=+FM
+AdditionalOptionString=
+BuildRequired=1
+
+[PICCore.c]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+
+[mru-list]
+1=PICCore.c
+
+[Windows]
+0=0000 PICCore.c 0 0 796 451 3 0
+
+[Opened Files]
+1=PICCore.c
+2=
+3=
+4=
+5=
+t1=73
+Count=1
+
+[ProjectLog]
+Days=2
+D1=29-03-2018
+D1_L=5
+D1_L1=[51665]Project Opened.
+D1_L2=[51762]Started Editing.
+D1_L3=[52130]Stopped Editing.
+D1_L4=[58355]Started Editing.
+D1_L5=[58663]Stopped Editing.
+D2=30-03-2018
+D2_L=5
+D2_L1=[45534]Started Editing.
+D2_L2=[45892]Stopped Editing.
+D2_L3=[47447]Started Editing.
+D2_L4=[47775]Stopped Editing.
+TotalEdit=3
+TotalDebug=0
+D2_E=3
+D2_D=0
+D2_L5=[63118]Project Closed.
+
+[defines]
+buildcount=3
+[Units]
+Count=1
+1=PICCore (main)

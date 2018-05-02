@@ -147,6 +147,7 @@ void send_byte(u8 ch, u8 crc) ;
 void responseCmd(u8 type, u8* pData); 
 void internalDeal(u8 type,  u8 *pData) ;
 void USART_SendDataString(u16 num) ;
+void USART_SendDataString_4(u16 num);
 extern u8 uart_send[USART_SEND_LEN] ;
 extern u8 SERIAL_RECEIVE_TIMEOUT ;
 extern u8  	Station_NUM;

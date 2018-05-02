@@ -1,0 +1,673 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+!_TAG_REVISION_NAME	MCHPTags	//
+!_TAG_REVISION_VERSION	6.0.1	//
+A0_A1::0x3ff02	C:\Program Files\PICC\Devices\12F675.h	117;"	d	line:117
+A0_A1_OUT_ON_A2::0x3fb01	C:\Program Files\PICC\Devices\12F675.h	120;"	d	line:120
+A0_C0_C1_C0::0x10FF09	C:\PROGRA~1\PICC\devices\16F684.h	202;"	d	line:202
+A0_VR_C0_VR::0x10FF0A	C:\PROGRA~1\PICC\devices\16F684.h	201;"	d	line:201
+A1_A0_C1_C0::0x10FF04	C:\PROGRA~1\PICC\devices\16F684.h	196;"	d	line:196
+A1_C0_C1_C0::0x10FF03	C:\PROGRA~1\PICC\devices\16F684.h	197;"	d	line:197
+A1_C0_C1_C0_OUT_ON_C4::0x00EF06	C:\PROGRA~1\PICC\devices\16F684.h	199;"	d	line:199
+A1_VR::0x2ff04	C:\Program Files\PICC\Devices\12F675.h	119;"	d	line:119
+A1_VR_C1_VR::0x10FF02	C:\PROGRA~1\PICC\devices\16F684.h	200;"	d	line:200
+A1_VR_OUT_ON_A2::0x6fb03	C:\Program Files\PICC\Devices\12F675.h	118;"	d	line:118
+ADC_CLOCK_DIV_16::0x50	C:\PROGRA~1\PICC\devices\16F684.h	246;"	d	line:246
+ADC_CLOCK_DIV_16::0x50	C:\Program Files\PICC\Devices\12F675.h	143;"	d	line:143
+ADC_CLOCK_DIV_16::0x50	C:\Program Files\PICC\devices\16F690.h	303;"	d	line:303
+ADC_CLOCK_DIV_2::0x100	C:\PROGRA~1\PICC\devices\16F684.h	242;"	d	line:242
+ADC_CLOCK_DIV_2::0x100	C:\Program Files\PICC\Devices\12F675.h	140;"	d	line:140
+ADC_CLOCK_DIV_2::0x100	C:\Program Files\PICC\devices\16F690.h	299;"	d	line:299
+ADC_CLOCK_DIV_32::0x20	C:\PROGRA~1\PICC\devices\16F684.h	245;"	d	line:245
+ADC_CLOCK_DIV_32::0x20	C:\Program Files\PICC\Devices\12F675.h	144;"	d	line:144
+ADC_CLOCK_DIV_32::0x20	C:\Program Files\PICC\devices\16F690.h	302;"	d	line:302
+ADC_CLOCK_DIV_4::0x40	C:\PROGRA~1\PICC\devices\16F684.h	243;"	d	line:243
+ADC_CLOCK_DIV_4::0x40	C:\Program Files\PICC\Devices\12F675.h	141;"	d	line:141
+ADC_CLOCK_DIV_4::0x40	C:\Program Files\PICC\devices\16F690.h	300;"	d	line:300
+ADC_CLOCK_DIV_64::0x60	C:\PROGRA~1\PICC\devices\16F684.h	247;"	d	line:247
+ADC_CLOCK_DIV_64::0x60	C:\Program Files\PICC\Devices\12F675.h	145;"	d	line:145
+ADC_CLOCK_DIV_64::0x60	C:\Program Files\PICC\devices\16F690.h	304;"	d	line:304
+ADC_CLOCK_DIV_8::0x10	C:\PROGRA~1\PICC\devices\16F684.h	244;"	d	line:244
+ADC_CLOCK_DIV_8::0x10	C:\Program Files\PICC\Devices\12F675.h	142;"	d	line:142
+ADC_CLOCK_DIV_8::0x10	C:\Program Files\PICC\devices\16F690.h	301;"	d	line:301
+ADC_CLOCK_INTERNAL::0x30	C:\PROGRA~1\PICC\devices\16F684.h	248;"	d	line:248
+ADC_CLOCK_INTERNAL::0x30	C:\Program Files\PICC\Devices\12F675.h	146;"	d	line:146
+ADC_CLOCK_INTERNAL::0x30	C:\Program Files\PICC\devices\16F690.h	305;"	d	line:305
+ADC_OFF::0	C:\PROGRA~1\PICC\devices\16F684.h	241;"	d	line:241
+ADC_OFF::0	C:\Program Files\PICC\Devices\12F675.h	139;"	d	line:139
+ADC_OFF::0	C:\Program Files\PICC\devices\16F690.h	298;"	d	line:298
+ADC_READ_ONLY::6	C:\PROGRA~1\PICC\devices\16F684.h	270;"	d	line:270
+ADC_READ_ONLY::6	C:\Program Files\PICC\Devices\12F675.h	168;"	d	line:168
+ADC_READ_ONLY::6	C:\Program Files\PICC\devices\16F690.h	331;"	d	line:331
+ADC_START_AND_READ::7	C:\PROGRA~1\PICC\devices\16F684.h	268;"	d	line:268
+ADC_START_AND_READ::7	C:\Program Files\PICC\Devices\12F675.h	166;"	d	line:166
+ADC_START_AND_READ::7	C:\Program Files\PICC\devices\16F690.h	329;"	d	line:329
+ADC_START_ONLY::1	C:\PROGRA~1\PICC\devices\16F684.h	269;"	d	line:269
+ADC_START_ONLY::1	C:\Program Files\PICC\Devices\12F675.h	167;"	d	line:167
+ADC_START_ONLY::1	C:\Program Files\PICC\devices\16F690.h	330;"	d	line:330
+ALL_ANALOG::0xF00FF	C:\Program Files\PICC\devices\16F690.h	321;"	d	line:321
+ALL_ANALOG::255	C:\PROGRA~1\PICC\devices\16F684.h	260;"	d	line:260
+ALL_ANALOG::7	C:\Program Files\PICC\Devices\12F675.h	158;"	d	line:158
+AN0_ANALOG::1	C:\Program Files\PICC\Devices\12F675.h	154;"	d	line:154
+AN1_ANALOG::2	C:\Program Files\PICC\Devices\12F675.h	155;"	d	line:155
+AN2_ANALOG::4	C:\Program Files\PICC\Devices\12F675.h	156;"	d	line:156
+AN3_ANALOG::8	C:\Program Files\PICC\Devices\12F675.h	157;"	d	line:157
+AiValue	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	90;"	v	line:90
+BOOLEAN::int1	C:\PROGRA~1\PICC\devices\16F684.h	38;"	d	line:38
+BOOLEAN::int1	C:\Program Files\PICC\Devices\12F675.h	32;"	d	line:32
+BOOLEAN::int1	C:\Program Files\PICC\devices\16F690.h	45;"	d	line:45
+BROWNOUT_RESTART::26	C:\PROGRA~1\PICC\devices\16F684.h	56;"	d	line:56
+BROWNOUT_RESTART::26	C:\Program Files\PICC\Devices\12F675.h	50;"	d	line:50
+BROWNOUT_RESTART::26	C:\Program Files\PICC\devices\16F690.h	63;"	d	line:63
+BYTE::int8	C:\PROGRA~1\PICC\devices\16F684.h	37;"	d	line:37
+BYTE::int8	C:\Program Files\PICC\Devices\12F675.h	31;"	d	line:31
+BYTE::int8	C:\Program Files\PICC\devices\16F690.h	44;"	d	line:44
+CCP_CAPTURE_DIV_16::7	C:\PROGRA~1\PICC\devices\16F684.h	151;"	d	line:151
+CCP_CAPTURE_DIV_16::7	C:\Program Files\PICC\devices\16F690.h	158;"	d	line:158
+CCP_CAPTURE_DIV_4::6	C:\PROGRA~1\PICC\devices\16F684.h	150;"	d	line:150
+CCP_CAPTURE_DIV_4::6	C:\Program Files\PICC\devices\16F690.h	157;"	d	line:157
+CCP_CAPTURE_FE::4	C:\PROGRA~1\PICC\devices\16F684.h	148;"	d	line:148
+CCP_CAPTURE_FE::4	C:\Program Files\PICC\devices\16F690.h	155;"	d	line:155
+CCP_CAPTURE_RE::5	C:\PROGRA~1\PICC\devices\16F684.h	149;"	d	line:149
+CCP_CAPTURE_RE::5	C:\Program Files\PICC\devices\16F690.h	156;"	d	line:156
+CCP_COMPARE_CLR_ON_MATCH::9	C:\PROGRA~1\PICC\devices\16F684.h	153;"	d	line:153
+CCP_COMPARE_CLR_ON_MATCH::9	C:\Program Files\PICC\devices\16F690.h	160;"	d	line:160
+CCP_COMPARE_INT::0xA	C:\PROGRA~1\PICC\devices\16F684.h	154;"	d	line:154
+CCP_COMPARE_INT::0xA	C:\Program Files\PICC\devices\16F690.h	161;"	d	line:161
+CCP_COMPARE_RESET_TIMER::0xB	C:\PROGRA~1\PICC\devices\16F684.h	155;"	d	line:155
+CCP_COMPARE_RESET_TIMER::0xB	C:\Program Files\PICC\devices\16F690.h	162;"	d	line:162
+CCP_COMPARE_SET_ON_MATCH::8	C:\PROGRA~1\PICC\devices\16F684.h	152;"	d	line:152
+CCP_COMPARE_SET_ON_MATCH::8	C:\Program Files\PICC\devices\16F690.h	159;"	d	line:159
+CCP_OFF::0	C:\PROGRA~1\PICC\devices\16F684.h	147;"	d	line:147
+CCP_OFF::0	C:\Program Files\PICC\devices\16F690.h	154;"	d	line:154
+CCP_PULSE_STEERING_A::0x01000000	C:\Program Files\PICC\devices\16F690.h	198;"	d	line:198
+CCP_PULSE_STEERING_B::0x02000000	C:\Program Files\PICC\devices\16F690.h	199;"	d	line:199
+CCP_PULSE_STEERING_C::0x04000000	C:\Program Files\PICC\devices\16F690.h	200;"	d	line:200
+CCP_PULSE_STEERING_D::0x08000000	C:\Program Files\PICC\devices\16F690.h	201;"	d	line:201
+CCP_PULSE_STEERING_SYNC::0x10000000	C:\Program Files\PICC\devices\16F690.h	202;"	d	line:202
+CCP_PWM::0xC	C:\PROGRA~1\PICC\devices\16F684.h	156;"	d	line:156
+CCP_PWM::0xC	C:\Program Files\PICC\devices\16F690.h	163;"	d	line:163
+CCP_PWM_FULL_BRIDGE::0x40	C:\PROGRA~1\PICC\devices\16F684.h	169;"	d	line:169
+CCP_PWM_FULL_BRIDGE::0x40	C:\Program Files\PICC\devices\16F690.h	176;"	d	line:176
+CCP_PWM_FULL_BRIDGE_REV::0xC0	C:\PROGRA~1\PICC\devices\16F684.h	170;"	d	line:170
+CCP_PWM_FULL_BRIDGE_REV::0xC0	C:\Program Files\PICC\devices\16F690.h	177;"	d	line:177
+CCP_PWM_HALF_BRIDGE::0x80	C:\PROGRA~1\PICC\devices\16F684.h	171;"	d	line:171
+CCP_PWM_HALF_BRIDGE::0x80	C:\Program Files\PICC\devices\16F690.h	178;"	d	line:178
+CCP_PWM_H_H::0x0c	C:\PROGRA~1\PICC\devices\16F684.h	164;"	d	line:164
+CCP_PWM_H_H::0x0c	C:\Program Files\PICC\devices\16F690.h	171;"	d	line:171
+CCP_PWM_H_L::0x0d	C:\PROGRA~1\PICC\devices\16F684.h	165;"	d	line:165
+CCP_PWM_H_L::0x0d	C:\Program Files\PICC\devices\16F690.h	172;"	d	line:172
+CCP_PWM_L_H::0x0e	C:\PROGRA~1\PICC\devices\16F684.h	166;"	d	line:166
+CCP_PWM_L_H::0x0e	C:\Program Files\PICC\devices\16F690.h	173;"	d	line:173
+CCP_PWM_L_L::0x0f	C:\PROGRA~1\PICC\devices\16F684.h	167;"	d	line:167
+CCP_PWM_L_L::0x0f	C:\Program Files\PICC\devices\16F690.h	174;"	d	line:174
+CCP_PWM_PLUS_1::0x1c	C:\PROGRA~1\PICC\devices\16F684.h	157;"	d	line:157
+CCP_PWM_PLUS_1::0x1c	C:\Program Files\PICC\devices\16F690.h	164;"	d	line:164
+CCP_PWM_PLUS_2::0x2c	C:\PROGRA~1\PICC\devices\16F684.h	158;"	d	line:158
+CCP_PWM_PLUS_2::0x2c	C:\Program Files\PICC\devices\16F690.h	165;"	d	line:165
+CCP_PWM_PLUS_3::0x3c	C:\PROGRA~1\PICC\devices\16F684.h	159;"	d	line:159
+CCP_PWM_PLUS_3::0x3c	C:\Program Files\PICC\devices\16F690.h	166;"	d	line:166
+CCP_SHUTDOWN_AC_F::0x080000	C:\PROGRA~1\PICC\devices\16F684.h	183;"	d	line:183
+CCP_SHUTDOWN_AC_F::0x080000	C:\Program Files\PICC\devices\16F690.h	190;"	d	line:190
+CCP_SHUTDOWN_AC_H::0x040000	C:\PROGRA~1\PICC\devices\16F684.h	182;"	d	line:182
+CCP_SHUTDOWN_AC_H::0x040000	C:\Program Files\PICC\devices\16F690.h	189;"	d	line:189
+CCP_SHUTDOWN_AC_L::0x000000	C:\PROGRA~1\PICC\devices\16F684.h	181;"	d	line:181
+CCP_SHUTDOWN_AC_L::0x000000	C:\Program Files\PICC\devices\16F690.h	188;"	d	line:188
+CCP_SHUTDOWN_BD_F::0x020000	C:\PROGRA~1\PICC\devices\16F684.h	187;"	d	line:187
+CCP_SHUTDOWN_BD_F::0x020000	C:\Program Files\PICC\devices\16F690.h	194;"	d	line:194
+CCP_SHUTDOWN_BD_H::0x010000	C:\PROGRA~1\PICC\devices\16F684.h	186;"	d	line:186
+CCP_SHUTDOWN_BD_H::0x010000	C:\Program Files\PICC\devices\16F690.h	193;"	d	line:193
+CCP_SHUTDOWN_BD_L::0x000000	C:\PROGRA~1\PICC\devices\16F684.h	185;"	d	line:185
+CCP_SHUTDOWN_BD_L::0x000000	C:\Program Files\PICC\devices\16F690.h	192;"	d	line:192
+CCP_SHUTDOWN_ON_COMP1::0x100000	C:\PROGRA~1\PICC\devices\16F684.h	173;"	d	line:173
+CCP_SHUTDOWN_ON_COMP1::0x100000	C:\Program Files\PICC\devices\16F690.h	180;"	d	line:180
+CCP_SHUTDOWN_ON_COMP1_INT0::0x500000	C:\PROGRA~1\PICC\devices\16F684.h	177;"	d	line:177
+CCP_SHUTDOWN_ON_COMP1_INT0::0x500000	C:\Program Files\PICC\devices\16F690.h	184;"	d	line:184
+CCP_SHUTDOWN_ON_COMP2::0x200000	C:\PROGRA~1\PICC\devices\16F684.h	174;"	d	line:174
+CCP_SHUTDOWN_ON_COMP2::0x200000	C:\Program Files\PICC\devices\16F690.h	181;"	d	line:181
+CCP_SHUTDOWN_ON_COMP2_INT0::0x600000	C:\PROGRA~1\PICC\devices\16F684.h	178;"	d	line:178
+CCP_SHUTDOWN_ON_COMP2_INT0::0x600000	C:\Program Files\PICC\devices\16F690.h	185;"	d	line:185
+CCP_SHUTDOWN_ON_COMP::0x300000	C:\PROGRA~1\PICC\devices\16F684.h	175;"	d	line:175
+CCP_SHUTDOWN_ON_COMP::0x300000	C:\Program Files\PICC\devices\16F690.h	182;"	d	line:182
+CCP_SHUTDOWN_ON_COMP_INT0::0x700000	C:\PROGRA~1\PICC\devices\16F684.h	179;"	d	line:179
+CCP_SHUTDOWN_ON_COMP_INT0::0x700000	C:\Program Files\PICC\devices\16F690.h	186;"	d	line:186
+CCP_SHUTDOWN_ON_INT0::0x400000	C:\PROGRA~1\PICC\devices\16F684.h	176;"	d	line:176
+CCP_SHUTDOWN_ON_INT0::0x400000	C:\Program Files\PICC\devices\16F690.h	183;"	d	line:183
+CCP_SHUTDOWN_RESTART::0x80000000	C:\PROGRA~1\PICC\devices\16F684.h	189;"	d	line:189
+CCP_SHUTDOWN_RESTART::0x80000000	C:\Program Files\PICC\devices\16F690.h	196;"	d	line:196
+CENTER::PIN_A3	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	10;"	d	line:10
+COMM_ROUTINE	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	142;"	e	line:142
+COMM_TIMER	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	152;"	e	line:152
+COMP_C1_LATCHED::0x300000	C:\Program Files\PICC\devices\16F690.h	258;"	d	line:258
+COMP_INVERT::0x10	C:\PROGRA~1\PICC\devices\16F684.h	205;"	d	line:205
+COMP_INVERT::0x10	C:\Program Files\PICC\Devices\12F675.h	123;"	d	line:123
+COMP_T1_GATE::0x2000000	C:\PROGRA~1\PICC\devices\16F684.h	207;"	d	line:207
+COMP_T1_GATE::0x2000000	C:\Program Files\PICC\devices\16F690.h	260;"	d	line:260
+COMP_T1_SYNC::0x1000000	C:\PROGRA~1\PICC\devices\16F684.h	206;"	d	line:206
+COMP_T1_SYNC::0x1000000	C:\Program Files\PICC\devices\16F690.h	259;"	d	line:259
+CP1_A1_A0::0x80	C:\Program Files\PICC\devices\16F690.h	236;"	d	line:236
+CP1_A1_VR::0x84	C:\Program Files\PICC\devices\16F690.h	240;"	d	line:240
+CP1_C1_A0::0x81	C:\Program Files\PICC\devices\16F690.h	237;"	d	line:237
+CP1_C1_VR::0x85	C:\Program Files\PICC\devices\16F690.h	241;"	d	line:241
+CP1_C2_A0::0x82	C:\Program Files\PICC\devices\16F690.h	238;"	d	line:238
+CP1_C2_VR::0x86	C:\Program Files\PICC\devices\16F690.h	242;"	d	line:242
+CP1_C3_A0::0x83	C:\Program Files\PICC\devices\16F690.h	239;"	d	line:239
+CP1_C3_VR::0x87	C:\Program Files\PICC\devices\16F690.h	243;"	d	line:243
+CP1_INVERT::0x10	C:\Program Files\PICC\devices\16F690.h	245;"	d	line:245
+CP1_OUT_ON_A2::0x20	C:\Program Files\PICC\devices\16F690.h	244;"	d	line:244
+CP2_A1_C0::0x8000	C:\Program Files\PICC\devices\16F690.h	247;"	d	line:247
+CP2_A1_VR::0x8400	C:\Program Files\PICC\devices\16F690.h	251;"	d	line:251
+CP2_C1_C0::0x8100	C:\Program Files\PICC\devices\16F690.h	248;"	d	line:248
+CP2_C1_VR::0x8500	C:\Program Files\PICC\devices\16F690.h	252;"	d	line:252
+CP2_C2_C0::0x8200	C:\Program Files\PICC\devices\16F690.h	249;"	d	line:249
+CP2_C2_VR::0x8600	C:\Program Files\PICC\devices\16F690.h	253;"	d	line:253
+CP2_C3_C0::0x8300	C:\Program Files\PICC\devices\16F690.h	250;"	d	line:250
+CP2_C3_VR::0x8700	C:\Program Files\PICC\devices\16F690.h	254;"	d	line:254
+CP2_INVERT::0x1000	C:\Program Files\PICC\devices\16F690.h	256;"	d	line:256
+CP2_OUT_ON_C4::0x2000	C:\Program Files\PICC\devices\16F690.h	255;"	d	line:255
+CRC16	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	136;"	f	line:136	signature:(unsigned char *puchMsg, unsigned char usDataLen)
+CRC16_Tstat	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	237;"	f	line:237	signature:(unsigned char ch)
+CRC16_val	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	751;"	f	line:751	signature:(unsigned char *puchMsg, unsigned char usDataLen)
+CRChi	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	94;"	v	line:94
+CRClo	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	94;"	v	line:94
+CheckSubData	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	777;"	f	line:777	signature:(unsigned char *value, unsigned char data_lenth)
+DATABUFLEN::8	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	26;"	d	line:26
+DEAD_MASTER_ROUTINE	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	145;"	e	line:145
+DEAD_MASTER_TIMER	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	155;"	e	line:155
+DEFAULT_TIMEOUT::0	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	20;"	d	line:20
+DIS_BRAKE::0xFB	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	37;"	d	line:37
+DIS_BRAKE_YAW::0xC7	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	40;"	d	line:40
+DIS_DRIVE::0xBF	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	36;"	d	line:36
+DI_LEFT::PIN_A1	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	2;"	d	line:2
+DI_RIGHT::PIN_C3	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	3;"	d	line:3
+DOWN::PIN_C6	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	11;"	d	line:11
+DealwithTag	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	87;"	v	line:87
+EN_BRAKE::0x04	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	30;"	d	line:30
+EN_BRAKE_YAW::0x38	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	39;"	d	line:39
+EN_DRIVE::0x40	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	32;"	d	line:32
+FALSE::0	C:\PROGRA~1\PICC\devices\16F684.h	34;"	d	line:34
+FALSE::0	C:\Program Files\PICC\Devices\12F675.h	28;"	d	line:28
+FALSE::0	C:\Program Files\PICC\devices\16F690.h	41;"	d	line:41
+FIRMWARE_VERSION::1	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	21;"	d	line:21
+GLOBAL::0x0BC0	C:\PROGRA~1\PICC\devices\16F684.h	285;"	d	line:285
+GLOBAL::0x0BC0	C:\Program Files\PICC\Devices\12F675.h	183;"	d	line:183
+GLOBAL::0x0BC0	C:\Program Files\PICC\devices\16F690.h	346;"	d	line:346
+HIGH_START::3	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	16;"	d	line:16
+HIGH_TEMP::PIN_A2	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	6;"	d	line:6
+H_TO_L::0	C:\PROGRA~1\PICC\devices\16F684.h	283;"	d	line:283
+H_TO_L::0	C:\Program Files\PICC\Devices\12F675.h	181;"	d	line:181
+H_TO_L::0	C:\Program Files\PICC\devices\16F690.h	344;"	d	line:344
+INIT_HEARTBEAT_COUNT::39	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	19;"	d	line:19
+INT_AD::0x8C40	C:\PROGRA~1\PICC\devices\16F684.h	288;"	d	line:288
+INT_AD::0x8C40	C:\Program Files\PICC\Devices\12F675.h	186;"	d	line:186
+INT_AD::0x8C40	C:\Program Files\PICC\devices\16F690.h	350;"	d	line:350
+INT_CCP1::0x8C04	C:\Program Files\PICC\devices\16F690.h	355;"	d	line:355
+INT_CCP1::0x8C20	C:\PROGRA~1\PICC\devices\16F684.h	295;"	d	line:295
+INT_COMP2::0x8C10	C:\PROGRA~1\PICC\devices\16F684.h	296;"	d	line:296
+INT_COMP2::0x8D40	C:\Program Files\PICC\devices\16F690.h	362;"	d	line:362
+INT_COMP::0x8C08	C:\PROGRA~1\PICC\devices\16F684.h	293;"	d	line:293
+INT_COMP::0x8C08	C:\Program Files\PICC\Devices\12F675.h	190;"	d	line:190
+INT_COMP::0x8D20	C:\Program Files\PICC\devices\16F690.h	361;"	d	line:361
+INT_EEPROM::0x8C80	C:\PROGRA~1\PICC\devices\16F684.h	292;"	d	line:292
+INT_EEPROM::0x8C80	C:\Program Files\PICC\Devices\12F675.h	189;"	d	line:189
+INT_EEPROM::0x8D10	C:\Program Files\PICC\devices\16F690.h	357;"	d	line:357
+INT_EXT::0x0B10	C:\PROGRA~1\PICC\devices\16F684.h	287;"	d	line:287
+INT_EXT::0x0B10	C:\Program Files\PICC\Devices\12F675.h	185;"	d	line:185
+INT_EXT::0x0B10	C:\Program Files\PICC\devices\16F690.h	349;"	d	line:349
+INT_OSC_FAIL::0x8C04	C:\PROGRA~1\PICC\devices\16F684.h	297;"	d	line:297
+INT_OSC_FAIL::0x8D80	C:\Program Files\PICC\devices\16F690.h	360;"	d	line:360
+INT_RA0::0x010B08	C:\PROGRA~1\PICC\devices\16F684.h	298;"	d	line:298
+INT_RA0::0x010B08	C:\Program Files\PICC\Devices\12F675.h	192;"	d	line:192
+INT_RA0::0x010B08	C:\Program Files\PICC\devices\16F690.h	363;"	d	line:363
+INT_RA1::0x020B08	C:\PROGRA~1\PICC\devices\16F684.h	299;"	d	line:299
+INT_RA1::0x020B08	C:\Program Files\PICC\Devices\12F675.h	193;"	d	line:193
+INT_RA1::0x020B08	C:\Program Files\PICC\devices\16F690.h	364;"	d	line:364
+INT_RA2::0x040B08	C:\PROGRA~1\PICC\devices\16F684.h	300;"	d	line:300
+INT_RA2::0x040B08	C:\Program Files\PICC\Devices\12F675.h	194;"	d	line:194
+INT_RA2::0x040B08	C:\Program Files\PICC\devices\16F690.h	365;"	d	line:365
+INT_RA3::0x080B08	C:\PROGRA~1\PICC\devices\16F684.h	301;"	d	line:301
+INT_RA3::0x080B08	C:\Program Files\PICC\Devices\12F675.h	195;"	d	line:195
+INT_RA3::0x080B08	C:\Program Files\PICC\devices\16F690.h	366;"	d	line:366
+INT_RA4::0x100B08	C:\PROGRA~1\PICC\devices\16F684.h	302;"	d	line:302
+INT_RA4::0x100B08	C:\Program Files\PICC\Devices\12F675.h	196;"	d	line:196
+INT_RA4::0x100B08	C:\Program Files\PICC\devices\16F690.h	367;"	d	line:367
+INT_RA5::0x200B08	C:\PROGRA~1\PICC\devices\16F684.h	303;"	d	line:303
+INT_RA5::0x200B08	C:\Program Files\PICC\Devices\12F675.h	197;"	d	line:197
+INT_RA5::0x200B08	C:\Program Files\PICC\devices\16F690.h	368;"	d	line:368
+INT_RA::0xFF0B08	C:\PROGRA~1\PICC\devices\16F684.h	294;"	d	line:294
+INT_RA::0xFF0B08	C:\Program Files\PICC\Devices\12F675.h	191;"	d	line:191
+INT_RA::0xFF0B08	C:\Program Files\PICC\devices\16F690.h	359;"	d	line:359
+INT_RB4::0x1100B08	C:\Program Files\PICC\devices\16F690.h	369;"	d	line:369
+INT_RB5::0x1200B08	C:\Program Files\PICC\devices\16F690.h	370;"	d	line:370
+INT_RB6::0x1400B08	C:\Program Files\PICC\devices\16F690.h	371;"	d	line:371
+INT_RB7::0x1800B08	C:\Program Files\PICC\devices\16F690.h	372;"	d	line:372
+INT_RB::0x1FF0B08	C:\Program Files\PICC\devices\16F690.h	348;"	d	line:348
+INT_RDA::0x8C20	C:\Program Files\PICC\devices\16F690.h	352;"	d	line:352
+INT_RTCC::0x0B20	C:\PROGRA~1\PICC\devices\16F684.h	286;"	d	line:286
+INT_RTCC::0x0B20	C:\Program Files\PICC\Devices\12F675.h	184;"	d	line:184
+INT_RTCC::0x0B20	C:\Program Files\PICC\devices\16F690.h	347;"	d	line:347
+INT_SSP::0x8C08	C:\Program Files\PICC\devices\16F690.h	356;"	d	line:356
+INT_TBE::0x8C10	C:\Program Files\PICC\devices\16F690.h	351;"	d	line:351
+INT_TIMER0::0x0B20	C:\PROGRA~1\PICC\devices\16F684.h	291;"	d	line:291
+INT_TIMER0::0x0B20	C:\Program Files\PICC\Devices\12F675.h	188;"	d	line:188
+INT_TIMER0::0x0B20	C:\Program Files\PICC\devices\16F690.h	358;"	d	line:358
+INT_TIMER1::0x8C01	C:\PROGRA~1\PICC\devices\16F684.h	289;"	d	line:289
+INT_TIMER1::0x8C01	C:\Program Files\PICC\Devices\12F675.h	187;"	d	line:187
+INT_TIMER1::0x8C01	C:\Program Files\PICC\devices\16F690.h	353;"	d	line:353
+INT_TIMER2::0x8C02	C:\PROGRA~1\PICC\devices\16F684.h	290;"	d	line:290
+INT_TIMER2::0x8C02	C:\Program Files\PICC\devices\16F690.h	354;"	d	line:354
+InitCRC16	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	225;"	f	line:225	signature:(void)
+KEY	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	58;"	v	line:58
+LEFT_DIRECTION::0x7F	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	31;"	d	line:31
+LIGHT::PIN_C2	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	5;"	d	line:5
+LIGHT_ROUTINE	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	143;"	e	line:143
+LIGHT_TIMER	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	153;"	e	line:153
+LOW_POWER::PIN_A4	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	4;"	d	line:4
+L_TO_H::0x40	C:\PROGRA~1\PICC\devices\16F684.h	282;"	d	line:282
+L_TO_H::0x40	C:\Program Files\PICC\Devices\12F675.h	180;"	d	line:180
+L_TO_H::0x40	C:\Program Files\PICC\devices\16F690.h	343;"	d	line:343
+MASTER_ROUTINE	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	144;"	e	line:144
+MASTER_TIMER	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	154;"	e	line:154
+MCLR_FROM_RUN::27	C:\PROGRA~1\PICC\devices\16F684.h	54;"	d	line:54
+MCLR_FROM_RUN::27	C:\Program Files\PICC\Devices\12F675.h	48;"	d	line:48
+MCLR_FROM_RUN::27	C:\Program Files\PICC\devices\16F690.h	61;"	d	line:61
+MCLR_FROM_SLEEP::19	C:\PROGRA~1\PICC\devices\16F684.h	53;"	d	line:53
+MCLR_FROM_SLEEP::19	C:\Program Files\PICC\Devices\12F675.h	47;"	d	line:47
+MCLR_FROM_SLEEP::19	C:\Program Files\PICC\devices\16F690.h	60;"	d	line:60
+MODBUS_ADDRESS::6	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	46;"	d	line:46
+MODBUS_AI_DN::13	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	55;"	d	line:55
+MODBUS_AI_UP::12	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	53;"	d	line:53
+MODBUS_BAUDRATE::9	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	49;"	d	line:49
+MODBUS_END::14	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	56;"	d	line:56
+MODBUS_HARDWARE_REV::8	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	48;"	d	line:48
+MODBUS_MASTER::10	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	51;"	d	line:51
+MODBUS_MODULE_ADDRESS::11	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	52;"	d	line:52
+MODBUS_PRODUCT_MODEL::7	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	47;"	d	line:47
+MODBUS_SERIALNUMBER_HIWORD::2	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	43;"	d	line:43
+MODBUS_SERIALNUMBER_LOWORD::0	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	42;"	d	line:42
+MODBUS_VERSION_NUMBER_HI::5	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	45;"	d	line:45
+MODBUS_VERSION_NUMBER_LO::4	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	44;"	d	line:44
+NC_NC::0x00FF07	C:\PROGRA~1\PICC\devices\16F684.h	195;"	d	line:195
+NC_NC::0x0ff07	C:\Program Files\PICC\Devices\12F675.h	116;"	d	line:116
+NC_NC_C1_C0::0x10FF05	C:\PROGRA~1\PICC\devices\16F684.h	198;"	d	line:198
+NC_NC_NC_NC::0x00	C:\Program Files\PICC\devices\16F690.h	234;"	d	line:234
+NC_NC_NC_NC::0x00FF07	C:\PROGRA~1\PICC\devices\16F684.h	194;"	d	line:194
+NC_NC_NC_NC::0x0ff07	C:\Program Files\PICC\Devices\12F675.h	115;"	d	line:115
+NORMAL_POWER_UP::25	C:\PROGRA~1\PICC\devices\16F684.h	55;"	d	line:55
+NORMAL_POWER_UP::25	C:\Program Files\PICC\Devices\12F675.h	49;"	d	line:49
+NORMAL_POWER_UP::25	C:\Program Files\PICC\devices\16F690.h	62;"	d	line:62
+NO_ANALOGS::0	C:\PROGRA~1\PICC\devices\16F684.h	259;"	d	line:259
+NO_ANALOGS::0	C:\Program Files\PICC\Devices\12F675.h	153;"	d	line:153
+NO_ANALOGS::0	C:\Program Files\PICC\devices\16F690.h	320;"	d	line:320
+OSC_125KHZ::0x11	C:\PROGRA~1\PICC\devices\16F684.h	222;"	d	line:222
+OSC_125KHZ::0x11	C:\Program Files\PICC\devices\16F690.h	279;"	d	line:279
+OSC_1MHZ::0x41	C:\PROGRA~1\PICC\devices\16F684.h	225;"	d	line:225
+OSC_1MHZ::0x41	C:\Program Files\PICC\devices\16F690.h	282;"	d	line:282
+OSC_250KHZ::0x21	C:\PROGRA~1\PICC\devices\16F684.h	223;"	d	line:223
+OSC_250KHZ::0x21	C:\Program Files\PICC\devices\16F690.h	280;"	d	line:280
+OSC_2MHZ::0x51	C:\PROGRA~1\PICC\devices\16F684.h	226;"	d	line:226
+OSC_2MHZ::0x51	C:\Program Files\PICC\devices\16F690.h	283;"	d	line:283
+OSC_31KHZ::1	C:\PROGRA~1\PICC\devices\16F684.h	221;"	d	line:221
+OSC_31KHZ::1	C:\Program Files\PICC\devices\16F690.h	278;"	d	line:278
+OSC_31KHZ_STABLE::2	C:\PROGRA~1\PICC\devices\16F684.h	233;"	d	line:233
+OSC_31KHZ_STABLE::2	C:\Program Files\PICC\devices\16F690.h	290;"	d	line:290
+OSC_4MHZ::0x61	C:\PROGRA~1\PICC\devices\16F684.h	227;"	d	line:227
+OSC_4MHZ::0x61	C:\Program Files\PICC\devices\16F690.h	284;"	d	line:284
+OSC_500KHZ::0x31	C:\PROGRA~1\PICC\devices\16F684.h	224;"	d	line:224
+OSC_500KHZ::0x31	C:\Program Files\PICC\devices\16F690.h	281;"	d	line:281
+OSC_8MHZ::0x71	C:\PROGRA~1\PICC\devices\16F684.h	228;"	d	line:228
+OSC_8MHZ::0x71	C:\Program Files\PICC\devices\16F690.h	285;"	d	line:285
+OSC_INTRC::1	C:\PROGRA~1\PICC\devices\16F684.h	229;"	d	line:229
+OSC_INTRC::1	C:\Program Files\PICC\devices\16F690.h	286;"	d	line:286
+OSC_NORMAL::0	C:\PROGRA~1\PICC\devices\16F684.h	230;"	d	line:230
+OSC_NORMAL::0	C:\Program Files\PICC\devices\16F690.h	287;"	d	line:287
+OSC_STATE_STABLE::4	C:\PROGRA~1\PICC\devices\16F684.h	232;"	d	line:232
+OSC_STATE_STABLE::4	C:\Program Files\PICC\devices\16F690.h	289;"	d	line:289
+PIN_A0::40	C:\PROGRA~1\PICC\devices\16F684.h	19;"	d	line:19
+PIN_A0::40	C:\Program Files\PICC\Devices\12F675.h	20;"	d	line:20
+PIN_A0::40	C:\Program Files\PICC\devices\16F690.h	19;"	d	line:19
+PIN_A1::41	C:\PROGRA~1\PICC\devices\16F684.h	20;"	d	line:20
+PIN_A1::41	C:\Program Files\PICC\Devices\12F675.h	21;"	d	line:21
+PIN_A1::41	C:\Program Files\PICC\devices\16F690.h	20;"	d	line:20
+PIN_A2::42	C:\PROGRA~1\PICC\devices\16F684.h	21;"	d	line:21
+PIN_A2::42	C:\Program Files\PICC\Devices\12F675.h	22;"	d	line:22
+PIN_A2::42	C:\Program Files\PICC\devices\16F690.h	21;"	d	line:21
+PIN_A3::43	C:\PROGRA~1\PICC\devices\16F684.h	22;"	d	line:22
+PIN_A3::43	C:\Program Files\PICC\Devices\12F675.h	23;"	d	line:23
+PIN_A3::43	C:\Program Files\PICC\devices\16F690.h	22;"	d	line:22
+PIN_A4::44	C:\PROGRA~1\PICC\devices\16F684.h	23;"	d	line:23
+PIN_A4::44	C:\Program Files\PICC\Devices\12F675.h	24;"	d	line:24
+PIN_A4::44	C:\Program Files\PICC\devices\16F690.h	23;"	d	line:23
+PIN_A5::45	C:\PROGRA~1\PICC\devices\16F684.h	24;"	d	line:24
+PIN_A5::45	C:\Program Files\PICC\Devices\12F675.h	25;"	d	line:25
+PIN_A5::45	C:\Program Files\PICC\devices\16F690.h	24;"	d	line:24
+PIN_B4::52	C:\Program Files\PICC\devices\16F690.h	26;"	d	line:26
+PIN_B5::53	C:\Program Files\PICC\devices\16F690.h	27;"	d	line:27
+PIN_B6::54	C:\Program Files\PICC\devices\16F690.h	28;"	d	line:28
+PIN_B7::55	C:\Program Files\PICC\devices\16F690.h	29;"	d	line:29
+PIN_C0::56	C:\PROGRA~1\PICC\devices\16F684.h	26;"	d	line:26
+PIN_C0::56	C:\Program Files\PICC\devices\16F690.h	31;"	d	line:31
+PIN_C1::57	C:\PROGRA~1\PICC\devices\16F684.h	27;"	d	line:27
+PIN_C1::57	C:\Program Files\PICC\devices\16F690.h	32;"	d	line:32
+PIN_C2::58	C:\PROGRA~1\PICC\devices\16F684.h	28;"	d	line:28
+PIN_C2::58	C:\Program Files\PICC\devices\16F690.h	33;"	d	line:33
+PIN_C3::59	C:\PROGRA~1\PICC\devices\16F684.h	29;"	d	line:29
+PIN_C3::59	C:\Program Files\PICC\devices\16F690.h	34;"	d	line:34
+PIN_C4::60	C:\PROGRA~1\PICC\devices\16F684.h	30;"	d	line:30
+PIN_C4::60	C:\Program Files\PICC\devices\16F690.h	35;"	d	line:35
+PIN_C5::61	C:\PROGRA~1\PICC\devices\16F684.h	31;"	d	line:31
+PIN_C5::61	C:\Program Files\PICC\devices\16F690.h	36;"	d	line:36
+PIN_C6::62	C:\Program Files\PICC\devices\16F690.h	37;"	d	line:37
+PIN_C7::63	C:\Program Files\PICC\devices\16F690.h	38;"	d	line:38
+READ_VARIABLES::3	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	27;"	d	line:27
+RECEIVE_MODULE_DATA::1	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	23;"	d	line:23
+RECEIVE_PC_DATA::0	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	22;"	d	line:22
+RIGHT_DIRECTION::0x80	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	34;"	d	line:34
+RS232STATE::PIN_A5	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	7;"	d	line:7
+RTCC_8_BIT::0	C:\PROGRA~1\PICC\devices\16F684.h	78;"	d	line:78
+RTCC_8_BIT::0	C:\Program Files\PICC\Devices\12F675.h	72;"	d	line:72
+RTCC_8_BIT::0	C:\Program Files\PICC\devices\16F690.h	85;"	d	line:85
+RTCC_DIV_128::6	C:\PROGRA~1\PICC\devices\16F684.h	74;"	d	line:74
+RTCC_DIV_128::6	C:\Program Files\PICC\Devices\12F675.h	68;"	d	line:68
+RTCC_DIV_128::6	C:\Program Files\PICC\devices\16F690.h	81;"	d	line:81
+RTCC_DIV_16::3	C:\PROGRA~1\PICC\devices\16F684.h	71;"	d	line:71
+RTCC_DIV_16::3	C:\Program Files\PICC\Devices\12F675.h	65;"	d	line:65
+RTCC_DIV_16::3	C:\Program Files\PICC\devices\16F690.h	78;"	d	line:78
+RTCC_DIV_1::8	C:\PROGRA~1\PICC\devices\16F684.h	67;"	d	line:67
+RTCC_DIV_1::8	C:\Program Files\PICC\Devices\12F675.h	61;"	d	line:61
+RTCC_DIV_1::8	C:\Program Files\PICC\devices\16F690.h	74;"	d	line:74
+RTCC_DIV_256::7	C:\PROGRA~1\PICC\devices\16F684.h	75;"	d	line:75
+RTCC_DIV_256::7	C:\Program Files\PICC\Devices\12F675.h	69;"	d	line:69
+RTCC_DIV_256::7	C:\Program Files\PICC\devices\16F690.h	82;"	d	line:82
+RTCC_DIV_2::0	C:\PROGRA~1\PICC\devices\16F684.h	68;"	d	line:68
+RTCC_DIV_2::0	C:\Program Files\PICC\Devices\12F675.h	62;"	d	line:62
+RTCC_DIV_2::0	C:\Program Files\PICC\devices\16F690.h	75;"	d	line:75
+RTCC_DIV_32::4	C:\PROGRA~1\PICC\devices\16F684.h	72;"	d	line:72
+RTCC_DIV_32::4	C:\Program Files\PICC\Devices\12F675.h	66;"	d	line:66
+RTCC_DIV_32::4	C:\Program Files\PICC\devices\16F690.h	79;"	d	line:79
+RTCC_DIV_4::1	C:\PROGRA~1\PICC\devices\16F684.h	69;"	d	line:69
+RTCC_DIV_4::1	C:\Program Files\PICC\Devices\12F675.h	63;"	d	line:63
+RTCC_DIV_4::1	C:\Program Files\PICC\devices\16F690.h	76;"	d	line:76
+RTCC_DIV_64::5	C:\PROGRA~1\PICC\devices\16F684.h	73;"	d	line:73
+RTCC_DIV_64::5	C:\Program Files\PICC\Devices\12F675.h	67;"	d	line:67
+RTCC_DIV_64::5	C:\Program Files\PICC\devices\16F690.h	80;"	d	line:80
+RTCC_DIV_8::2	C:\PROGRA~1\PICC\devices\16F684.h	70;"	d	line:70
+RTCC_DIV_8::2	C:\Program Files\PICC\Devices\12F675.h	64;"	d	line:64
+RTCC_DIV_8::2	C:\Program Files\PICC\devices\16F690.h	77;"	d	line:77
+RTCC_EXT_H_TO_L::48	C:\PROGRA~1\PICC\devices\16F684.h	65;"	d	line:65
+RTCC_EXT_H_TO_L::48	C:\Program Files\PICC\Devices\12F675.h	59;"	d	line:59
+RTCC_EXT_H_TO_L::48	C:\Program Files\PICC\devices\16F690.h	72;"	d	line:72
+RTCC_EXT_L_TO_H::32	C:\PROGRA~1\PICC\devices\16F684.h	64;"	d	line:64
+RTCC_EXT_L_TO_H::32	C:\Program Files\PICC\Devices\12F675.h	58;"	d	line:58
+RTCC_EXT_L_TO_H::32	C:\Program Files\PICC\devices\16F690.h	71;"	d	line:71
+RTCC_INTERNAL::0	C:\PROGRA~1\PICC\devices\16F684.h	63;"	d	line:63
+RTCC_INTERNAL::0	C:\Program Files\PICC\Devices\12F675.h	57;"	d	line:57
+RTCC_INTERNAL::0	C:\Program Files\PICC\devices\16F690.h	70;"	d	line:70
+RX2::PIN_B5	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	13;"	d	line:13
+ReadData	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	853;"	f	line:853	signature:( unsigned int16 addr)
+SERIAL_TIMEOUT_SECONDS::250	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	18;"	d	line:18
+SNWriteflag	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	84;"	v	line:84
+SPI_CLK_DIV_16::1	C:\Program Files\PICC\devices\16F690.h	212;"	d	line:212
+SPI_CLK_DIV_4::0	C:\Program Files\PICC\devices\16F690.h	211;"	d	line:211
+SPI_CLK_DIV_64::2	C:\Program Files\PICC\devices\16F690.h	213;"	d	line:213
+SPI_CLK_T2::3	C:\Program Files\PICC\devices\16F690.h	214;"	d	line:214
+SPI_H_TO_L::0x10	C:\Program Files\PICC\devices\16F690.h	210;"	d	line:210
+SPI_L_TO_H::0	C:\Program Files\PICC\devices\16F690.h	209;"	d	line:209
+SPI_MASTER::0x20	C:\Program Files\PICC\devices\16F690.h	207;"	d	line:207
+SPI_SAMPLE_AT_END::0x8000	C:\Program Files\PICC\devices\16F690.h	217;"	d	line:217
+SPI_SLAVE::0x24	C:\Program Files\PICC\devices\16F690.h	208;"	d	line:208
+SPI_SS_DISABLED::1	C:\Program Files\PICC\devices\16F690.h	215;"	d	line:215
+SPI_XMIT_L_TO_H::0x4000	C:\Program Files\PICC\devices\16F690.h	218;"	d	line:218
+SendDataToSub	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	764;"	f	line:764	signature:(unsigned char num, unsigned char *data_buffer)
+Serial_Port_Polling	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	549;"	f	line:549	signature:(void)
+Serial_Port_Polling	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	137;"	p	line:137	signature:(void)
+T1_CLK_OUT::8	C:\PROGRA~1\PICC\devices\16F684.h	125;"	d	line:125
+T1_CLK_OUT::8	C:\Program Files\PICC\Devices\12F675.h	102;"	d	line:102
+T1_CLK_OUT::8	C:\Program Files\PICC\devices\16F690.h	132;"	d	line:132
+T1_DISABLED::0	C:\PROGRA~1\PICC\devices\16F684.h	120;"	d	line:120
+T1_DISABLED::0	C:\Program Files\PICC\Devices\12F675.h	97;"	d	line:97
+T1_DISABLED::0	C:\Program Files\PICC\devices\16F690.h	127;"	d	line:127
+T1_DIV_BY_1::0	C:\PROGRA~1\PICC\devices\16F684.h	127;"	d	line:127
+T1_DIV_BY_1::0	C:\Program Files\PICC\Devices\12F675.h	104;"	d	line:104
+T1_DIV_BY_1::0	C:\Program Files\PICC\devices\16F690.h	134;"	d	line:134
+T1_DIV_BY_2::0x10	C:\PROGRA~1\PICC\devices\16F684.h	128;"	d	line:128
+T1_DIV_BY_2::0x10	C:\Program Files\PICC\Devices\12F675.h	105;"	d	line:105
+T1_DIV_BY_2::0x10	C:\Program Files\PICC\devices\16F690.h	135;"	d	line:135
+T1_DIV_BY_4::0x20	C:\PROGRA~1\PICC\devices\16F684.h	129;"	d	line:129
+T1_DIV_BY_4::0x20	C:\Program Files\PICC\Devices\12F675.h	106;"	d	line:106
+T1_DIV_BY_4::0x20	C:\Program Files\PICC\devices\16F690.h	136;"	d	line:136
+T1_DIV_BY_8::0x30	C:\PROGRA~1\PICC\devices\16F684.h	130;"	d	line:130
+T1_DIV_BY_8::0x30	C:\Program Files\PICC\Devices\12F675.h	107;"	d	line:107
+T1_DIV_BY_8::0x30	C:\Program Files\PICC\devices\16F690.h	137;"	d	line:137
+T1_EXTERNAL::7	C:\PROGRA~1\PICC\devices\16F684.h	122;"	d	line:122
+T1_EXTERNAL::7	C:\Program Files\PICC\Devices\12F675.h	99;"	d	line:99
+T1_EXTERNAL::7	C:\Program Files\PICC\devices\16F690.h	129;"	d	line:129
+T1_EXTERNAL_SYNC::3	C:\PROGRA~1\PICC\devices\16F684.h	123;"	d	line:123
+T1_EXTERNAL_SYNC::3	C:\Program Files\PICC\Devices\12F675.h	100;"	d	line:100
+T1_EXTERNAL_SYNC::3	C:\Program Files\PICC\devices\16F690.h	130;"	d	line:130
+T1_GATE::0x40	C:\PROGRA~1\PICC\devices\16F684.h	132;"	d	line:132
+T1_GATE::0x40	C:\Program Files\PICC\Devices\12F675.h	109;"	d	line:109
+T1_GATE::0x40	C:\Program Files\PICC\devices\16F690.h	139;"	d	line:139
+T1_GATE_INVERTED::0xC0	C:\PROGRA~1\PICC\devices\16F684.h	133;"	d	line:133
+T1_GATE_INVERTED::0xC0	C:\Program Files\PICC\Devices\12F675.h	110;"	d	line:110
+T1_GATE_INVERTED::0xC0	C:\Program Files\PICC\devices\16F690.h	140;"	d	line:140
+T1_INTERNAL::5	C:\PROGRA~1\PICC\devices\16F684.h	121;"	d	line:121
+T1_INTERNAL::5	C:\Program Files\PICC\Devices\12F675.h	98;"	d	line:98
+T1_INTERNAL::5	C:\Program Files\PICC\devices\16F690.h	128;"	d	line:128
+T2_DISABLED::0	C:\PROGRA~1\PICC\devices\16F684.h	138;"	d	line:138
+T2_DISABLED::0	C:\Program Files\PICC\devices\16F690.h	145;"	d	line:145
+T2_DIV_BY_16::6	C:\PROGRA~1\PICC\devices\16F684.h	141;"	d	line:141
+T2_DIV_BY_16::6	C:\Program Files\PICC\devices\16F690.h	148;"	d	line:148
+T2_DIV_BY_1::4	C:\PROGRA~1\PICC\devices\16F684.h	139;"	d	line:139
+T2_DIV_BY_1::4	C:\Program Files\PICC\devices\16F690.h	146;"	d	line:146
+T2_DIV_BY_4::5	C:\PROGRA~1\PICC\devices\16F684.h	140;"	d	line:140
+T2_DIV_BY_4::5	C:\Program Files\PICC\devices\16F690.h	147;"	d	line:147
+TIMER1_isr	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	120;"	f	line:120
+TOP::PIN_A0	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	8;"	d	line:8
+TOTAL_TIMERS	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	157;"	e	line:157
+TRUE::1	C:\PROGRA~1\PICC\devices\16F684.h	35;"	d	line:35
+TRUE::1	C:\Program Files\PICC\Devices\12F675.h	29;"	d	line:29
+TRUE::1	C:\Program Files\PICC\devices\16F690.h	42;"	d	line:42
+TX2::PIN_B7	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	12;"	d	line:12
+UART_ADDRESS::2	C:\Program Files\PICC\devices\16F690.h	224;"	d	line:224
+UART_AUTODETECT::8	C:\Program Files\PICC\devices\16F690.h	226;"	d	line:226
+UART_AUTODETECT_NOWAIT::9	C:\Program Files\PICC\devices\16F690.h	227;"	d	line:227
+UART_DATA::4	C:\Program Files\PICC\devices\16F690.h	225;"	d	line:225
+UART_SEND_BREAK::13	C:\Program Files\PICC\devices\16F690.h	229;"	d	line:229
+UART_WAKEUP_ON_RDA::10	C:\Program Files\PICC\devices\16F690.h	228;"	d	line:228
+UP::PIN_C7	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	9;"	d	line:9
+VREF_6th::0x10	C:\Program Files\PICC\devices\16F690.h	271;"	d	line:271
+VREF_COMP1::0x80	C:\Program Files\PICC\devices\16F690.h	272;"	d	line:272
+VREF_COMP2::0x40	C:\Program Files\PICC\devices\16F690.h	273;"	d	line:273
+VREF_HIGH::0x00	C:\Program Files\PICC\devices\16F690.h	269;"	d	line:269
+VREF_HIGH::0x80	C:\PROGRA~1\PICC\devices\16F684.h	216;"	d	line:216
+VREF_HIGH::0x80	C:\Program Files\PICC\Devices\12F675.h	131;"	d	line:131
+VREF_LOW::0x20	C:\Program Files\PICC\devices\16F690.h	268;"	d	line:268
+VREF_LOW::0xa0	C:\PROGRA~1\PICC\devices\16F684.h	215;"	d	line:215
+VREF_LOW::0xa0	C:\Program Files\PICC\Devices\12F675.h	130;"	d	line:130
+VSS_VDD::0x0000	C:\PROGRA~1\PICC\devices\16F684.h	263;"	d	line:263
+VSS_VDD::0x0000	C:\Program Files\PICC\Devices\12F675.h	161;"	d	line:161
+VSS_VDD::0x0000	C:\Program Files\PICC\devices\16F690.h	324;"	d	line:324
+VSS_VREF::0x4000	C:\PROGRA~1\PICC\devices\16F684.h	264;"	d	line:264
+VSS_VREF::0x4000	C:\Program Files\PICC\Devices\12F675.h	162;"	d	line:162
+VSS_VREF::0x4000	C:\Program Files\PICC\devices\16F690.h	325;"	d	line:325
+WDT_1152MS::14	C:\PROGRA~1\PICC\devices\16F684.h	96;"	d	line:96
+WDT_1152MS::14	C:\Program Files\PICC\Devices\12F675.h	90;"	d	line:90
+WDT_1152MS::14	C:\Program Files\PICC\devices\16F690.h	103;"	d	line:103
+WDT_144MS::11	C:\PROGRA~1\PICC\devices\16F684.h	93;"	d	line:93
+WDT_144MS::11	C:\Program Files\PICC\Devices\12F675.h	87;"	d	line:87
+WDT_144MS::11	C:\Program Files\PICC\devices\16F690.h	100;"	d	line:100
+WDT_18MS::8	C:\PROGRA~1\PICC\devices\16F684.h	90;"	d	line:90
+WDT_18MS::8	C:\Program Files\PICC\Devices\12F675.h	84;"	d	line:84
+WDT_18MS::8	C:\Program Files\PICC\devices\16F690.h	97;"	d	line:97
+WDT_2304MS::15	C:\PROGRA~1\PICC\devices\16F684.h	97;"	d	line:97
+WDT_2304MS::15	C:\Program Files\PICC\Devices\12F675.h	91;"	d	line:91
+WDT_2304MS::15	C:\Program Files\PICC\devices\16F690.h	104;"	d	line:104
+WDT_288MS::12	C:\PROGRA~1\PICC\devices\16F684.h	94;"	d	line:94
+WDT_288MS::12	C:\Program Files\PICC\Devices\12F675.h	88;"	d	line:88
+WDT_288MS::12	C:\Program Files\PICC\devices\16F690.h	101;"	d	line:101
+WDT_36MS::9	C:\PROGRA~1\PICC\devices\16F684.h	91;"	d	line:91
+WDT_36MS::9	C:\Program Files\PICC\Devices\12F675.h	85;"	d	line:85
+WDT_36MS::9	C:\Program Files\PICC\devices\16F690.h	98;"	d	line:98
+WDT_576MS::13	C:\PROGRA~1\PICC\devices\16F684.h	95;"	d	line:95
+WDT_576MS::13	C:\Program Files\PICC\Devices\12F675.h	89;"	d	line:89
+WDT_576MS::13	C:\Program Files\PICC\devices\16F690.h	102;"	d	line:102
+WDT_72MS::10	C:\PROGRA~1\PICC\devices\16F684.h	92;"	d	line:92
+WDT_72MS::10	C:\Program Files\PICC\Devices\12F675.h	86;"	d	line:86
+WDT_72MS::10	C:\Program Files\PICC\devices\16F690.h	99;"	d	line:99
+WDT_DIV_16::0x100	C:\PROGRA~1\PICC\devices\16F684.h	103;"	d	line:103
+WDT_DIV_16::0x100	C:\Program Files\PICC\devices\16F690.h	110;"	d	line:110
+WDT_DIV_2::0x700	C:\PROGRA~1\PICC\devices\16F684.h	106;"	d	line:106
+WDT_DIV_2::0x700	C:\Program Files\PICC\devices\16F690.h	113;"	d	line:113
+WDT_DIV_4::0x500	C:\PROGRA~1\PICC\devices\16F684.h	105;"	d	line:105
+WDT_DIV_4::0x500	C:\Program Files\PICC\devices\16F690.h	112;"	d	line:112
+WDT_DIV_8::0x300	C:\PROGRA~1\PICC\devices\16F684.h	104;"	d	line:104
+WDT_DIV_8::0x300	C:\Program Files\PICC\devices\16F690.h	111;"	d	line:111
+WDT_FROM_SLEEP::3	C:\PROGRA~1\PICC\devices\16F684.h	51;"	d	line:51
+WDT_FROM_SLEEP::3	C:\Program Files\PICC\Devices\12F675.h	45;"	d	line:45
+WDT_FROM_SLEEP::3	C:\Program Files\PICC\devices\16F690.h	58;"	d	line:58
+WDT_OFF::0	C:\PROGRA~1\PICC\devices\16F684.h	102;"	d	line:102
+WDT_OFF::0	C:\Program Files\PICC\devices\16F690.h	109;"	d	line:109
+WDT_ON::0x4100	C:\PROGRA~1\PICC\devices\16F684.h	101;"	d	line:101
+WDT_ON::0x4100	C:\Program Files\PICC\devices\16F690.h	108;"	d	line:108
+WDT_TIMEOUT::11	C:\PROGRA~1\PICC\devices\16F684.h	52;"	d	line:52
+WDT_TIMEOUT::11	C:\Program Files\PICC\Devices\12F675.h	46;"	d	line:46
+WDT_TIMEOUT::11	C:\Program Files\PICC\devices\16F690.h	59;"	d	line:59
+WDT_TIMES_128::0x1700	C:\PROGRA~1\PICC\devices\16F684.h	114;"	d	line:114
+WDT_TIMES_128::0x1700	C:\Program Files\PICC\devices\16F690.h	121;"	d	line:121
+WDT_TIMES_16::0x1100	C:\PROGRA~1\PICC\devices\16F684.h	111;"	d	line:111
+WDT_TIMES_16::0x1100	C:\Program Files\PICC\devices\16F690.h	118;"	d	line:118
+WDT_TIMES_1::0x900	C:\PROGRA~1\PICC\devices\16F684.h	107;"	d	line:107
+WDT_TIMES_1::0x900	C:\Program Files\PICC\devices\16F690.h	114;"	d	line:114
+WDT_TIMES_2::0xB00	C:\PROGRA~1\PICC\devices\16F684.h	108;"	d	line:108
+WDT_TIMES_2::0xB00	C:\Program Files\PICC\devices\16F690.h	115;"	d	line:115
+WDT_TIMES_32::0x1300	C:\PROGRA~1\PICC\devices\16F684.h	112;"	d	line:112
+WDT_TIMES_32::0x1300	C:\Program Files\PICC\devices\16F690.h	119;"	d	line:119
+WDT_TIMES_4::0xD00	C:\PROGRA~1\PICC\devices\16F684.h	109;"	d	line:109
+WDT_TIMES_4::0xD00	C:\Program Files\PICC\devices\16F690.h	116;"	d	line:116
+WDT_TIMES_64::0x1500	C:\PROGRA~1\PICC\devices\16F684.h	113;"	d	line:113
+WDT_TIMES_64::0x1500	C:\Program Files\PICC\devices\16F690.h	120;"	d	line:120
+WDT_TIMES_8::0xF00	C:\PROGRA~1\PICC\devices\16F684.h	110;"	d	line:110
+WDT_TIMES_8::0xF00	C:\Program Files\PICC\devices\16F690.h	117;"	d	line:117
+WRITE_VARIABLES::6	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	28;"	d	line:28
+WriteData	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	791;"	f	line:791	signature:( unsigned int16 addr ,unsigned char value)
+addr	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	363;"	l	line:363
+auchCRCHi	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	96;"	v	line:96
+auchCRCLo	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	117;"	v	line:117
+big_ticks	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	167;"	v	line:167
+checkMainData	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	160;"	f	line:160	signature:(void)
+comm_isr	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	55;"	f	line:55
+crc	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	796;"	l	line:796
+crc	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	858;"	l	line:858
+crc_val	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	779;"	l	line:779
+data_buffer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	80;"	v	line:80
+deadmaster_timer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	169;"	v	line:169
+dealwithMainData	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	717;"	f	line:717	signature:(void)
+et_jump_function	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	148;"	t	line:148
+et_timer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	158;"	t	line:158
+fgetc::getch	C:\PROGRA~1\PICC\devices\16F684.h	41;"	d	line:41
+fgetc::getch	C:\Program Files\PICC\Devices\12F675.h	35;"	d	line:35
+fgetc::getch	C:\Program Files\PICC\devices\16F690.h	48;"	d	line:48
+fgets::gets	C:\PROGRA~1\PICC\devices\16F684.h	45;"	d	line:45
+fgets::gets	C:\Program Files\PICC\Devices\12F675.h	39;"	d	line:39
+fgets::gets	C:\Program Files\PICC\devices\16F690.h	52;"	d	line:52
+fputc::putchar	C:\PROGRA~1\PICC\devices\16F684.h	44;"	d	line:44
+fputc::putchar	C:\Program Files\PICC\Devices\12F675.h	38;"	d	line:38
+fputc::putchar	C:\Program Files\PICC\devices\16F690.h	51;"	d	line:51
+fputs::puts	C:\PROGRA~1\PICC\devices\16F684.h	46;"	d	line:46
+fputs::puts	C:\Program Files\PICC\Devices\12F675.h	40;"	d	line:40
+fputs::puts	C:\Program Files\PICC\devices\16F690.h	53;"	d	line:53
+getc::getch	C:\PROGRA~1\PICC\devices\16F684.h	40;"	d	line:40
+getc::getch	C:\Program Files\PICC\Devices\12F675.h	34;"	d	line:34
+getc::getch	C:\Program Files\PICC\devices\16F690.h	47;"	d	line:47
+getchar::getch	C:\PROGRA~1\PICC\devices\16F684.h	42;"	d	line:42
+getchar::getch	C:\Program Files\PICC\Devices\12F675.h	36;"	d	line:36
+getchar::getch	C:\Program Files\PICC\devices\16F690.h	49;"	d	line:49
+heart_beat_counter	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	77;"	v	line:77
+high_count	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	76;"	v	line:76
+i	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	361;"	l	line:361
+i	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	766;"	l	line:766
+id	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	261;"	l	line:261
+initSend_COM	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	523;"	f	line:523	signature:(void)
+initSerial	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	459;"	f	line:459	signature:(void)
+init_big_ticks	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	159;"	v	line:159
+init_timers	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	967;"	f	line:967
+init_timers	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	138;"	p	line:138	signature:( )
+initial	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	923;"	f	line:923	signature:(void)
+initial	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	71;"	p	line:71	signature:()
+internal_deal	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	259;"	f	line:259	signature:(void)
+laddress	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	82;"	v	line:82
+light_counter	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	168;"	v	line:168
+maddress	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	83;"	v	line:83
+main	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	1049;"	f	line:1049	signature:(void)
+master_led	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	179;"	v	line:179
+master_switch	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	172;"	v	line:172
+new_heart_beat	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	86;"	v	line:86
+no_activity	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	181;"	v	line:181
+num	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	360;"	l	line:360
+putc::putchar	C:\PROGRA~1\PICC\devices\16F684.h	43;"	d	line:43
+putc::putchar	C:\Program Files\PICC\Devices\12F675.h	37;"	d	line:37
+putc::putchar	C:\Program Files\PICC\devices\16F690.h	50;"	d	line:50
+readvalue	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	173;"	v	line:173
+rece_count	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	81;"	v	line:81
+rece_size	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	79;"	v	line:79
+receive_data	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	174;"	v	line:174
+received_schedual_data	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	178;"	v	line:178
+receiving_schedual_byte	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	175;"	v	line:175
+responseData	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	358;"	f	line:358	signature:(void)
+run_function	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	982;"	f	line:982	signature:( et_jump_function func_no )
+sAN0::1	C:\PROGRA~1\PICC\devices\16F684.h	251;"	d	line:251
+sAN0::1	C:\Program Files\PICC\Devices\12F675.h	149;"	d	line:149
+sAN0::1	C:\Program Files\PICC\devices\16F690.h	308;"	d	line:308
+sAN10::0x40000	C:\Program Files\PICC\devices\16F690.h	318;"	d	line:318
+sAN11::0x80000	C:\Program Files\PICC\devices\16F690.h	319;"	d	line:319
+sAN1::2	C:\PROGRA~1\PICC\devices\16F684.h	252;"	d	line:252
+sAN1::2	C:\Program Files\PICC\Devices\12F675.h	150;"	d	line:150
+sAN1::2	C:\Program Files\PICC\devices\16F690.h	309;"	d	line:309
+sAN2::4	C:\PROGRA~1\PICC\devices\16F684.h	253;"	d	line:253
+sAN2::4	C:\Program Files\PICC\Devices\12F675.h	151;"	d	line:151
+sAN2::4	C:\Program Files\PICC\devices\16F690.h	310;"	d	line:310
+sAN3::8	C:\PROGRA~1\PICC\devices\16F684.h	254;"	d	line:254
+sAN3::8	C:\Program Files\PICC\Devices\12F675.h	152;"	d	line:152
+sAN3::8	C:\Program Files\PICC\devices\16F690.h	311;"	d	line:311
+sAN4::16	C:\PROGRA~1\PICC\devices\16F684.h	255;"	d	line:255
+sAN4::16	C:\Program Files\PICC\devices\16F690.h	312;"	d	line:312
+sAN5::32	C:\PROGRA~1\PICC\devices\16F684.h	256;"	d	line:256
+sAN5::32	C:\Program Files\PICC\devices\16F690.h	313;"	d	line:313
+sAN6::64	C:\PROGRA~1\PICC\devices\16F684.h	257;"	d	line:257
+sAN6::64	C:\Program Files\PICC\devices\16F690.h	314;"	d	line:314
+sAN7::128	C:\PROGRA~1\PICC\devices\16F684.h	258;"	d	line:258
+sAN7::128	C:\Program Files\PICC\devices\16F690.h	315;"	d	line:315
+sAN8::0x10000	C:\Program Files\PICC\devices\16F690.h	316;"	d	line:316
+sAN9::0x20000	C:\Program Files\PICC\devices\16F690.h	317;"	d	line:317
+send_buffer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	362;"	l	line:362
+send_buffer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	794;"	l	line:794
+send_buffer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	856;"	l	line:856
+serial_main_restart	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	512;"	f	line:512	signature:(void)
+serial_receive_timeout	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	75;"	v	line:75
+serial_receive_timeout_count	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	85;"	v	line:85
+setup_oscillator	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	935;"	p	line:935	file:
+start_timer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	530;"	f	line:530	signature:( et_timer timer_no , unsigned char timeout )
+stop_timer	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	41;"	f	line:41	signature:( et_timer timer_no )
+success	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	794;"	l	line:794
+success	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	856;"	l	line:856
+success_write_schedual	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	177;"	v	line:177
+temp	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	794;"	l	line:794
+temp	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	856;"	l	line:856
+timer_counter	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	796;"	l	line:796
+timer_counter	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	858;"	l	line:858
+timer_no	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	969;"	l	line:969
+timer_no	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.h	171;"	v	line:171
+uIndex	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	140;"	l	line:140
+uIndex	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	239;"	l	line:239
+uIndex	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	755;"	l	line:755
+uchCRCHi	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	138;"	l	line:138
+uchCRCHi	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	753;"	l	line:753
+uchCRCLo	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	139;"	l	line:139
+uchCRCLo	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	754;"	l	line:754
+x3	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	928;"	l	line:928
+x3	Z:\Designs\T3-Wind\HandHeld\code\REV4\PICCore.C	931;"	l	line:931

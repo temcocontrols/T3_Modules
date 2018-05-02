@@ -190,34 +190,92 @@ void mass_flash_init(void)
 			inputs[loop].range = 0 ; 
 			inputs[loop].digital_analog = 0 ;
 			#if (defined T36CTA)
-				#if (defined T36CTA_REV1)
-				if( loop < 13)
-					sprintf((char*)label_buf, "AI%u", loop);
-				else
-					sprintf((char*)label_buf, "CT%u", loop-12);
-				#endif
-				#if (defined T36CTA_REV2)
-				if( loop < 8)
-					sprintf((char*)label_buf, "AI%u", loop);
-				else if(loop == 8)
+				if(t36ct_ver == T36CTA_REV1 )//#if (defined T36CTA_REV1)#if (defined T36CTA_REV1)
 				{
-					inputs[loop].digital_analog = 1 ;
-					inputs[loop].range = pressureInWc ; 
-					sprintf((char*)label_buf, "AIR FLOW");
-				}
-				else if(loop == 9)
+					if( loop < 13)
+						sprintf((char*)label_buf, "AI%u", loop);
+					else if( loop <19)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = I0_75Amps;
+						sprintf((char*)label_buf, "CT%u", loop-12);
+					}
+					else if(loop == 19)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = R10K_40_250DegF;
+						sprintf((char*)label_buf, "OUTDOOR TEMP");
+					}
+					else if(loop == 20)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Humidty;
+						sprintf((char*)label_buf, "OUTDOOR HUM");
+					}
+					else if(loop == 21)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Reserved1;
+						sprintf((char*)label_buf, "OUTDOOR LUX");
+					}
+					else if(loop == 22)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Reserved1;
+						sprintf((char*)label_buf, "OUTDOOR ENTHALPY");
+					}
+					else
+						sprintf((char*)label_buf, " ");
+				}//#endif
+				if(t36ct_ver == T36CTA_REV2 )//#if (defined T36CTA_REV2)
 				{
-					inputs[loop].digital_analog = 1 ;
-					inputs[loop].range = Reserved3;
-					sprintf((char*)label_buf, "ACCELEROMETER");
-				}
-				else
-				{
-					inputs[loop].digital_analog = 1 ;
-					inputs[loop].range = I0_100Amps;
-					sprintf((char*)label_buf, "CT%u", loop-9);
-				}
-				#endif
+					if( loop < 8)
+						sprintf((char*)label_buf, "AI%u", loop);
+					else if(loop == 8)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = pressureInWc ; 
+						sprintf((char*)label_buf, "AIR FLOW");
+					}
+					else if(loop == 9)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Reserved3;
+						sprintf((char*)label_buf, "ACCELEROMETER");
+					}
+					else if( loop < 16)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = I0_75Amps;
+						sprintf((char*)label_buf, "CT%u", loop-9);
+					}
+					else if(loop == 16)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = R10K_40_250DegF;
+						sprintf((char*)label_buf, "OUTDOOR TEMP");
+					}
+					else if(loop == 17)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Humidty;
+						sprintf((char*)label_buf, "OUTDOOR HUM");
+					}
+					else if(loop == 18)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Reserved1;
+						sprintf((char*)label_buf, "OUTDOOR LUX");
+					}
+					else if(loop == 19)
+					{
+						inputs[loop].digital_analog = 1 ;
+						inputs[loop].range = Reserved1;
+						sprintf((char*)label_buf, "OUTDOOR ENTHALPY");
+					}
+					else
+						sprintf((char*)label_buf, " ");
+				}//#endif
 			#else
 			sprintf((char*)label_buf, "AI%u", loop);
 			#endif

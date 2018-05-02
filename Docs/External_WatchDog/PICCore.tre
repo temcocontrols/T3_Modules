@@ -1,0 +1,8 @@
+ÀÄPICCore
+   ÃÄMAIN  0/62  Ram=1
+   ³  ÃÄ@cinit1  (Inline)  Ram=0
+   ³  ÃÄinitial  0/71  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/20  Ram=1
+   ³  ³  ÀÄ@delay_ms1  0/20  Ram=1
+   ³  ÀÄ@delay_ms1  0/20  Ram=1
+   ÀÄTIMER1_isr  0/16  Ram=0

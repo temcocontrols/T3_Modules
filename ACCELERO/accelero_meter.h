@@ -13,6 +13,9 @@
 
 #define ACCELERO_ADDR_READ   0x3B
 #define ACCELERO_ADDR_WRITE  0x3A
+
+//#define ACCELERO_ADDR_READ   0xd5
+//#define ACCELERO_ADDR_WRITE  0xd4
 //IO·½ÏòÉèÖÃ
 //#define ACCELERO_SDA_IN()	 {GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)8 << 12);}
 //#define ACCELERO_SDA_OUT()	 {GPIOB->CRH &= 0XFFFF0FFF; GPIOB->CRH |= ((u32)3 << 12);}
@@ -25,9 +28,13 @@
 #define BUILD_UINT10_AXIS(MSB, LSB)   \
           ( ((MSB & 0x00ff) << 2) + ((LSB & 0x00ff) >> 6) )
 
+//#define BUILD_UINT10_AXIS(MSB, LSB)   \
+//          ( ((MSB & 0x00ff) << 8) + ((LSB & 0x00ff) ) )
 
 extern uint16_t axis_value[];
 extern uint8_t asix_sequence;
+extern uint16_t gyro_value[];
+extern uint8_t gyro_sequence;
 
 void ACCELERO_IO_Init(void);
 

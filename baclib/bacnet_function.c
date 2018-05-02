@@ -1,3 +1,4 @@
+#ifndef T36CTA
 #include "stdint.h"
 #include "types.h"
 #include "define.h"
@@ -778,3 +779,4 @@ char* Get_Object_Name(void)
 //    memcpy(uart_send, p, length);
 //   USART_SendDataString(length);
 //}
+#endif

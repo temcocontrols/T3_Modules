@@ -21,7 +21,9 @@
 
 
 void uart1_init(u32 bound);
-
+#if 1//T36CTA
+void uart4_init(u32 bound);
+#endif
 #define EN_USART1_RX 			1		//使能（1）/禁止（0）串口1接收
 
 

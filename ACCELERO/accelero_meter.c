@@ -6,7 +6,8 @@
 
 uint16_t axis_value[3] = {0, 0, 0};
 uint8_t asix_sequence = 0;
-
+uint16_t gyro_value[3] = {0, 0, 0};
+uint8_t gyro_sequence = 0;
 
 
 void ACCELERO_IO_Init(void)
@@ -88,6 +89,7 @@ u8 ACCELERO_I2C_wait_for_ack(void)
 		
 //	GPIO_SetBits(GPIOB, GPIO_Pin_10);
 //	delay_us(1);
+#if 0
 	GPIO_ResetBits(GPIOB, GPIO_Pin_11);
 	delay_us(1);
 	GPIO_SetBits(GPIOB, GPIO_Pin_10);
@@ -96,6 +98,24 @@ u8 ACCELERO_I2C_wait_for_ack(void)
 	delay_us(1);
 	GPIO_SetBits(GPIOB, GPIO_Pin_11);
 	delay_us(1);
+#else
+	ACCELERO_SDA_IN();		//SDA设置为输入  
+//	IIC_SDA = 1;
+	delay_us(1);	   
+	GPIO_SetBits(GPIOB, GPIO_Pin_10);
+	delay_us(1);	 
+	while(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_11))
+	{
+		ucErrTime++;
+		if(ucErrTime > 250)
+		{
+			ACCELERO_I2C_stop();
+			return 1;
+		}
+	}
+	GPIO_ResetBits(GPIOB, GPIO_Pin_10);	//时钟输出0 	   
+	return 0;  
+#endif
 //	for(ucErrTime = 0; ucErrTime < 250; ucErrTime++)
 //	{
 //		if(READ_ACCELERO_SDA == 0)

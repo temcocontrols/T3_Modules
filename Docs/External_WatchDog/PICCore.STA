@@ -1,0 +1,48 @@
+
+ROM used:   231/1024 (23%)
+            231/1024 (23%) including unused fragments
+
+            0.4 Average locations per line
+            6.6 Average locations per statement
+
+RAM used:   16/64 (25%) at main() level
+            16/64 (25%) worst case
+
+Stack used: 2 worst case (1 in main + 1 for interrupts)
+Stack size: 8
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  143    35 100  PICCore.c
+  500     0   0  C:\Program Files\PICC\devices\12F675.h
+----- -----
+  643    35 Total
+
+Page ROM  %  RAM    Vol Diff  Functions:
+---- --- --- ---    --- ----  ----------
+0     20   9    1             @delay_ms1
+0     16   7    0    102  3.3  TIMER1_isr
+0     71  31    0    684  4.9  initial
+0     62  27    1    357  3.7  MAIN
+ Inline         0             @cinit1
+
+Program metrics:
+    Functions               3
+    Statements              35
+    Comments                124
+    Volume (V)              1428
+    Difficulty (D)          12.1
+    Effort to implement (E) 17290
+    Time to implement (T)   16 minutes
+    Est Delivered Bugs (B)  0
+    Cyclomatic Complexity   4
+    Maintainability (MI)    73
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-00037    52  0  
+00038-003FF   175  793  
+
+
+

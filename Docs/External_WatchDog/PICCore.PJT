@@ -1,0 +1,42 @@
+[PROJECT]
+Target=PICCore.HEX
+Development_Mode=2
+Processor=0x2675
+Processor_Text=PIC12F675
+ToolSuite=CCS
+
+[Directories]
+Include=
+Library=
+LinkerScript=
+
+[Target Data]
+FileList=F:\work space\PicRev1\PICCore.c
+BuildTool=C-COMPILER
+OptionString=+FM
+AdditionalOptionString=
+BuildRequired=1
+
+[PICCore.c]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+
+[mru-list]
+1=PICCore.c
+
+[Windows]
+0=0000 PICCore.c 0 0 796 451 3 0
+
+[Opened Files]
+1=PICCore.C
+2=
+3=
+4=
+5=
+[Units]
+Count=1
+1=PICCore (main)
